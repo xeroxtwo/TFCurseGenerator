@@ -342,7 +342,7 @@ function generateCurse() {
 		{complicationText: "Your pheromones allow you to seduce almost any creature."},
 		{complicationText: "Also, you must lay one large egg every day.",
 			additionalExplaination: randomFrom([
-								"The time of day when you lay your egg is random each day. A shifting feeling in your belly gives you 30 seconds warning before you drop.",
+								"The time of day when you lay your egg is random. A shifting feeling in your belly gives you 30 seconds warning before you drop.",
 								"The first time laying is painful. By the end of the first week, it starts to become pleasurable.",
 								"Your eggs are capable of carrying young."]),
 			makeClosingRemarkText: function(){return String.format("Does that mean you have a cloaca now? {0}", 
