@@ -127,8 +127,16 @@ function generateCurse() {
 	// instead of static text, you can specify a "make" function that will be called at render time.
 	var triggers = [
 		{makeTriggerText: function(){return happensOnce ? "If you ever catch sight of the full moon" : "Each full moon";}},
-		{makeTriggerText: function(){return happensOnce ? "In one week" : String.format("Every {0}", randomFrom(["Monday", "Saturday", "Friday"]));}},
-		{triggerText: "Immediately,", durationText: "The transformation is permanent.", chosen: function(){happensOnce = true;}},
+		{makeTriggerText: function(){return happensOnce ? "In one week" : String.format("Every {0}", randomFrom(["Monday", "Saturday", "Friday"]));},
+				chosen: function(){shortDurationOnly = true;}},
+		{triggerText: "Immediately,", durationText: "The transformation is permanent.", chosen: function(){happensOnce = true;},
+				closingRemarkText: randomFrom([
+						"I hope you're sitting at home in front of your desktop right now.",
+						"Who's going to find you like that?",
+						"This might be awkward if you're out in public.",
+						"Surprise!",
+						"If you don't send me feedback, I'll know why.",
+						"I hope whatever clothes you're wearing don't get damaged."])},
 		{makeTriggerText: function(){return happensOnce ? "If you happen to touch an animal" : "Whenever you touch an animal";},
 				subjectText: "touched animal", chosen: function(){specificTarget = true; sexUndecided = true; touchTrigger = true;}},
 		{makeTriggerText: function(){return happensOnce ? "If you ever touch a male animal" : "Whenever you touch a male animal";},
@@ -141,8 +149,11 @@ function generateCurse() {
 				subjectText: "touched woman", chosen: function(){specificTarget = true; personSubject = true; triggerFemale = true; touchTrigger = true;}},
 		{makeTriggerText: function(){return happensOnce ? "When you next touch someone": "Whenever you touch someone";},
 				subjectText: "touched person", chosen: function(){specificTarget = true; personSubject = true;sexUndecided = true; touchTrigger = true;}},
-		{makeTriggerText: function(){return happensOnce ? "The next time someone sees your privates,": "Whenever you are aroused";}, 
-				durationText: "You remain this way until you have sex."},
+		{makeTriggerText: function(){return happensOnce ? "The next time someone sees your privates,": "Whenever anyone sees your privates";}, 
+				durationText: "You remain this way until you have sex.",
+				closingRemarkText: randomFrom([
+						"I don't think this is what they were expecting when you said \"I'll show you mine.\"",
+						"I hope you don't get pantsed anytime soon.",])},
 		{makeTriggerText: function(){return happensOnce 
 				? "There exists a phrase, and, if you ever hear it," : "You have a secret key phrase, and whenever you hear it";},
 				additionalExplainations: [],
@@ -152,7 +163,7 @@ function generateCurse() {
 						"Your rival knows the curse's trigger phrase."]));}},
 		{makeTriggerText: function(){return happensOnce ? "The next time you orgasm" : "Each time you orgasm";},
 				additionalExplainations: ["You transform partially when you're aroused."]},
-		{makeTriggerText: function(){return happensOnce ? "Immediately after the next time you have sex," : "Each time you have sex";},
+		{makeTriggerText: function(){return happensOnce ? "Immediately after the next time you have sex," : "Each time you have sex,";},
 				chosen: function(){this.closingRemarkText = randomFrom([
 						"Welp, that's going to be awkward.",
 						"How's that for an afterglow?",
@@ -161,18 +172,19 @@ function generateCurse() {
 		{makeTriggerText: function(){return happensOnce ? "The next time you see an animal" : "Whenever you see an animal,";},
 				subjectText: "sighted animal", chosen: function(){specificTarget = true;sexUndecided = true;}},
 		{makeTriggerText: function(){return happensOnce ? "Tomorrow morning" : String.format("Every {0},", randomFrom(["sunrise", "sunset", "night at midnight"]));},
-				chosen: function(){shortDurationOnly = true;}},
+				chosen: function(){shortDurationOnly = true;},
+				closingRemarkText: randomFrom(["That's not a lot of time to prepare.", "I hope you're at your own house."])},
 	];
 	
 	var generalTransformations = [
 		{makeTransformationText:function(){return String.format("you transform into {0}", specificTarget ? "a copy of the" : subjectArticle);},
 				chosen: function(){if(triggerFemale != null){subjectFemale = triggerFemale;}}},
-		{makeTransformationText:function(){return String.format("you pleasurably shift into {0}", specificTarget ? "a copy of the" : subjectArticle);},
+		{makeTransformationText:function(){return String.format("you {0} shift into {1}", randomFrom(["pleasurably", "painfully", "awkwardly"]), specificTarget ? "a copy of the" : subjectArticle);},
 				chosen: function(){if(triggerFemale != null){subjectFemale = triggerFemale;}}},
 		{makeTransformationText:function(){return String.format("you become {0}", specificTarget ? "a copy of the" : subjectArticle);}, 
 			chosen: function(){if(triggerFemale != null){subjectFemale = triggerFemale;}}},
 		{makeTransformationText:function(){return specificTarget 
-				? "an additional head grows beside your own. It's that of the" : "an additional head grows beside your own. It's that of a";},
+				? "an additional head grows beside your own. It's that of the" : "an additional head grows beside your own, and your original head changes to match. The heads are that of a";},
 				additionalExplainations: [],
 				chosen: function(){this.additionalExplainations.push(randomFrom([
 						specificTarget ? "The new head retains its own mind." : "You have no control over your new head.",
@@ -182,7 +194,8 @@ function generateCurse() {
 		{makeTransformationText:function(){return String.format("{0} into {1}", happensOnce 
 				? "you spend the next 24 hours transforming" : "you transform a little bit more",
 				specificTarget ? "a copy of the" : subjectArticle);}, durationText: "",
-				chosen: function(){if(triggerFemale != null){subjectFemale = triggerFemale;}}},
+				chosen: function(){if(triggerFemale != null){subjectFemale = triggerFemale;}},
+				closingRemarkText: "You might not even notice it until you've changed quite a bit."},
 		{makeTransformationText:function(){return String.format("your genitals are replaced by those of {0}", specificTarget ? "the" : subjectArticle);}},
 		{makeTransformationText:function(){return String.format("you become a taur version of {0}", specificTarget ? "the" : subjectArticle);}},
 		{makeTransformationText:function(){return String.format("you become an sentient sex doll made to look like {0}",
@@ -194,9 +207,16 @@ function generateCurse() {
 	var inhumanTransformations = [
 		{makeTransformationText:function(){return String.format("you transform into an anthro version of {0}", specificTarget ? "the" : subjectArticle);},
 				chosen: function(){becomingHybrid = true;}},
-		{makeTransformationText:function(){return String.format("you transform into a kemono version of {0}", specificTarget ? "the" : subjectArticle);},
+		{makeTransformationText:function(){return String.format("you transform into a kemono version of {0}", specificTarget ? "the" : subjectArticle);
+				closingRemarkText: randomFrom([
+					"A kemono is one of those anime characters with the ears and the tail, right?", "How kawaii!"])},
 				chosen: function(){becomingHybrid = true;}},
-		{makeTransformationText:function(){return String.format("you become an inflatable pool toy shaped like {0}", specificTarget ? "the" : subjectArticle);}},
+		{makeTransformationText:function(){return String.format("you become an inflatable pool toy shaped like {0}", specificTarget ? "the" : subjectArticle);},
+				closingRemarkText: randomFrom([
+					"What are you going to do off-season?", 
+					"Hopefully you can warn people ahead of time.",
+					"I'd put my lips on your nozzle ;)",
+					"I've always wondered what it feels like to get inflated. You'll have to tell me."])},
 		{makeTransformationText:function(){return String.format("your hands turn into the {0} of {1}", extemitiesName, specificTarget ? "the" : subjectArticle);},
 				additionalExplainations:[happensOnce ? "Over the next year, the rest of you also transforms." : "Each time you transform, an additional bodypart also changes."],
 				chosen: function(){becomingHybrid = true;}},
@@ -220,10 +240,13 @@ function generateCurse() {
 		{subjectText: "member of your favorite species"},
 		{makeSubjectText: function(){return subjectFemale ? "cow" : "bull";}, closingRemarkText: "Uhh. . . Moo?",
 				chosen: function(){extemitiesName = "hooves";}},
-		{makeSubjectText: function(){return subjectFemale ? "rottweiler bitch" : "rottweiler stud";}},
-		{makeSubjectText: function(){return subjectFemale ? "german shepherd bitch" : "german shepherd stud";}},
+		{makeSubjectText: function(){return subjectFemale ? "rottweiler bitch" : "rottweiler stud";},
+				closingRemarkText: randomFrom(["That's a solid breed.","Beg for the biscuit!"])},
+		{makeSubjectText: function(){return subjectFemale ? "german shepherd bitch" : "german shepherd stud";},
+				closingRemarkText: randomFrom(["Do you know any tricks?","Are you going to pretend to be someone's pet?"])},
 		{makeSubjectText: function(){return subjectFemale ? "doe" : "buck";},
-				chosen: function(){extemitiesName = "hooves";}},
+				chosen: function(){extemitiesName = "hooves";},
+				closingRemarkText: "A noble animal with a great rack."},
 		{makeSubjectText: function(){return subjectFemale ? "cat" : "tom cat";}},
 		{makeSubjectText: function(){return subjectFemale ? "ewe" : "ram";},
 				chosen: function(){extemitiesName = "hooves";}},
@@ -232,29 +255,39 @@ function generateCurse() {
 		{subjectText: "hawk", chosen: function(){extemitiesName = "talons";}},
 		{makeSubjectText: function(){return subjectFemale ? "vixen" : "fox";}},
 		{makeSubjectText: function(){return subjectFemale ? "nanny goat" : "billy goat";},
-				chosen: function(){extemitiesName = "hooves";}},
+				chosen: function(){extemitiesName = "hooves";},
+				closingRemarkText: "Maybe it'll make you a better climber."},
 		{subjectText: "zebra", chosen: function(){extemitiesName = "hooves";}},
 		{subjectText: "snow leopard"},
 		{subjectText: "tiger"},
 		{subjectText: "squirrel"},
 		{subjectText: "lizard", chosen: function(){extemitiesName = "claws";}},
-		{subjectText: "closest pet", chosen: function(){specificTarget = true;}},
+		{subjectText: "closest pet", chosen: function(){specificTarget = true;},
+			closingRemarkText: "Is it better or worse if it's your own pet?"},
 		{subjectText: "kangaroo"},
-		{subjectText: "donkey", chosen: function(){extemitiesName = "hooves";}},
+		{subjectText: "donkey", chosen: function(){extemitiesName = "hooves";},
+			closingRemarkText: randomFrom([
+					"Too bad it had to be such an awkward animal.", "Don't make an ass out of yourself."])},
 		{subjectText: "monkey"},
 		{makeSubjectText: function(){return subjectFemale ? "mare" : "stallion";}, chosen: function(){extemitiesName = "hooves";}},
 		{subjectText: "komodo dragon", chosen: function(){extemitiesName = "claws";}},
-		{subjectText: "anaconda", chosen: function(){subjectArticle = "an"; extemitiesName = "nothings";}},
+		{subjectText: "anaconda", chosen: function(){subjectArticle = "an"; extemitiesName = "nothings";},
+			closingRemarkText: "Just as I like 'em: thick and slithery."},
 		{subjectText: "last animal you touched", chosen: function(){specificTarget = true;}},
-		{subjectText: "the last animal you ate", chosen: function(){specificTarget = true;}},
+		{subjectText: "the last animal you ate", chosen: function(){specificTarget = true;},
+		closingRemarkText: randomFrom([
+					"Sample any exotic meats lately?", "Mmm-mm. This beef tastes just like you."])},
 	];
 	var imaginarySubjects = [
-		{subjectText: "last fantasy creature you killed in a video game", chosen: function(){specificTarget = true;}},
+		{subjectText: "last fantasy creature you killed in a video game", chosen: function(){specificTarget = true;},
+			closingRemarkText: "Mana really does flow from computer monitors these days."},
 		{subjectText: "current year's zodiac animal", chosen: function(){specificTarget = true;}},
 		{subjectText: "zodiac animal assigned to you at birth", chosen: function(){specificTarget = true;}},
-		{subjectText: "dragon", additionalExplainations: ["You have a lust for hoarding treasure that is impossible to ignore."]},
+		{subjectText: "dragon", additionalExplainations: ["You have a lust for hoarding treasure that is impossible to ignore."],
+				closingRemarkText: "I said you looked lucky, didn't I?"},
 		{subjectText: "unicorn", chosen: function(){extemitiesName = "hooves";}},
-		{subjectText: "kobold"},
+		{subjectText: "kobold",
+			closingRemarkText: "I think you'll be adorable."},
 		{subjectText: "wyvern"},
 	];
 	var imaginaryNonHybridable = [
@@ -265,16 +298,19 @@ function generateCurse() {
 	]
 	
 	var durations = [
-		{durationText: ""},
 		{durationText: "You remain this way until you have sex."},
-		{durationText: "You remain this way until you can convince someone to kiss you."},
-		{durationText: "You remain this way until you reveal your curse to someone new."},
+		{durationText: "You remain this way until you can convince someone to kiss you.",
+			closingRemarkText: "You're lucky I didn't say the person kissing had to be a princess"},
+		{durationText: "You remain this way until you reveal your curse to someone new.",
+			closingRemarkText: randomFrom(["Who will you show first?","How many times before you run out of people you trust?"])},
 		{durationText: "You remain this way until you have sex with a human."},
 		{durationText: "You remain this way for a full 24 hours."},
 	]
 	var longDurations = [
-		{durationText: "You return to normal after one week."},
-		{durationText: "You return to normal after one day, but each transformation lasts twice as long as the last."},
+		{durationText: "You return to normal after one week.",
+				closingRemarkText: "I've noticed you've been taking a lot of one-week vacations lately. . ."},
+		{durationText: "You return to normal after one day, but each transformation lasts twice as long as the last.",
+				closingRemarkText: "The more you like it, the more dangerous it is."},
 		{durationText: "You will return to normal in a week, but each time you orgasm, the duration is increased by a day."},
 		{makeDurationText: function(){return sexUndecided ? "Your original form can only be restored by reproducing." : 
 				subjectFemale ? "Your original form can only be restored by giving birth." : "Your original form can only be restored by siring young.";}},
@@ -283,12 +319,21 @@ function generateCurse() {
 	var generalComplications = [
 		{makeComplicationText: function(){return String.format("{0} must obey the orders of any human", happensOnce ? "You" : "While transformed, you");}},
 		{complicationText: "Your sex drive and production of bodily fluids are greatly increased."},
-		{complicationText: "Your curse is sexually transmittable."},
-		{complicationText: "Also, you must lay one large egg every day."},
-		{complicationText: "Also, you grow an extra pair of breasts."},
+		{complicationText: "Your curse is sexually transmittable.",
+			closingRemarkText: "It won't be long before prospective lovers ask each other to get tested for it."},
+		{complicationText: "Your bodily fluids are a potent aphrodesiac when consumed"},
+		{complicationText: "Your pheromones allow you to seduce almost any creature."},
+		{complicationText: "Also, you must lay one large egg every day.",
+			makeClosingRemarkText: function(){return String.format("Does that mean you have a cloaca now? {0}", 
+			randomFrom(["Weird.", "Cool!", "Fascinating.", "Gross.", "Huh."]))}},
+		{complicationText: "Also, you grow an extra pair of breasts.",
+			closingRemarkText: "An extra pair of tits never hurt anyone."},
 		{complicationText: "Your current romantic interest is also afflicted with the same curse."},
 		{complicationText: "If you weren't before, you are now bisexual."},
 		{makeComplicationText: function(){return String.format("{0} a hermaphrodite.", happensOnce ? "You become" : "While transformed, you are");}},
+		{makeComplicationText: function(){return String.format("{0} {1}", happensOnce ? "You become" : "While transformed, you are",
+			subjectFemale ? "kinda, like, an air-headed bimbo." : "a meat-headed hunk.");}},
+		{makeComplicationText: function(){return happensOnce ? "You don't quite remember your life before the transformation" : "While 	transformed, you don't remember being any other way."}},
 		{makeComplicationText: function(){return String.format("Immediately after your transformation {0}",
 				sexUndecided ? "You feel compelled to reproduce until you are successful." : 
 						subjectFemale ? "you feel a kicking and realize you're pregnant!" : "the nearest female becomes pregnant with your children.");}},
@@ -308,10 +353,25 @@ function generateCurse() {
 		{makeComplicationText: function(){return happensOnce ? "You are captured for scientific research." : "Each time you revert to human, you retain more parts of your other form.";}},
 	]
 	var personSubjectComplications = [
-		{complicationText: "You gain the memories of the other person."},
-		{complicationText: "Whenever the other person becomes aroused, you are as well."},
-		{complicationText: "Whenever the other person becomes orgasms, so do you."},
+		{complicationText: "You gain the memories of the other person.",
+				closingRemarkText: "Pilfer their dirty secrets."},
+		{complicationText: "Whenever the other person becomes aroused, you are as well. And vice-versa."},
+		{complicationText: "Whenever the other person becomes orgasms, so do you. And vice-versa."},
 		{complicationText: "You cannot refuse orders from the other person."},
+	]
+	
+	var generalClosingRemarks = [
+		{closingRemarkText: "That might be pretty difficult to hide. . ."},
+		{closingRemarkText: "Do you think you'll be able to live a normal life like that?"},
+		{closingRemarkText: "So. . . are you going to tell anyone you know about it?"},
+		{closingRemarkText: "How could you possibly adapt?"},
+		{closingRemarkText: "I wonder if you can use that as a way to make money. . ."},
+		{closingRemarkText: "Guess I was wrong about you being lucky."},
+		{closingRemarkText: "I think I'll like you more this way."},
+		{closingRemarkText: "I think prople will like you more this way."},
+		{closingRemarkText: "You may have to get a new job."},
+		{closingRemarkText: "That might be kinda fun."},
+		{closingRemarkText: "You'll come around to it eventually."},
 	]
 	
 	// Code start
@@ -326,7 +386,7 @@ function generateCurse() {
 	if (curse.renderSubjectText == null) {
 		updateCurse(curse, randomFrom(buildSubjects(imaginarySpeciesAllowed)));
 	}
-	if (curse.renderDuration == null) {
+	if (curse.renderDurationText == null) {
 		updateCurse(curse, randomFrom(buildDurations()));
 	}
 	if (curse.renderComplicationText == null) {
@@ -334,6 +394,11 @@ function generateCurse() {
 			updateCurse(curse, randomFrom(buildComplications(imaginarySpeciesAllowed, personSubject)));
 		} else {
 			updateCurse(curse, {complicationText: ""});
+		}
+	}
+	if (curse.renderClosingRemarkText == null) {
+		if(Math.random() < 0.15) {
+			updateCurse(curse, randomFrom(generalClosingRemarks));
 		}
 	}
 	
