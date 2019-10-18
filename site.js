@@ -156,13 +156,12 @@ function generateCurse() {
 						"I hope you don't get pantsed anytime soon.",])},
 		{makeTriggerText: function(){return happensOnce 
 				? "There exists a phrase, and, if you ever hear it," : "You have a secret key phrase, and whenever you hear it";},
-				additionalExplainations: [],
-				chosen: function(){this.additionalExplainations.push(randomFrom([
+				additionalExplaination: randomFrom([
 						"You can't resist dropping hints about the curse's trigger phrase.",
 						"You have the curse's trigger phrase tattooed above your ass.",
-						"Your rival knows the curse's trigger phrase."]));}},
+						"Your rival knows the curse's trigger phrase."]),},
 		{makeTriggerText: function(){return happensOnce ? "The next time you orgasm" : "Each time you orgasm";},
-				additionalExplainations: ["You transform partially when you're aroused."]},
+				additionalExplaination: "You transform partially when you're aroused."},
 		{makeTriggerText: function(){return happensOnce ? "Immediately after the next time you have sex," : "Each time you have sex,";},
 				chosen: function(){this.closingRemarkText = randomFrom([
 						"Welp, that's going to be awkward.",
@@ -170,10 +169,10 @@ function generateCurse() {
 						"Hopefully your partner doesn't die of surprise."]);
 						touchTrigger = true;}},
 		{makeTriggerText: function(){return happensOnce ? "The next time you see an animal" : "Whenever you see an animal,";},
-				subjectText: "sighted animal", chosen: function(){specificTarget = true;sexUndecided = true;}},
+				subjectText: "sighted animal", chosen: function(){specificTarget = true;sexUndecided = true;},},
 		{makeTriggerText: function(){return happensOnce ? "Tomorrow morning" : String.format("Every {0},", randomFrom(["sunrise", "sunset", "night at midnight"]));},
 				chosen: function(){shortDurationOnly = true;},
-				closingRemarkText: randomFrom(["That's not a lot of time to prepare.", "I hope you're at your own house."])},
+				closingRemarkText: randomFrom(["You just have to find a new routine.", "I hope you're at your own house.", "That's not that long from now!"])},
 	];
 	
 	var generalTransformations = [
@@ -183,24 +182,33 @@ function generateCurse() {
 				chosen: function(){if(triggerFemale != null){subjectFemale = triggerFemale;}}},
 		{makeTransformationText:function(){return String.format("you become {0}", specificTarget ? "a copy of the" : subjectArticle);}, 
 			chosen: function(){if(triggerFemale != null){subjectFemale = triggerFemale;}}},
-		{makeTransformationText:function(){return specificTarget 
-				? "an additional head grows beside your own. It's that of the" : "an additional head grows beside your own, and your original head changes to match. The heads are that of a";},
-				additionalExplainations: [],
-				chosen: function(){this.additionalExplainations.push(randomFrom([
-						specificTarget ? "The new head retains its own mind." : "You have no control over your new head.",
-						"You control the additional head fully.",
-						"Your personality is split between the heads. One gets your libido and passion, the other gets your logic and restraint.",
-						"You get along with your new head like a sibling most of the time, but it's always making sexual advances."]));},},
+		randomFrom([ // make head transformations a little less common.
+				{makeTransformationText:function(){return specificTarget 
+						? "an additional head grows beside your own. It's that of the" : "an additional head grows beside your own, and your original head changes to match. The heads are that of a";},
+						additionalExplaination: randomFrom([
+								specificTarget ? "The new head retains its own mind." : "You have no control over your new head.",
+								"You control the additional head fully.",
+								"Your personality is split between the heads. One gets your libido and passion, the other gets your logic and restraint.",
+								"You get along with your new head like a sibling most of the time, but it's always making sexual advances."]),},			
+				{makeTransformationText:function(){return String.format("your head transforms into that of {0}", specificTarget ? "the" : subjectArticle);},
+						chosen: function(){becomingHybrid = true;}},]),
 		{makeTransformationText:function(){return String.format("{0} into {1}", happensOnce 
 				? "you spend the next 24 hours transforming" : "you transform a little bit more",
 				specificTarget ? "a copy of the" : subjectArticle);}, durationText: "",
 				chosen: function(){if(triggerFemale != null){subjectFemale = triggerFemale;}},
-				closingRemarkText: "You might not even notice it until you've changed quite a bit."},
-		{makeTransformationText:function(){return String.format("your genitals are replaced by those of {0}", specificTarget ? "the" : subjectArticle);}},
+				closingRemarkText: "I looooove the slow burn."},
+		{makeTransformationText:function(){return String.format("your genitals are replaced by those of {0}", specificTarget ? "the" : subjectArticle);},
+				additionalExplaination: randomFrom([
+						"You adopt the donor's sex drive.",
+						"You obtain your new privates via a swap.",
+						"Your new genitals are not resized to match your body."]),},
 		{makeTransformationText:function(){return String.format("you become a taur version of {0}", specificTarget ? "the" : subjectArticle);}},
 		{makeTransformationText:function(){return String.format("you become an sentient sex doll made to look like {0}",
 				specificTarget ? "the" : subjectArticle);},
-				additionalExplainations:["Mental conditioning makes fufilling your duties a pleasure."]},
+				additionalExplaination: randomFrom([
+						"Mental conditioning makes fufilling your duties a pleasure.",
+						"Whenever anyone sees you, they have an urge to use you.",
+						"You cannot refuse any command."])},
 		{makeTransformationText:function(){return String.format("you swap minds with {0}", specificTarget ? "the" : "the nearest");},
 				chosen: function(){imaginarySpeciesAllowed = false; if(triggerFemale != null){subjectFemale = triggerFemale;};}},
 	];
@@ -213,25 +221,29 @@ function generateCurse() {
 				chosen: function(){becomingHybrid = true;}},
 		{makeTransformationText:function(){return String.format("you become an inflatable pool toy shaped like {0}", specificTarget ? "the" : subjectArticle);},
 				closingRemarkText: randomFrom([
-					"What are you going to do off-season?", 
+					"What are you going to do in the winter?", 
 					"Hopefully you can warn people ahead of time.",
 					"I'd put my lips on your nozzle ;)",
-					"I've always wondered what it feels like to get inflated. You'll have to tell me."])},
+					"I've always wondered what it feels like to get inflated. You'll have to tell me."]),
+					additionalExplaination: randomFrom(["You go unconcious when deflated.", "You can still move when transformed.", "Your valve is an erogenous zone"]),},
 		{makeTransformationText:function(){return String.format("your hands turn into the {0} of {1}", extemitiesName, specificTarget ? "the" : subjectArticle);},
-				additionalExplainations:[happensOnce ? "Over the next year, the rest of you also transforms." : "Each time you transform, an additional bodypart also changes."],
-				chosen: function(){becomingHybrid = true;}},
-		{makeTransformationText:function(){return String.format("your head transforms into that of {0}", specificTarget ? "the" : subjectArticle);},
+				additionalExplaination: happensOnce ? "Over the next year, the rest of your body transforms to match your new hands." : "Each time you transform, an additional bodypart also changes.",
 				chosen: function(){becomingHybrid = true;}},
 		{makeTransformationText:function(){return String.format("you become {0} {1} from the waist down", specificTarget ? "the" : subjectArticle, curse.renderSubjectText());},
 				chosen: function(){shouldRenderSubjectText = false; becomingHybrid = true;}},
 	];
-	
 	var touchTransformations = [
 		{makeTransformationText:function(){return String.format("you merge with {0} {1}, becoming a two-headed hybrid",specificTarget ? "the" : "", curse.renderSubjectText());},
 			subjectText: "them",
-			chosen: function(){shouldRenderSubjectText = false; if(triggerFemale != null){subjectFemale = triggerFemale;}}},
+			chosen: function(){shouldRenderSubjectText = false; if(triggerFemale != null){subjectFemale = triggerFemale;}},
+			closingRemarkText: "I hope it's someone that you really like."},
 		{makeTransformationText:function(){return String.format("you merge with {0} {1}, becoming their new {2}",
 				specificTarget ? "the" : "", curse.renderSubjectText(), sexUndecided ? "genitals" : triggerFemale ? "pussy" : "penis");},
+			additionalExplaination: randomFrom([
+								"You don't lose your eyes when you merge. They remain above your host's junk, taking in the views and looking pretty upset.",
+								"You can exert some control over your host's libido.",
+								"You can communicate with your host mentally and access their senses.",
+								"Your new host doesn't remember the transformation."]),
 			chosen: function(){shouldRenderSubjectText = false; if(triggerFemale != null){subjectFemale = triggerFemale;}},
 			subjectText: "them"},
 	]
@@ -283,7 +295,7 @@ function generateCurse() {
 			closingRemarkText: "Mana really does flow from computer monitors these days."},
 		{subjectText: "current year's zodiac animal", chosen: function(){specificTarget = true;}},
 		{subjectText: "zodiac animal assigned to you at birth", chosen: function(){specificTarget = true;}},
-		{subjectText: "dragon", additionalExplainations: ["You have a lust for hoarding treasure that is impossible to ignore."],
+		{subjectText: "dragon", additionalExplaination: "You have a lust for hoarding treasure that is impossible to ignore.",
 				closingRemarkText: "I said you looked lucky, didn't I?"},
 		{subjectText: "unicorn", chosen: function(){extemitiesName = "hooves";}},
 		{subjectText: "kobold",
@@ -318,7 +330,8 @@ function generateCurse() {
 
 	var generalComplications = [
 		{makeComplicationText: function(){return String.format("{0} must obey the orders of any human", happensOnce ? "You" : "While transformed, you");}},
-		{complicationText: "Your sex drive and production of bodily fluids are greatly increased."},
+		{complicationText: "Your sex drive and production of bodily fluids are greatly increased.",
+				closingRemarkText: "Does bodily fluids include sweat? That could be kinda gross."},
 		{complicationText: "Your curse is sexually transmittable.",
 			closingRemarkText: "It won't be long before prospective lovers ask each other to get tested for it."},
 		{complicationText: "Your bodily fluids are a potent aphrodesiac when consumed"},
@@ -463,7 +476,9 @@ function updateCurse(curse, update) {
 			curse.renderComplicationText = function(){return update.complicationText;};
 		} 
 	}
-	curse.additionalExplainations = curse.additionalExplainations.concat(update.additionalExplainations);
+	if (update.additionalExplaination) {
+		curse.additionalExplainations.push(update.additionalExplaination);
+	}
 	if (curse.renderClosingRemarkText == null) {
 		if (update.makeClosingRemarkText != null) {
 			curse.renderClosingRemarkText = update.makeClosingRemarkText;
