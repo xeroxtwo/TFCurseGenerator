@@ -1,6 +1,45 @@
 .curseOutput {
-	margin-top: 40px;
+	margin-top: 20px;
+	margin-bottom: 5px;
 	padding-left: 20px;
+	padding-right: 20px;
 	padding-top: 10px;
 	font-size: 20px;
+}
+
+h1 {
+	font-size: 65px;
+}
+
+body {
+	background-color: black;
+	color: violet;	
+}
+
+.jumbotron {
+	background-color: violet;
+	color: black;
+}
+
+.btn-outline-secondary {
+	background-color: black;
+}
+
+.curseOutput {
+	background-color: violet;
+	color: black;
+}
+
+.circeTalk {
+	font-family: "DejaVu Sans Mono", monospace;
+	font-size: 20px;
+}
+
+.talk {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.curseRow {
+	visibility: hidden;
 }

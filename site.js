@@ -1,12 +1,32 @@
 // I apologize for this in advance.
 
+var generation = 0;
+var circeTexts = [
+	"Alright, here's your curse! Enjoy.",
+	"God, you mortals are so picky. Here, how's this one?"
+]
+
 $(document).ready(function() {
     $("#goButton").click(function(){
-		$("#output").html(generateCurseText());
+		$("#circePre").html(getCircePreText());
+		generation = generation + 1;
+		var curseOutput = generateCurse();
+		$("#goButton").html("Wait, can I get a different one?");
+		$("#output").html(curseOutput.curseText);
+		$("#circePost").html(curseOutput.circeText);
+		$(".curseRow").css("visibility", "visible");
     }); 
 });
 
-function generateCurseText() {
+function getCircePreText() {
+	if (generation >= circeTexts) {
+		return circeTexts[circeTexts.length - 1];
+	} else {
+		return circeTexts[generation];
+	}
+}
+
+function generateCurse() {
 	// Methods
 	function buildTransformations(specificTarget, personSubject, touchTrigger) {
 		var output = generalTransformations;
@@ -70,23 +90,22 @@ function generateCurseText() {
 			}
 		},
 		
-		renderClosingRemarkBlock: function() {
+		renderCirceText: function() {
 			if(this.renderClosingRemarkText != null) {
-				return String.format("<br><br>{0}", this.renderClosingRemarkText());
+				return String.format("{0}", this.renderClosingRemarkText());
 			} else {
 				return "";
 			}
 		},
 		
 		renderText : function() {
-			return String.format("{0} {1} {2}. {3} {4}{5}{6}",
+			return String.format("{0} {1} {2}. {3} {4}{5}",
 				this.renderTriggerText(),
 				this.renderTransformationText(),
 				shouldRenderSubjectText ? this.renderSubjectText() : "",
 				this.renderDurationText(),
 				this.renderComplicationText(),
-				this.renderAdditionalExplainations(),
-				this.renderClosingRemarkBlock());
+				this.renderAdditionalExplainations());
 			},
 	}
 	
@@ -108,7 +127,6 @@ function generateCurseText() {
 	// instead of static text, you can specify a "make" function that will be called at render time.
 	var triggers = [
 		{makeTriggerText: function(){return happensOnce ? "If you ever catch sight of the full moon" : "Each full moon";}},
-		{triggerText: "Immediately,", durationText: "The transformation is permanent."},
 		{makeTriggerText: function(){return happensOnce ? "In one week" : String.format("Every {0}", randomFrom(["Monday", "Saturday", "Friday"]));}},
 		{triggerText: "Immediately,", durationText: "The transformation is permanent.", chosen: function(){happensOnce = true;}},
 		{makeTriggerText: function(){return happensOnce ? "If you happen to touch an animal" : "Whenever you touch an animal";},
@@ -123,7 +141,7 @@ function generateCurseText() {
 				subjectText: "touched woman", chosen: function(){specificTarget = true; personSubject = true; triggerFemale = true; touchTrigger = true;}},
 		{makeTriggerText: function(){return happensOnce ? "When you next touch someone": "Whenever you touch someone";},
 				subjectText: "touched person", chosen: function(){specificTarget = true; personSubject = true;sexUndecided = true; touchTrigger = true;}},
-		{makeTriggerText: function(){return happensOnce ? "The next time someone sees your genitals": "Whenever you are aroused";}, 
+		{makeTriggerText: function(){return happensOnce ? "The next time someone sees your privates,": "Whenever you are aroused";}, 
 				durationText: "You remain this way until you have sex."},
 		{makeTriggerText: function(){return happensOnce 
 				? "There exists a phrase, and, if you ever hear it," : "You have a secret key phrase, and whenever you hear it";},
@@ -180,7 +198,7 @@ function generateCurseText() {
 				chosen: function(){becomingHybrid = true;}},
 		{makeTransformationText:function(){return String.format("you become an inflatable pool toy shaped like {0}", specificTarget ? "the" : subjectArticle);}},
 		{makeTransformationText:function(){return String.format("your hands turn into the {0} of {1}", extemitiesName, specificTarget ? "the" : subjectArticle);},
-				additionalExplainations:[happensOnce ? "" : "Each time you transform, an additional bodypart also changes."],
+				additionalExplainations:[happensOnce ? "Over the next year, the rest of you also transforms." : "Each time you transform, an additional bodypart also changes."],
 				chosen: function(){becomingHybrid = true;}},
 		{makeTransformationText:function(){return String.format("your head transforms into that of {0}", specificTarget ? "the" : subjectArticle);},
 				chosen: function(){becomingHybrid = true;}},
@@ -319,7 +337,7 @@ function generateCurseText() {
 		}
 	}
 	
-	return curse.renderText();
+	return {curseText: curse.renderText(), circeText: curse.renderCirceText()};
 }
 
 

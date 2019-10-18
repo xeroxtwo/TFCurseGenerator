@@ -1,31 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>TF Curse Generator</title>
-    <link href="site.css" media="screen" rel="stylesheet" type="text/css" />	
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+    <title>TF Curse Generator</title>	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="site.css" media="screen" rel="stylesheet" type="text/css" />
+	<script src="https://use.fontawesome.com/2fd73ec02e.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
     <script src="site.js" type="text/javascript"></script>
   </head>
   <body>
     <div class="jumbotron text-center">
-		<h1>Xerox2's TF Curse Generator</h1>
+		<h3>Welcome to</h3>
+		<h1>Circly.ai</h1>
+		<br>
 		<p>
 			<a href=https://twitter.com/XeroxToo>Twitter</a>
 			| 
 			<a href=https://www.furaffinity.net/user/xerox2/>Furaffinity</a>
+			|
+			<a href=https://github.com/xeroxtwo/TFCurseGenerator>Github</a>
 		</p>
 	</div>
 	<div class="container">
-		<div class="row">
-				<button type="button" class="btn btn-lg btn-success" id="goButton">Generate Curse</button>
-			</div>
-			<div class="row bg-info curseOutput">
-				<p id="output">Click the button to generate a curse!</p>
+		<div class="row talk">
+			<p class="circeTalk" id="circePre">Hello. My name is Circe, and this is a cursed webpage.<br /><br />
+I call it “cursed” because everyone who visits this page is subject to a unique curse that causes drastic physical transformations.<br /><br />
+Yes, that includes you.<br /><br />
+It’s a bummer, I know. You’ll have a chance to yell at the person who linked you here later. Well, if you can still talk when we’re done with you. Some people end up worse off than others, but I’ve got a feeling you’ll be one of the lucky ones.<br /> 
+<br />
+And don’t worry! Since I threw out the dusty tomes and migrated to the cloud, my efficiency is through the roof. You’ll be out of here with your new curse in no time.<br />
+<br />
+Ready to learn your fate? 
+</p>
+		</div>
+		<div class="row curseOutput curseRow">
+				<p id="output"></p>
+		</div>
+		<div class="row curseRow">
+				<button type="button" id="copyButton"><i class="fa fa-clipboard" aria-hidden="true"></i> Copy</button>
+		</div>
+		<div class="row talk">
+			<p class="circeTalk" id="circePost"></p>
 		</div>
 		<div class="row">
-			<button type="button" id="copyButton"><span class="glyphicon glyphicon-copy"></span>Copy</button>
+				<button type="button" class="btn btn-lg btn-outline-secondary btn-block" id="goButton">If I have to. . .</button>
 		</div>
 	</div>
   </body>
