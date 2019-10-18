@@ -251,7 +251,8 @@ function generateCurse() {
 	var generalSubjects = [
 		{subjectText: "member of your favorite species"},
 		{makeSubjectText: function(){return subjectFemale ? "cow" : "bull";}, closingRemarkText: "Uhh. . . Moo?",
-				chosen: function(){extemitiesName = "hooves";}},
+				chosen: function(){extemitiesName = "hooves";},
+				additionalExplaination: function(){return subjectFemale ? "You also have an udder and give milk." : "You hate the color red, and you find cows strangely alluring.";}},
 		{makeSubjectText: function(){return subjectFemale ? "rottweiler bitch" : "rottweiler stud";},
 				closingRemarkText: randomFrom(["That's a solid breed.","Beg for the biscuit!"])},
 		{makeSubjectText: function(){return subjectFemale ? "german shepherd bitch" : "german shepherd stud";},
@@ -297,9 +298,10 @@ function generateCurse() {
 		{subjectText: "zodiac animal assigned to you at birth", chosen: function(){specificTarget = true;}},
 		{subjectText: "dragon", additionalExplaination: "You have a lust for hoarding treasure that is impossible to ignore.",
 				closingRemarkText: "I said you looked lucky, didn't I?"},
-		{subjectText: "unicorn", chosen: function(){extemitiesName = "hooves";}},
+		{subjectText: "unicorn", chosen: function(){extemitiesName = "hooves";},
+				closingRemarkText: "What a majestic creature you've become."},
 		{subjectText: "kobold",
-			closingRemarkText: "I think you'll be adorable."},
+			closingRemarkText: randomFrom(["I think you'll be adorable.", "I love those thick, lizardy tails!"])},
 		{subjectText: "wyvern"},
 	];
 	var imaginaryNonHybridable = [
@@ -314,8 +316,10 @@ function generateCurse() {
 		{durationText: "You remain this way until you can convince someone to kiss you.",
 			closingRemarkText: "You're lucky I didn't say the person kissing had to be a princess"},
 		{durationText: "You remain this way until you reveal your curse to someone new.",
-			closingRemarkText: randomFrom(["Who will you show first?","How many times before you run out of people you trust?"])},
-		{durationText: "You remain this way until you have sex with a human."},
+			closingRemarkText: randomFrom(["Who will you show first?",
+					"How many times before you run out of people you trust?", 
+					"I hope they don't use it as leverage against you."])},
+		{durationText: "You remain this way until you have sex with someone."},
 		{durationText: "You remain this way for a full 24 hours."},
 	]
 	var longDurations = [
@@ -337,6 +341,10 @@ function generateCurse() {
 		{complicationText: "Your bodily fluids are a potent aphrodesiac when consumed"},
 		{complicationText: "Your pheromones allow you to seduce almost any creature."},
 		{complicationText: "Also, you must lay one large egg every day.",
+			additionalExplaination: randomFrom([
+								"The time of day when you lay your egg is random each day. A shifting feeling in your belly gives you 30 seconds warning before you drop.",
+								"The first time laying is painful. By the end of the first week, it starts to become pleasurable.",
+								"Your eggs are capable of carrying young."]),
 			makeClosingRemarkText: function(){return String.format("Does that mean you have a cloaca now? {0}", 
 			randomFrom(["Weird.", "Cool!", "Fascinating.", "Gross.", "Huh."]))}},
 		{complicationText: "Also, you grow an extra pair of breasts.",
@@ -357,11 +365,11 @@ function generateCurse() {
 	var mundaneAnimalComplications = [
 		{complicationText: "You and the relevant species experience a mutual attraction."},
 		{complicationText: "You can speak to other members of the relevant species."},
-		{makeComplicationText: function(){return String.format("{0} lose your ability to read and write", happensOnce ? "You" : "While transformed, you");}},
-		{complicationText: "You get all the instincts of the relevant species and can't resist acting on them."},
 	]
 	var inhumanComplications = [
+		{makeComplicationText: function(){return String.format("{0} lose your ability to read and write", happensOnce ? "You" : "While transformed, you");}},
 		{complicationText: "You retain your ability to speak English."},
+		{complicationText: "You get all the instincts of the relevant species and can't resist acting on them."},
 		{makeComplicationText: function(){return happensOnce ? "You are sold to a rich, private collector." : "While in human form, you retain some parts of your other form.";}},
 		{makeComplicationText: function(){return happensOnce ? "You are captured for scientific research." : "Each time you revert to human, you retain more parts of your other form.";}},
 	]
