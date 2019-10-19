@@ -13,6 +13,7 @@ var explicitness = nsfw;
 
 $(document).ready(function() {
     $("#goButton").click(function(){
+		fetch("https://www.freevisitorcounters.com/en/home/counter/588546/t/3", {credentials: "omit", mode: 'no-cors',});
 		updateExplicitSuggestion();
 		$("#circePre").html(getCircePreText());
 		generation = generation + 1;
@@ -172,7 +173,7 @@ function generateCurse() {
 	// instead of static text, you can specify a "make" function that will be called at render time.
 	var triggers = [
 		{makeTriggerText: function(){return happensOnce ? "If you ever catch sight of the full moon" : "Each full moon";},},
-		{makeTriggerText: function(){return happensOnce ? "The next time you're splashed with water" : "Each time you're splashed with water";},},
+		{makeTriggerText: function(){return happensOnce ? "The next time you are splashed with water" : "Each time you are splashed with water";},},
 		{makeTriggerText: function(){return happensOnce ? "In one week" : String.format("Every {0}", randomFrom(["Monday", "Saturday", "Friday"]));},
 				chosen: function(){shortDurationOnly = true;}},
 		{triggerText: "Immediately,", durationText: "The transformation is permanent.", chosen: function(){happensOnce = true;},
