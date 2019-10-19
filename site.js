@@ -13,6 +13,7 @@ var explicitness = nsfw;
 
 $(document).ready(function() {
     $("#goButton").click(function(){
+		// curse counter
 		fetch("https://www.freevisitorcounters.com/en/home/counter/588546/t/3", {credentials: "omit", mode: 'no-cors',});
 		updateExplicitSuggestion();
 		$("#circePre").html(getCircePreText());
@@ -26,6 +27,8 @@ $(document).ready(function() {
 		$(".curseRow").css("display", "block");
 		$(".circeOnlyOnce").css("display", "none");	
     }); 
+	//visitor counter
+	fetch("https://www.freevisitorcounters.com/en/home/counter/588555/t/3", {mode: 'no-cors',});
 });
 
 function updateExplicitSuggestion() {
