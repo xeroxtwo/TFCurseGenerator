@@ -4,6 +4,7 @@
 	padding-left: 20px;
 	padding-right: 20px;
 	padding-top: 10px;
+	padding-bottom: 5px;
 	font-size: 20px;
 }
 
@@ -41,5 +42,17 @@ body {
 }
 
 .curseRow {
-	visibility: hidden;
+	display: none;
+}
+
+#secretCopyField {
+	display: none;
+}
+
+
+input[type=radio]{
+  transform:scale(1.5);
+}
+.form-check-inline {
+	margin-right: 23px;
 }

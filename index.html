@@ -25,14 +25,15 @@
 	<div class="container">
 		<div class="row talk">
 			<p class="circeTalk" id="circePre">Hello. My name is Circe, and this is a cursed webpage.<br /><br />
-I call it “cursed” because everyone who visits this page is subject to a unique curse that causes drastic physical transformations.<br /><br />
-Yes, that includes you.<br /><br />
-It’s a bummer, I know. You’ll have a chance to yell at the person who linked you here later. Well, if you can still talk when I'm done with you. Some people end up worse off than others, but I’ve got a feeling you’ll be one of the lucky ones.<br /> 
-<br />
-And don’t worry! Ever since I threw out the dusty tomes and migrated to the cloud, my efficiency is through the roof! You’ll be out of here with your new curse in no time.<br />
-<br />
-Ready to learn your fate? 
-</p>
+				I call it “cursed” because everyone who visits this page is subject to a unique curse that causes drastic physical transformations.<br /><br />
+				Yes, that includes you.<br /><br />
+				It’s a bummer, I know. You’ll have a chance to yell at the person who linked you here later. Well, if you can still talk when I'm done with you. Some people end up worse off than others, but I’ve got a feeling you’ll be one of the lucky ones.<br /> 
+				<br />
+				And don’t worry! Ever since I threw out the dusty tomes and migrated to the cloud, my efficiency is through the roof! You’ll be out of here with your new curse in no time.<br />
+				</p>
+			<p class="circeTalk circeOnlyOnce"><br />Since I know you fancy yourself something of a transformation. . . let's say "conniseur", I'm going to offer you a choice.<br /> 
+			<br /> 
+			How dirty do you want your curse to be?</p>
 		</div>
 		<div class="row curseOutput curseRow">
 				<p id="output"></p>
@@ -43,9 +44,28 @@ Ready to learn your fate?
 		<div class="row talk">
 			<p class="circeTalk" id="circePost"></p>
 		</div>
+		<div class="row talk circeTalk">
+			<div class="form-check form-check-inline">
+				  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+				  <label class="form-check-label" for="inlineRadio1">Tame  </label>
+			</div>
+			<div class="form-check form-check-inline">
+				  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2" checked>
+				  <label class="form-check-label" for="inlineRadio2">Explicit  </label>
+			</div>
+			<div class="form-check form-check-inline">
+				  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">
+				  <label class="form-check-label" for="inlineRadio2">Shameful</label>
+			</div>
+		</div>
+		<div class ="row talk circeOnlyOnce">
+				<p class="circeTalk">Ready to learn your fate?</p>
+		</div>
+		
 		<div class="row">
 				<button type="button" class="btn btn-lg btn-outline-secondary btn-block" id="goButton">If I have to. . .</button>
 		</div>
 	</div>
+	<div id="secretCopyField"></div>
   </body>
 </html>
