@@ -257,7 +257,7 @@ function generateCurse() {
 				tags: [nsfw]},
 		{transformationText: "you switch genders", chosen: function(){shouldRenderSubjectText = false;}},
 		{makeTransformationText:function(){return String.format("you become a taur version of {0}", specificTarget ? "the" : subjectArticle);},
-			if(triggerFemale != null){subjectFemale = triggerFemale;}}},
+			chosen: function(){if(triggerFemale != null){subjectFemale = triggerFemale;}}},
 		{makeTransformationText:function(){return specificTarget ? String.format("you grow a copy of the {0}'s genitals in your mouth", curse.renderSubjectText()) : 
 				String.format("your {0} transforms into the {1} of {2} {3}", subjectFemale ? "mouth" : "tongue", subjectFemale ? "pussy" : "penis", subjectArticle, curse.renderSubjectText());},
 				tags: [lewd],
@@ -545,15 +545,15 @@ function generateCurse() {
 		updateCurse(curse, randomFrom(buildDurations()));
 	}
 	if (curse.renderComplicationText == null) {
-		if(Math.random() < 0.35) {
+		var chance = explicitness == lewd ? .8 : explicitness == nsfw ? .35 : .15;
+		if(Math.random() < chance) {
 			updateCurse(curse, randomFrom(buildComplications(imaginarySpeciesAllowed, personSubject)));
 		} else {
 			updateCurse(curse, {complicationText: ""});
 		}
 	}
 	if (curse.renderClosingRemarkText == null) {
-		var chance = explicitness == lewd ? .8 : explicitness == nsfw ? .3 : .15;
-		if(Math.random() < chance) {
+		if(Math.random() < .3) {
 			updateCurse(curse, randomFrom(filterNSFW(generalClosingRemarks)));
 		}
 	}
