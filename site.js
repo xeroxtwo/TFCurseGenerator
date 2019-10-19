@@ -510,7 +510,7 @@ function generateCurse() {
 				closingRemarkText: "Pilfer their dirty secrets."},
 		{complicationText: "Whenever the other person becomes aroused, you are as well. And vice-versa.",
 			tags: [nsfw]},
-		{complicationText: "Whenever the other person becomes orgasms, so do you. And vice-versa.",
+		{complicationText: "Whenever the other person orgasms, so do you. And vice-versa.",
 			tags: [nsfw]},
 		{complicationText: "You cannot refuse orders from the other person."},
 	]
@@ -523,7 +523,7 @@ function generateCurse() {
 		{closingRemarkText: "I wonder if you can use that as a way to make money. . ."},
 		{closingRemarkText: "Guess I was wrong about you being lucky."},
 		{closingRemarkText: "I think I'll like you more this way."},
-		{closingRemarkText: "I think prople will like you more this way."},
+		{closingRemarkText: "I think people will like you more this way."},
 		{closingRemarkText: "You may have to get a new job."},
 		{closingRemarkText: "That might be kinda fun."},
 		{closingRemarkText: "You'll come around to it eventually."},
