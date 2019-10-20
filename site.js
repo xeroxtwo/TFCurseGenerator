@@ -1,15 +1,19 @@
 // I apologize for this in advance.
 
-var generation = 0;
-var circeTexts = [
+const circeTexts = [
 	"Alright, here's your curse! Enjoy.",
 	"God, you mortals are so picky. Here, how's this one?"
 ]
-var sfw = "SFW";
-var nsfw = "NSFW";
-var lewd = "LEWD";
-var explicitness = nsfw;
 
+// Tag and filter constants
+const sfw = "SFW";
+const nsfw = "NSFW";
+const lewd = "LEWD";
+const inhuman = "INHUMAN";
+
+
+var explicitness = nsfw;
+var generation = 0;
 
 $(document).ready(function() {
     $("#goButton").click(function(){
@@ -56,16 +60,78 @@ function getCircePreText() {
 }
 
 function generateCurse() {
-	// Methods
-	function buildTransformations(specificTarget, personSubject, touchTrigger) {
-		var output = generalTransformations;
-		if (!personSubject) {
-			output = output.concat(inhumanTransformations);
+	
+	// Status variables
+	// The convention is this:
+	// 	subject* = status of the person transforming
+	//  target* = status of the target (if applicable)
+	//  a null value signifies that the status is not decided and ambiguous verbage should be used.
+	//  ALL STATUS VARIABLE CHECKS MUST INCLUDE NULL CHECKS FOR THIS REASON.
+	//	USE THE decidedAndTrue() and isDecided() CONVENIENCE METHODS FOR CLARITY
+	var subjectHuman = null;
+	
+	// removes elements from the input list if they include the specified tag
+	function filterTag(components, tag) {
+		var output = [];
+		for (var i = 0; i < components.length; i++) {
+			if (components[i].tags != null) {
+				if (components[i].tags.includes(tag)) {
+					continue;
+				}
+			}
+			output.push(components[i]);
 		}
+		return output;
+	}
+	
+	// returns a copy of components with all elements that include any of the specified tags.
+	function filterTags(components, tags) {
+		var output = components;
+		for (var i = 0; i < tags.length; i++) {
+			output = filterTag(output, tags[i]);
+		}
+		return output;
+	}
+	
+	function filterComponents(components) {
+		var output = components;
+		if (decidedAndTrue(subjectHuman)) {
+			output = filterTag(output, inhuman);
+		}
+		if (explicitness == sfw) {
+			output = filterTags(output, [nsfw, lewd]);
+		}
+		if (explicitness == nsfw) {
+			output = filterTag(output, lewd);
+		}
+		return output;
+	}
+	
+	function decidedAndTrue(statusVariable) {
+		return isDecided(statusVariable) && statusVariable;
+	}
+	
+	function isDecided(statusVariable) {
+		return statusVariable != null;
+	}
+	
+	function updateStatusVariables(component) {
+		if (component.tags != null) {
+			for (var i = 0; i < component.tags.length; i++) {
+				var tag = component.tags[i];
+				if (tag == inhuman) {
+					subjectHuman = false;
+				}
+			}
+		}
+	}
+	
+	function buildTransformations() {
+		var output = transformations;
 		if (touchTrigger) {
 			output = output.concat(touchTransformations);
 		}
-		return filterNSFW(output);
+		return filterComponents(output);
 	}
 	
 	function buildSubjects(imaginarySpeciesAllowed) {
@@ -76,7 +142,7 @@ function generateCurse() {
 				output = output.concat(imaginaryNonHybridable);
 			}
 		}
-		return filterNSFW(output);
+		return filterComponents(output);
 	}
 	
 	function buildDurations() {
@@ -84,39 +150,82 @@ function generateCurse() {
 		if (!shortDurationOnly) {
 			output = output.concat(longDurations);
 		}
-		return filterNSFW(output);
+		return filterComponents(output);
 	}
 	
-	function buildComplications(imaginarySpeciesAllowed, personSubject) {
+	function buildComplications(imaginarySpeciesAllowed, subjectHuman) {
 		var output = generalComplications;
-		if (!personSubject) {
+		if (!decidedAndTrue(subjectHuman)) {
 			output = output.concat(inhumanComplications);
 			if (!imaginarySpeciesAllowed) {
 				output = output.concat(mundaneAnimalComplications);
 			}
 		} else {
-			output = output.concat(personSubjectComplications);
+			output = output.concat(subjectHumanComplications);
 		}
-		return filterNSFW(output);
+		return filterComponents(output);
 	}
 	
-	function filterNSFW(inputData) {
-		output = [];
-		for (var i = 0; i < inputData.length; i++) {
-			if (inputData[i].tags != null) {
-				if (explicitness == sfw) {
-					if (inputData[i].tags.includes(nsfw) || inputData[i].tags.includes(lewd)) {
-						continue;
-					}
-				} else if (explicitness == nsfw) {
-					if (inputData[i].tags.includes(lewd)) {
-						continue;
-					}
-				}
-			}
-			output.push(inputData[i]);
+	function updateCurse(curse, update) {
+		updateStatusVariables(update);
+		if (update.chosen != null) {
+			update.chosen();
 		}
-		return output;
+		if (curse.renderTriggerText == null) {
+			if (update.makeTriggerText != null) {
+				curse.renderTriggerText = update.makeTriggerText;
+			}
+			if (update.triggerText != null) {
+				curse.renderTriggerText = function(){return update.triggerText;};
+			}
+		}
+		if (curse.renderTransformationText == null) {
+			if (update.makeTransformationText != null) {
+				curse.renderTransformationText = update.makeTransformationText;
+			}
+			if (update.transformationText != null) {
+				curse.renderTransformationText = function(){return update.transformationText;};
+			} 
+		}
+		if (curse.renderSubjectText == null) {
+			if (update.makeSubjectText != null) {
+				curse.renderSubjectText = update.makeSubjectText;
+			}
+			if (update.subjectText != null) {
+				curse.renderSubjectText = function(){return update.subjectText;};
+			} 
+		}
+		if (curse.renderDurationText == null) {
+			if (update.makeDurationText != null) {
+				curse.renderDurationText = update.makeDurationText;
+			}
+			if (update.durationText != null) {
+				curse.renderDurationText = function(){return update.durationText;};
+			} 
+		}
+		if (curse.renderComplicationText == null) {
+			if (update.makeComplicationText != null) {
+				curse.renderComplicationText = update.makeComplicationText;
+			}
+			if (update.complicationText != null) {
+				curse.renderComplicationText = function(){return update.complicationText;};
+			} 
+		}
+		if (update.additionalExplaination) {
+			curse.additionalExplainations.push(update.additionalExplaination);
+		}
+		if (update.makeAdditionalExplaination) {
+			//TODO: This means makeAdiditionalExplainations are not run at render time. Should fix so they're consistent. 
+			curse.additionalExplainations.push(update.makeAdditionalExplaination());
+		}
+		if (curse.renderClosingRemarkText == null) {
+			if (update.makeClosingRemarkText != null) {
+				curse.renderClosingRemarkText = update.makeClosingRemarkText;
+			}
+			if (update.closingRemarkText != null) {
+				curse.renderClosingRemarkText = function(){return update.closingRemarkText;};
+			} 
+		}
 	}
 	
 	// Variables
@@ -129,7 +238,6 @@ function generateCurse() {
 		additionalExplainations : [""],
 		renderClosingRemarkText: null,
 		
-		// methods
 		renderAdditionalExplainations : function () {
 			if (this.additionalExplainations.length > 1) {
 				return String.format("<br>{0}", this.additionalExplainations.join(' '));
@@ -160,9 +268,8 @@ function generateCurse() {
 	
 	var imaginarySpeciesAllowed = true;
 	var specificTarget = false;
-	var personSubject = false;
 	var subjectArticle = "a";
-	var happensOnce = (Math.random() <0.3); // 30% chance
+	var happensOnce = (Math.random() <0.2); // 20% chance, more with some triggers that force it.
 	var subjectFemale = (Math.random() < 0.5); // 50% chance
 	var triggerFemale =  null;
 	var sexUndecided = true;
@@ -174,6 +281,11 @@ function generateCurse() {
 	
 	// DATA
 	// instead of static text, you can specify a "make" function that will be called at render time.
+	
+	//  TAGS:
+	//		Tags are used for filtering components. Each tag as a sister status variable. 
+	// 		If that status variable is unset (set to null), or set in a way that is compatible, the component included in the list for selection.
+	//		Once selected, a component will set its tags' status variables, ensuring downstream components are properly filtered.
 	var triggers = [
 		{
 			makeTriggerText: function(){return happensOnce ? "If you ever catch sight of the full moon" : "Each full moon";},
@@ -213,17 +325,17 @@ function generateCurse() {
 		{
 			makeTriggerText: function(){return happensOnce ? "When you next touch a man": "Whenever you touch a man";},
 			subjectText: "touched man", 
-			chosen: function(){specificTarget = true; personSubject = true; triggerFemale = false; touchTrigger = true;}
+			chosen: function(){specificTarget = true; subjectHuman = true; triggerFemale = false; touchTrigger = true;}
 		},
 		{
 			makeTriggerText: function(){return happensOnce ? "When you next touch a woman": "Whenever you touch a woman";},
 			subjectText: "touched woman", 
-			chosen: function(){specificTarget = true; personSubject = true; triggerFemale = true; touchTrigger = true;}
+			chosen: function(){specificTarget = true; subjectHuman = true; triggerFemale = true; touchTrigger = true;}
 		},
 		{
 			makeTriggerText: function(){return happensOnce ? "When you next touch someone": "Whenever you touch someone";},
 			subjectText: "touched person",
-			chosen: function(){specificTarget = true; personSubject = true;sexUndecided = true; touchTrigger = true;}
+			chosen: function(){specificTarget = true; subjectHuman = true;sexUndecided = true; touchTrigger = true;}
 		},
 		{
 			makeTriggerText: function(){return happensOnce ? "The next time someone sees your privates,": "Whenever anyone sees your privates";}, 
@@ -266,7 +378,10 @@ function generateCurse() {
 		},
 	];
 	
-	var generalTransformations = [
+	// =====================
+	//    TRANSFORMATIONS
+	// =====================
+	var transformations = [
 		{
 			makeTransformationText:function(){return String.format("you transform into {0}", specificTarget ? "a copy of the" : subjectArticle);},
 			chosen: function(){if(triggerFemale != null){subjectFemale = triggerFemale; sexUndecided = false;}}
@@ -373,22 +488,23 @@ function generateCurse() {
 					: "Your tentacles can't stay still for long."]),
 			chosen: function(){shouldRenderSubjectText = false;}
 		},
-
-	];
-	var inhumanTransformations = [
+		// Inhuman transformations
 		{
 			makeTransformationText:function(){return String.format("you transform into an anthro version of {0}", specificTarget ? "the" : subjectArticle);},
-			chosen: function(){becomingHybrid = true;}
+			chosen: function(){becomingHybrid = true;},
+			tags: [inhuman],
 		},
 		{
 			makeTransformationText:function(){return String.format("you grow the tail of {0}", specificTarget ? "the" : subjectArticle);},
-			chosen: function(){becomingHybrid = true;}
+			chosen: function(){becomingHybrid = true;},
+			tags: [inhuman],
 		},
 		{
 			makeTransformationText:function(){return String.format("you transform into a kemono version of {0}", specificTarget ? "the" : subjectArticle);
 			closingRemarkText: randomFrom([
 				"A kemono is one of those anime characters with the ears and the tail, right?", "How kawaii!"])},
-			chosen: function(){becomingHybrid = true;}
+			chosen: function(){becomingHybrid = true;},
+			tags: [inhuman],
 		},
 		{
 			makeTransformationText:function(){return String.format("you become an inflatable pool toy shaped like {0}", specificTarget ? "the" : subjectArticle);},
@@ -401,6 +517,7 @@ function generateCurse() {
 				"You go unconcious when deflated.", 
 				"You can still move when transformed.", 
 				"Your valve is an erogenous zone"]),
+			tags: [inhuman],
 		},
 		{
 			makeTransformationText:function(){return randomFrom([
@@ -411,12 +528,14 @@ function generateCurse() {
 			additionalExplaination: happensOnce 
 				? "Over the next year, the rest of your body transforms to match." 
 				: "Each time you transform, an additional bodypart also changes.",
-			chosen: function(){becomingHybrid = true;}
+			chosen: function(){becomingHybrid = true;},
+			tags: [inhuman],
 		},
 		{
 			makeTransformationText:function(){return String.format("you become {0} {1} from the waist down",
 				specificTarget ? "the" : subjectArticle, curse.renderSubjectText());},
-			chosen: function(){shouldRenderSubjectText = false; becomingHybrid = true;}
+			chosen: function(){shouldRenderSubjectText = false; becomingHybrid = true;},
+			tags: [inhuman],
 		},
 	];
 	var touchTransformations = [
@@ -824,7 +943,7 @@ function generateCurse() {
 				: "Each time you revert to human, you retain more parts of your other form.";}
 		},
 	]
-	var personSubjectComplications = [
+	var subjectHumanComplications = [
 		{
 			complicationText: "You gain the memories of the other person.",
 			closingRemarkText: "Pilfer their dirty secrets."
@@ -861,9 +980,9 @@ function generateCurse() {
 		updateCurse(curse, {durationText: "The transformation is permanent."});
 	}
 	
-	updateCurse(curse, randomFrom(filterNSFW(triggers)));
+	updateCurse(curse, randomFrom(filterComponents(triggers)));
 	if (curse.renderTransformationText == null) {
-		updateCurse(curse, randomFrom(buildTransformations(specificTarget, personSubject, touchTrigger)));
+		updateCurse(curse, randomFrom(buildTransformations()));
 	}
 	if (curse.renderSubjectText == null) {
 		updateCurse(curse, randomFrom(buildSubjects(imaginarySpeciesAllowed)));
@@ -874,14 +993,14 @@ function generateCurse() {
 	if (curse.renderComplicationText == null) {
 		var chance = explicitness == lewd ? .8 : explicitness == nsfw ? .35 : .15;
 		if(Math.random() < chance) {
-			updateCurse(curse, randomFrom(buildComplications(imaginarySpeciesAllowed, personSubject)));
+			updateCurse(curse, randomFrom(buildComplications(imaginarySpeciesAllowed, subjectHuman)));
 		} else {
 			updateCurse(curse, {complicationText: ""});
 		}
 	}
 	if (curse.renderClosingRemarkText == null) {
 		if(Math.random() < .3) {
-			updateCurse(curse, randomFrom(filterNSFW(generalClosingRemarks)));
+			updateCurse(curse, randomFrom(filterComponents(generalClosingRemarks)));
 		}
 	}
 	
@@ -900,67 +1019,6 @@ String.format = function() {
 
 function isEmpty(str) {
     return (!str || 0 === str.length);
-}
-
-function updateCurse(curse, update) {
-	if (update.chosen != null) {
-		update.chosen();
-	}
-	if (curse.renderTriggerText == null) {
-		if (update.makeTriggerText != null) {
-			curse.renderTriggerText = update.makeTriggerText;
-		}
-		if (update.triggerText != null) {
-			curse.renderTriggerText = function(){return update.triggerText;};
-		}
-	}
-	if (curse.renderTransformationText == null) {
-		if (update.makeTransformationText != null) {
-			curse.renderTransformationText = update.makeTransformationText;
-		}
-		if (update.transformationText != null) {
-			curse.renderTransformationText = function(){return update.transformationText;};
-		} 
-	}
-	if (curse.renderSubjectText == null) {
-		if (update.makeSubjectText != null) {
-			curse.renderSubjectText = update.makeSubjectText;
-		}
-		if (update.subjectText != null) {
-			curse.renderSubjectText = function(){return update.subjectText;};
-		} 
-	}
-	if (curse.renderDurationText == null) {
-		if (update.makeDurationText != null) {
-			curse.renderDurationText = update.makeDurationText;
-		}
-		if (update.durationText != null) {
-			curse.renderDurationText = function(){return update.durationText;};
-		} 
-	}
-	if (curse.renderComplicationText == null) {
-		if (update.makeComplicationText != null) {
-			curse.renderComplicationText = update.makeComplicationText;
-		}
-		if (update.complicationText != null) {
-			curse.renderComplicationText = function(){return update.complicationText;};
-		} 
-	}
-	if (update.additionalExplaination) {
-		curse.additionalExplainations.push(update.additionalExplaination);
-	}
-	if (update.makeAdditionalExplaination) {
-		//TODO: This means makeAdiditionalExplainations are not run at render time. Should fix so they're consistent. 
-		curse.additionalExplainations.push(update.makeAdditionalExplaination());
-	}
-	if (curse.renderClosingRemarkText == null) {
-		if (update.makeClosingRemarkText != null) {
-			curse.renderClosingRemarkText = update.makeClosingRemarkText;
-		}
-		if (update.closingRemarkText != null) {
-			curse.renderClosingRemarkText = function(){return update.closingRemarkText;};
-		} 
-	}
 }
 
 function randomFrom(array) {
