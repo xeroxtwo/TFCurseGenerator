@@ -335,6 +335,11 @@ function generateCurse() {
 		shouldFilter: function(){return filterGenderAgnosticSubject;},
 		onChoice: function() {filterGenderAgnosticSubject = false;}
 	}
+	
+	const nonSpecificSubject = {
+		shouldFilter: function(){return specificTarget;},
+		onChoice: function() {}
+	}
 
 	
 	
@@ -471,9 +476,30 @@ function generateCurse() {
 			chosen: function(){specificTarget = true;},
 		},
 		{
-			makeTriggerText: function(){return happensOnce ? "Tomorrow morning" : String.format("Every {0},", randomFrom(["sunrise", "sunset", "night at midnight"]));},
-			chosen: function(){shortDurationOnly = true;},
-			closingRemarkText: randomFrom(["You just have to find a new routine.", "I hope you're at your own house.", "That's not that long from now!"])
+			makeTriggerText: function(){
+				var costume = String.format("{0} {1}", 
+					randomFrom(["a humanoid", "an anthro", "a cartoonish", subjectArticle, "a polka-dot", "a bright pink", "a neon green", "a neon striped", "a bright blue", "a plaid", "a checkerboard-patterned", "a purple", "a glow-in-the-dark"]),
+					curse.renderSubjectText());
+				return String.format("{0} {1} costume. {2} {3}",
+					randomFrom([
+						"While visiting an out-of-the-way antique store, you find", 
+						"While exploring your parents' attic, you find", 
+						"You've been chosen to be your school's new mascot at homecoming. They give you",
+						"You recieve a package in the mail containing"
+						]),
+					costume,
+					happensOnce ? "If you ever wear it," : "Whenever you wear it,",
+					randomFrom([
+						String.format("the zipper disappears, the fabric turns to flesh, and you find yourself stuck as a flesh-and-blood yet fake-looking version of {0}", costume),
+						String.format("the costume merges with your flesh, turning you into {0}", costume),
+						String.format("the costume merges with your flesh and disappears, leaving you as {0}", costume),
+						String.format("the costume's fabric replaces your flesh, leaving you trapped as a giant, animated plushy that looks like {0}", costume),
+						String.format("the costume's fabric replaces your flesh, leaving you trapped as an animate version of {0} that is made out of synthetic materials", costume)
+					])
+				)}, 
+			transformationText: "",
+			chosen: function(){specificTarget = true; shouldRenderSubjectText = false;},
+			closingRemarkText: randomFrom(["I have the strangest urge to beat you up right now.", "I just want to cuddle you!"])
 		},
 		{
 			makeTriggerText: function(){return happensOnce ? "Tomorrow morning" : String.format("Every {0},", randomFrom(["sunrise", "sunset", "night at midnight"]));},
@@ -781,7 +807,7 @@ function generateCurse() {
 			subjectText: "closest pet", 
 			chosen: function(){specificTarget = true;},
 			closingRemarkText: "Is it better or worse if it's your own pet?",
-			requires: [genderAgnostic],
+			requires: [genderAgnostic, nonSpecificSubject],
 		},
 		{
 			subjectText: "whale", 
@@ -819,7 +845,7 @@ function generateCurse() {
 		{
 			subjectText: "last animal you touched", 
 			chosen: function(){specificTarget = true;},
-			requires: [genderAgnostic],
+			requires: [genderAgnostic, nonSpecificSubject],
 		},
 		{
 			subjectText: "the last animal you ate", 
@@ -827,7 +853,7 @@ function generateCurse() {
 			closingRemarkText: randomFrom([
 				"Sample any exotic meats lately?",
 				"Mmm-mm. This beef tastes just like you."]),
-			requires: [genderAgnostic],
+			requires: [genderAgnostic, nonSpecificSubject],
 		},
 	];
 	var imaginarySubjects = [
@@ -835,12 +861,12 @@ function generateCurse() {
 			subjectText: "last fantasy creature you killed in a video game", 
 			chosen: function(){specificTarget = true;},
 			closingRemarkText: "Mana really does flow from computer monitors these days.",
-			requires: [genderAgnostic],
+			requires: [genderAgnostic, nonSpecificSubject],
 		},
 		{
 			subjectText: "current year's Chinese zodiac animal", 
 			chosen: function(){specificTarget = true;},
-			requires: [genderAgnostic],
+			requires: [genderAgnostic, nonSpecificSubject],
 		},
 		{
 			makeSubjectText: function(){return subjectFemale ? "dire wolf bitch": "dire wolf stud";},
@@ -849,7 +875,7 @@ function generateCurse() {
 		{
 			subjectText: "Chinese zodiac animal assigned to you at birth", 
 			chosen: function(){specificTarget = true;},
-			requires: [genderAgnostic],
+			requires: [genderAgnostic, nonSpecificSubject],
 		},
 		{
 			makeSubjectText: function(){return subjectFemale ? "dragoness": "drake";},
