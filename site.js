@@ -82,6 +82,7 @@ function generateCurse() {
 	//  ALL STATUS VARIABLE CHECKS MUST INCLUDE NULL CHECKS FOR THIS REASON.
 	//	USE THE decidedAndTrue() and isDecided() CONVENIENCE METHODS FOR CLARITY
 	var subjectHuman = null;
+	var touchTrigger = false;
 	
 	function decidedAndTrue(statusVariable) {
 		return isDecided(statusVariable) && statusVariable;
@@ -102,7 +103,7 @@ function generateCurse() {
 	}
 	
 	const touchTransformation = {
-		shouldFilter: function() {return decidedAndTrue(touchTrigger);},
+		shouldFilter: function() {return decidedAndFalse(touchTrigger);},
 		onChoice: function() {touchTrigger = true;}
 	}
 	
@@ -282,7 +283,6 @@ function generateCurse() {
 	var subjectFemale = (Math.random() < 0.5); // 50% chance
 	var triggerFemale =  null;
 	var sexUndecided = true;
-	var touchTrigger = false;
 	var shouldRenderSubjectText = true;
 	var shortDurationOnly = false;
 	var extemitiesName = "paws";
