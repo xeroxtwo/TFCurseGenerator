@@ -287,6 +287,7 @@ function generateCurse() {
 	var triggerFemale =  null;
 	var subjectFemale = null;
 	var filterGenderAgnosticSubject = false;
+	var inanimateTF = false;
 	
 
 	// TAGS 
@@ -334,6 +335,7 @@ function generateCurse() {
 		shouldFilter: function(){return filterGenderAgnosticSubject;},
 		onChoice: function() {filterGenderAgnosticSubject = false;}
 	}
+
 	
 	
 	// DATA
@@ -467,6 +469,11 @@ function generateCurse() {
 			makeTriggerText: function(){return happensOnce ? "The next time you see an animal" : "Whenever you see an animal,";},
 			subjectText: "sighted animal", 
 			chosen: function(){specificTarget = true;},
+		},
+		{
+			makeTriggerText: function(){return happensOnce ? "Tomorrow morning" : String.format("Every {0},", randomFrom(["sunrise", "sunset", "night at midnight"]));},
+			chosen: function(){shortDurationOnly = true;},
+			closingRemarkText: randomFrom(["You just have to find a new routine.", "I hope you're at your own house.", "That's not that long from now!"])
 		},
 		{
 			makeTriggerText: function(){return happensOnce ? "Tomorrow morning" : String.format("Every {0},", randomFrom(["sunrise", "sunset", "night at midnight"]));},
@@ -655,7 +662,7 @@ function generateCurse() {
 				"Your new host doesn't remember the transformation."]),
 			chosen: function(){shouldRenderSubjectText = false;},
 			sets: [subjectSexBecomesTriggerSex],
-			requires: [touchTransformation],
+			requires: [touchTransformation, lewd],
 		},
 	];
 	
