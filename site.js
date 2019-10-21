@@ -345,7 +345,7 @@ function generateCurse() {
 	
 	// DATA
 	// instead of static text, you can specify a "make" function that will be called at render time.
-	
+	// Every type of component can set the values for any "downstream" components by specifying them. They're secretly all of the same type.
 	//  TAGS:
 	//		Tags can be included in the "sets" or "requires" field. If included in "requires," the component
 	//		will not be a candidate for choice of the tag's condition isn't met. When included in the "sets"
@@ -407,13 +407,13 @@ function generateCurse() {
 				"I hope whatever clothes you're wearing don't get damaged."])
 		},
 		{
-			makeTriggerText: function(){return happensOnce ? "If you happen to touch an animal," : "Whenever you touch an animal";},
+			makeTriggerText: function(){return happensOnce ? "If you happen to touch an animal," : "Whenever you touch an animal,";},
 			subjectText: "touched animal", 
 			chosen: function(){specificTarget = true;},
 			sets: [touchTransformation]
 		},
 		{
-			makeTriggerText: function(){return happensOnce ? "If you ever touch a male animal" : "Whenever you touch a male animal";},
+			makeTriggerText: function(){return happensOnce ? "If you ever touch a male animal," : "Whenever you touch a male animal,";},
 			subjectText: "touched animal", 
 			chosen: function(){specificTarget = true; triggerFemale = false;},
 			sets: [touchTransformation]
@@ -424,7 +424,7 @@ function generateCurse() {
 			chosen: function(){specificTarget = true;}
 		},
 		{
-			makeTriggerText: function(){return happensOnce ? "When you next touch a man": "Whenever you touch a man";},
+			makeTriggerText: function(){return happensOnce ? "When you next touch a man,": "Whenever you touch a man";},
 			subjectText: "touched man", 
 			chosen: function(){specificTarget = true; subjectHuman = true; triggerFemale = false;},
 			sets: [touchTransformation]
@@ -436,7 +436,9 @@ function generateCurse() {
 			sets: [touchTransformation]
 		},
 		{
-			makeTriggerText: function(){return happensOnce ? "When you next touch someone": "Whenever you touch someone";},
+			makeTriggerText: function(){
+				return String.format(happensOnce ? "When you next touch {0}": "Whenever you touch {0},",
+				randomFrom(["someone", "your best friend", "your romantic partner", "a stranger in public", "your boss"]));},
 			subjectText: "touched person",
 			chosen: function(){specificTarget = true; subjectHuman = true;},
 			sets: [touchTransformation]
@@ -447,6 +449,10 @@ function generateCurse() {
 				"I don't think this is what they were expecting when you said \"I'll show you mine.\"",
 				"I hope you don't get pantsed anytime soon.",]),
 			requires: [nsfw]
+		},
+		{
+			makeTriggerText: function(){return happensOnce ? "The next time you get publicly humiliated,": "Whenever you are emberassed,";},
+			additionalExplaination: happensOnce ? "You transform partially when you're emberassed." : "The more emberassed you are, the more you change.",
 		},
 		{
 			makeTriggerText: function(){return happensOnce ? "There exists a phrase, and, if you ever hear it," : "You have a secret key phrase, and whenever you hear it";},
@@ -494,7 +500,7 @@ function generateCurse() {
 						String.format("the costume merges with your flesh, turning you into {0}", costume),
 						String.format("the costume merges with your flesh and disappears, leaving you as {0}", costume),
 						String.format("the costume's fabric replaces your flesh, leaving you trapped as a giant, animated plushy that looks like {0}", costume),
-						String.format("the costume's fabric replaces your flesh, leaving you trapped as an animate version of {0} that is made out of synthetic materials", costume)
+						String.format("the costume's fabric replaces your flesh, leaving you trapped as an animate version of {0} that is made out of synthetic material", costume)
 					])
 				)}, 
 			transformationText: "",
@@ -562,6 +568,12 @@ function generateCurse() {
 		},
 		{
 			transformationText: "you switch genders",
+			additionalExplaination: randomFrom([
+				"You absolutely love your new life.",
+				"All your friends start hitting on you, and you're tempted to start dating one of them.",
+				"You look like an androdgynous version of your old self, but the equipment between your legs is the real deal.",
+				"You never quite feel comfortable as your new sex, and often \"crossdress\" to match your original gender.",
+				"You find yourself hopelessly attracted to all your friends."]),
 			chosen: function(){shouldRenderSubjectText = false;}
 		},
 		{
@@ -647,7 +659,7 @@ function generateCurse() {
 				"I'd put my lips on your nozzle ;)",
 				"I've always wondered what it feels like to get inflated. You'll have to tell me."]),
 			additionalExplaination: randomFrom([
-				"You go unconcious when deflated.", 
+				"You go unconcious when deflated.",
 				"You can still move when transformed.", 
 				"Your valve is an erogenous zone"]),
 			requires: [subjectInhuman],
@@ -736,7 +748,7 @@ function generateCurse() {
 			sets: [determinesRandomSex],
 		},
 		{
-			subjectText: "hawk", 
+			subjectText: randomFrom(["hawk", "bluebird", "ecretary bird"]), 
 			chosen: function(){extemitiesName = "talons";},
 			requires: [genderAgnostic],
 		},
@@ -751,6 +763,10 @@ function generateCurse() {
 			closingRemarkText: "Maybe it'll make you a better climber."
 		},
 		{
+			makeSubjectText: function(){return subjectFemale ? "she-bear" : "he-bear";},
+			sets: [determinesRandomSex],
+		},
+		{
 			subjectText: "zebra", 
 			chosen: function(){extemitiesName = "hooves";},
 			requires: [genderAgnostic],
@@ -760,12 +776,15 @@ function generateCurse() {
 			requires: [genderAgnostic],
 		},
 		{
-			subjectText: "tiger",
+			subjectText: randomFrom(["tiger", "lion", "cheetah"]),
 			requires: [genderAgnostic],
 		},
 		{
 			subjectText: "hyena",
 			requires: [genderAgnostic],
+			makeAdditionalExplaination: function(){return decidedAndTrue(subjectFemale) 
+				? "You have a pseudopenis and fake testicles." 
+				: "Remember: male hyenas are submissive to the females.";},
 			closingRemarkText: "Yeen Queen is my favorite band!"
 		},
 		{
@@ -779,10 +798,12 @@ function generateCurse() {
 		{
 			subjectText: "kangaroo",
 			requires: [genderAgnostic],
+			closingRemarkText: "G'day, mate!"
 		},
 		{
 			subjectText: randomFrom(["monkey", "baboon", "lemur"]),
 			requires: [genderAgnostic],
+			closingRemarkText: "Maybe you should try living in a treehouse."
 		},
 		{
 			subjectText: randomFrom(["squid", "worm", "lemur"]),
@@ -833,7 +854,8 @@ function generateCurse() {
 			sets: [determinesRandomSex],
 		},
 		{
-			subjectText: "komodo dragon", chosen: function(){extemitiesName = "claws";},
+			subjectText: randomFrom("komodo dragon", "skink", "newt"), 
+			chosen: function(){extemitiesName = "claws";},
 			requires: [genderAgnostic],
 		},
 		{
@@ -903,8 +925,7 @@ function generateCurse() {
 			requires: [genderAgnostic],
 		},
 		{
-			subjectText: "goblin", 
-			chosen: function(){extemitiesName = "hands";},
+			subjectText: "sea serpent",
 			requires: [genderAgnostic],
 		},
 	];
@@ -913,10 +934,29 @@ function generateCurse() {
 			subjectText: "demon", 
 			chosen: function(){extemitiesName = "claws";},
 			requires: [genderAgnostic],
+		}, 
+		{
+			subjectText: "goblin", 
+			chosen: function(){extemitiesName = "hands";},
+			requires: [genderAgnostic],
+		},
+		{
+			subjectText: "orc", 
+			chosen: function(){extemitiesName = "hands";},
+			requires: [genderAgnostic],
 		},
 		{
 			subjectText: "sphinx",
 			requires: [genderAgnostic],
+		},
+		{
+			subjectText: "naga",
+			requires: [genderAgnostic],
+		},
+		{
+			subjectText: "cerberus",
+			requires: [genderAgnostic],
+			closingRemarkText: "Stop fighting with yourself!",
 		},
 		{
 			subjectText: "drider", 
@@ -955,6 +995,17 @@ function generateCurse() {
 		{
 			durationText: "You remain this way for 23 hours.",
 			closingRemarkText: "That's enough time for a full day and a full night's sleep while you're transformed."
+		},
+		{
+			makeDurationText: function() {return String.format("You revert to your old self in {0} hours, but, if you {1}, the transformation becomes permenant.",
+				randomFrom(["two", "four", "six", "twelve"]),
+				randomFrom([
+					"have sex", 
+					decidedAndTrue(subjectFemale) ? "get pregnant" : "reproduce", 
+					"orgasm",
+					"are seen by someone else you know"]));},
+			closingRemarkText: "I'm sure you won't have any trouble resisting the urge to stay that way forever.",
+			requires: [nsfw],
 		},
 	]
 	var longDurations = [
