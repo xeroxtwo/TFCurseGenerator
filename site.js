@@ -451,8 +451,8 @@ function generateCurse() {
 			requires: [nsfw]
 		},
 		{
-			makeTriggerText: function(){return happensOnce ? "The next time you get publicly humiliated,": "Whenever you are emberassed,";},
-			additionalExplaination: happensOnce ? "You transform partially when you're emberassed." : "The more emberassed you are, the more you change.",
+			makeTriggerText: function(){return happensOnce ? "The next time you get publicly humiliated,": "Whenever you are embarrassed,";},
+			additionalExplaination: happensOnce ? "You transform partially when you're embarrassed." : "The more embarrassed you are, the more you change.",
 		},
 		{
 			makeTriggerText: function(){return happensOnce ? "There exists a phrase, and, if you ever hear it," : "You have a secret key phrase, and whenever you hear it";},
@@ -580,15 +580,26 @@ function generateCurse() {
 			makeTransformationText:function(){return String.format("you become a taur version of {0}", specificTarget ? "the" : subjectArticle);},
 			sets: [subjectSexBecomesTriggerSex]
 		},
-		{
-			makeTransformationText:function(){return specificTarget 
-				? String.format("you grow a copy of the {0}'s genitals in your mouth", curse.renderSubjectText())
-				: String.format("your {0} transforms into the {1} of {2} {3}", 
-					subjectFemale ? "mouth" : "tongue", subjectFemale ? "pussy" : "penis", subjectArticle, curse.renderSubjectText());},
-			sets: [subjectSexBecomesTriggerSex, determinesRandomSex],
-			requires: [lewd],
-			chosen: function(){shouldRenderSubjectText = false;},
-		},
+		randomFrom([ // less genital-mouths
+			{
+				makeTransformationText:function(){return specificTarget 
+					? String.format("you grow a copy of the {0}'s genitals in your mouth", curse.renderSubjectText())
+					: String.format("your {0} transforms into the {1} of {2} {3}", 
+						subjectFemale ? "mouth" : "tongue", subjectFemale ? "pussy" : "penis", subjectArticle, curse.renderSubjectText());},
+				sets: [subjectSexBecomesTriggerSex, determinesRandomSex],
+				requires: [lewd],
+				chosen: function(){shouldRenderSubjectText = false;},
+			},
+			{
+				makeTransformationText:function(){return String.format("your genitals transform into the mouth of {0}", specificTarget ? "the" : subjectArticle);},
+				additionalExplaination: randomFrom([
+					"You have no control over your new mouth.",
+					"Whatever was between your legs before ends up incorperated into your new mouth.",
+					"Whatever was between your legs before ends up incorperated into your original mouth.",
+					"Eating is an orgasmic experience."]),
+				requires: [lewd]
+			},
+		]),
 		{
 			makeTransformationText:function(){return String.format("you become an sentient sex doll made to look like {0}",
 				specificTarget ? "the" : subjectArticle);},
@@ -603,15 +614,6 @@ function generateCurse() {
 			makeTransformationText:function(){return String.format("you swap minds with {0}", specificTarget ? "the" : "the nearest");},
 			chosen: function(){imaginarySpeciesAllowed = false;},
 			sets: [subjectSexBecomesTriggerSex]
-		},
-		{
-			makeTransformationText:function(){return String.format("your genitals transform into the mouth of {0}", specificTarget ? "the" : subjectArticle);},
-			additionalExplaination: randomFrom([
-				"You have no control over your new mouth.",
-				"Whatever was between your legs before ends up incorperated into your new mouth.",
-				"Whatever was between your legs before ends up incorperated into your original mouth.",
-				"Eating is an orgasmic experience."]),
-			requires: [lewd]
 		},
 		{
 			makeTransformationText: function() {return String.format("your {0}, and legs transform into those of {1}", 
@@ -684,7 +686,9 @@ function generateCurse() {
 		},
 		// touch transformations
 		{
-			makeTransformationText:function(){return String.format("you merge with them, becoming a two-headed hybrid",)},
+			makeTransformationText:function(){return randomFrom([
+				"you merge with them, becoming a two-headed hybrid",
+				String.format("you merge with them, becoming the {0} of a new taur", randomFrom(["top half", "bottom half"]))])},
 			chosen: function(){shouldRenderSubjectText = false;},
 			closingRemarkText: "I hope you really liked them.",
 			sets: [subjectSexBecomesTriggerSex],
@@ -748,7 +752,7 @@ function generateCurse() {
 			sets: [determinesRandomSex],
 		},
 		{
-			subjectText: randomFrom(["hawk", "bluebird", "ecretary bird"]), 
+			subjectText: randomFrom(["hawk", "bluebird", "secretary bird"]), 
 			chosen: function(){extemitiesName = "talons";},
 			requires: [genderAgnostic],
 		},
