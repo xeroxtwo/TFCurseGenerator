@@ -523,7 +523,7 @@ function generateCurse() {
 					costume,
 					happensOnce ? "If you ever wear it," : "Whenever you wear it,",
 					randomFrom([
-						String.format("the zipper disappears, the fabric turns to flesh, and you find yourself stuck as a flesh-and-blood yet fake-looking version of {0}", costume),
+						String.format("the zipper disappears, the fabric turns to flesh, and you find yourself stuck as a strangely-proportioned version of {0}", costume),
 						String.format("the costume merges with your flesh, turning you into {0}", costume),
 						String.format("the costume merges with your flesh and disappears, leaving you as {0}", costume),
 						String.format("the costume's fabric replaces your flesh, leaving you trapped as a giant, animated plushy that looks like {0}", costume),
@@ -576,7 +576,8 @@ function generateCurse() {
 			},			
 			{
 				makeTransformationText:function(){return String.format("your head transforms into that of {0}", specificTarget ? "the" : subjectArticle);},
-				chosen: function(){becomingHybrid = true;}},
+				chosen: function(){becomingHybrid = true;},
+				requires: [subjectInhuman],},
 		]),
 		{
 			makeTransformationText:function(){return String.format("{0} into {1}", happensOnce 
@@ -589,8 +590,7 @@ function generateCurse() {
 			makeTransformationText:function(){return String.format("your genitals are replaced by those of {0}", specificTarget ? "the" : subjectArticle);},
 			additionalExplaination: randomFrom([
 				"You adopt the donor's sex drive.",
-				"You obtain your new privates via a swap.",
-				"Your new genitals are not resized to match your body."]),
+				"You obtain your new privates via a swap.",]),
 			requires: [nsfw]
 		},
 		{
@@ -660,7 +660,8 @@ function generateCurse() {
 					: "Your new tentacles are exceptionally large.",
 				lewdSelected ? "The tips of your tentacles are erogenous zones." 
 					: "Your tentacles can't stay still for long."]),
-			chosen: function(){shouldRenderSubjectText = false;}
+			chosen: function(){shouldRenderSubjectText = false;},
+			requires: [subjectInhuman],
 		},
 		// Inhuman transformations
 		{
@@ -819,10 +820,6 @@ function generateCurse() {
 			closingRemarkText: "Yeen Queen is my favorite band!"
 		},
 		{
-			subjectText: "bunny",
-			requires: [genderAgnostic],
-		},
-		{
 			subjectText: "squirrel",
 			requires: [genderAgnostic],
 		},
@@ -837,7 +834,7 @@ function generateCurse() {
 			closingRemarkText: "Maybe you should try living in a treehouse."
 		},
 		{
-			subjectText: randomFrom(["squid", "worm", "lemur"]),
+			subjectText: "squid",
 			requires: [genderAgnostic],
 		},
 		{
@@ -848,11 +845,6 @@ function generateCurse() {
 		{
 			subjectText: "otter", 
 			chosen: function(){extemitiesName = "webbed paws"; subjectArticle = "an"},
-			requires: [genderAgnostic],
-		},
-		{
-			subjectText: "lizard", 
-			chosen: function(){extemitiesName = "claws";},
 			requires: [genderAgnostic],
 		},
 		{
@@ -942,11 +934,6 @@ function generateCurse() {
 			requires: [genderAgnostic],
 		},
 		{
-			subjectText: "warg",
-			closingRemarkText: "What a majestic creature you've become.",
-			requires: [genderAgnostic],
-		},
-		{
 			subjectText: "kobold",
 			closingRemarkText: randomFrom(["I think you'll be adorable.", "I love those thick, lizardy tails!"]),
 			requires: [genderAgnostic],
@@ -966,6 +953,12 @@ function generateCurse() {
 			chosen: function(){extemitiesName = "claws";},
 			requires: [genderAgnostic],
 		}, 
+		{
+			subjectText: "last character you played in a video game", 
+			chosen: function(){specificTarget = true;},
+			closingRemarkText: "Mana really does flow from computer monitors these days.",
+			requires: [genderAgnostic, nonSpecificSubject],
+		},
 		{
 			subjectText: "goblin", 
 			chosen: function(){extemitiesName = "hands";},
@@ -988,11 +981,6 @@ function generateCurse() {
 			subjectText: "cerberus",
 			requires: [genderAgnostic],
 			closingRemarkText: "Stop fighting with yourself!",
-		},
-		{
-			subjectText: "drider", 
-			chosen: function(){extemitiesName = "spider legs";},
-			requires: [genderAgnostic],
 		},
 		{
 			makeSubjectText: function(){return subjectFemale ? "gorgon": "minotaur";},
