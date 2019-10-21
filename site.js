@@ -366,7 +366,7 @@ function generateCurse() {
 						: ["They are prone to entering intense, sexual heats where they view you as a potential mate", "you touch their penis"]);
 				}
 				if (nsfwSelected || lewdSelected) {
-					drawAndTrigger.push([randomFrom(["They love to wrestle", "They constantly want pets", "While together, they rub against you constantly"]), "happen to touch their genitals"]);
+					drawAndTrigger.push([randomFrom(["They love to wrestle", "They always try to lay on you", "They constantly want to be stroked", "While together, they rub against you constantly"]), "happen to touch their genitals"]);
 				}
 				var selectedDrawAndTrigger = randomFrom(drawAndTrigger);
 				return String.format(
@@ -386,6 +386,9 @@ function generateCurse() {
 					)},
 			sets: [determinesRandomSex, triggerSexBecomesOppositeSubjectSex, subjectMustDetermineSex, touchTransformation]
 		},
+		// You find a glory hole in the bathroom of xyz. A XYZ dick is uncermoneously shoved through. you find it addictve and each time you go back, turn female animal.
+		
+		// You are abducted and people get to vote on what you turn into. 
 		{
 			makeTriggerText: function(){return happensOnce ? "If you ever catch sight of the full moon," : "Each full moon";},
 		},
@@ -396,16 +399,29 @@ function generateCurse() {
 			makeTriggerText: function(){return happensOnce ? "In one week" : String.format("Every {0}", randomFrom(["Monday", "Saturday", "Friday"]));},
 			chosen: function(){shortDurationOnly = true;}
 		},
-		{
-			triggerText: "Immediately,", durationText: "The transformation is permanent.", chosen: function(){happensOnce = true;},
-			closingRemarkText: randomFrom([
-				"I hope you're sitting at home in front of your desktop right now.",
-				"Who's going to find you like that?",
-				"This might be awkward if you're out in public.",
-				"Surprise!",
-				"If you don't send me feedback, I'll know why.",
-				"I hope whatever clothes you're wearing don't get damaged."])
-		},
+		randomFrom([ // fewer permenant durations.
+			{
+				triggerText: "Immediately,", 
+				durationText: "The transformation is permanent.", 
+				chosen: function(){happensOnce = true;},
+				closingRemarkText: randomFrom([
+					"I hope you're sitting at home in front of your desktop right now.",
+					"Who's going to find you like that?",
+					"This might be awkward if you're out in public.",
+					"Surprise!",
+					"If you don't send me feedback, I'll know why.",
+					"I hope whatever clothes you're wearing don't get damaged."])
+			},
+			{
+				triggerText: randomFrom([
+					"After being prescribed a dangerous, experimental drug by accident,",
+					"A cult kidnaps you. They perform a profane ritual on you, and",
+					"A cruel witch spikes the punch at a party you're invited to, and all the guests' bodies twist into bizarre, inhuman shapes. This includes you, and",
+					"You are exposed to toxic sludge via a chemical spill. Instead of getting sick,"]), 
+				durationText: "There's no way to return to normal.", 
+				chosen: function(){happensOnce = true;},
+			},
+		]),
 		{
 			makeTriggerText: function(){return happensOnce ? "If you happen to touch an animal," : "Whenever you touch an animal,";},
 			subjectText: "touched animal", 
@@ -858,7 +874,7 @@ function generateCurse() {
 			sets: [determinesRandomSex],
 		},
 		{
-			subjectText: randomFrom("komodo dragon", "skink", "newt"), 
+			subjectText: randomFrom(["komodo dragon", "skink", "newt"]), 
 			chosen: function(){extemitiesName = "claws";},
 			requires: [genderAgnostic],
 		},
@@ -1016,6 +1032,10 @@ function generateCurse() {
 		{
 			durationText: "You return to normal after one week.",
 			closingRemarkText: "I've noticed you've been taking a lot of one-week vacations lately. . ."
+		},
+		{
+			durationText: "You return to normal in one year.",
+			closingRemarkText: "Just when you were getting used to living your new life, you turn back. I love it."
 		},
 		{
 			durationText: "You return to normal after one day, but each transformation lasts twice as long as the last.",
