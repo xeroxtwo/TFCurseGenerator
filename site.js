@@ -388,7 +388,19 @@ function generateCurse() {
 		},
 		// You find a glory hole in the bathroom of xyz. A XYZ dick is uncermoneously shoved through. you find it addictve and each time you go back, turn female animal.
 		
-		// You are abducted and people get to vote on what you turn into. 
+		{
+			makeTriggerText: function() {return String.format("{0} go without {1}{2}",
+				happensOnce ? "If you ever" : "The longer you",
+				randomFrom([
+					nsfwSelected || lewdSelected ? randomFrom("having sex", "having an orgasm") : "cuddling someone",
+					"bringing someone home on the first date",
+					lewdSelected ? "using a glory hole" : "wrestling someone",
+					"privacy",
+					"being called a freak",
+				]),					
+				happensOnce ? " for one week," : ", the more");},
+			durationText: "If you don't fufill the curse's requirement in one week, you are fully and permanently transformed."
+		},
 		{
 			makeTriggerText: function(){return happensOnce ? "If you ever catch sight of the full moon," : "Each full moon";},
 		},
@@ -416,6 +428,7 @@ function generateCurse() {
 				triggerText: randomFrom([
 					"After being prescribed a dangerous, experimental drug by accident,",
 					"A cult kidnaps you. They perform a profane ritual on you, and",
+					"You are abducted and put on display, naked and restrained, for a collection of rich secret-society members. They hold an auction to decide your fate. The winner types something into his phone, and moments later",
 					"A cruel witch spikes the punch at a party you're invited to, and all the guests' bodies twist into bizarre, inhuman shapes. This includes you, and",
 					"You are exposed to toxic sludge via a chemical spill. Instead of getting sick,"]), 
 				durationText: "There's no way to return to normal.", 
@@ -1013,10 +1026,6 @@ function generateCurse() {
 			requires: [nsfw]
 		},
 		{
-			durationText: "You remain this way for 23 hours.",
-			closingRemarkText: "That's enough time for a full day and a full night's sleep while you're transformed."
-		},
-		{
 			makeDurationText: function() {return String.format("You revert to your old self in {0} hours, but, if you {1}, the transformation becomes permenant.",
 				randomFrom(["two", "four", "six", "twelve"]),
 				randomFrom([
@@ -1029,6 +1038,10 @@ function generateCurse() {
 		},
 	]
 	var longDurations = [
+		{
+			durationText: "You remain this way for 24 hours.",
+			closingRemarkText: "You get to experience everything the day has to offer."
+		},
 		{
 			durationText: "You return to normal after one week.",
 			closingRemarkText: "I've noticed you've been taking a lot of one-week vacations lately. . ."
@@ -1157,8 +1170,8 @@ function generateCurse() {
 				: "While transformed, you don't remember being any other way."}
 		},
 		{
-			makeComplicationText: function(){return String.format("Immediately after your transformation {0}",
-				isUndecided(subjectFemale) ? "You feel compelled to reproduce until you are successful." : 
+			makeComplicationText: function(){return String.format("Immediately after your transformation, {0}",
+				isUndecided(subjectFemale) ? "you feel compelled to reproduce until you are successful." : 
 					subjectFemale ? "you feel a kicking and realize you're pregnant!" 
 					: "the nearest female becomes pregnant with your children.");},
 			requires: [nsfw]
