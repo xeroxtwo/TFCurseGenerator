@@ -372,10 +372,10 @@ function generateCurse() {
 				return String.format(
 					"{0} {1} {2}. {3}. {4}. {5} {6},", 
 					randomFrom([
-						"The next time you are out in nature alone, you encounter", 
-						"You land a job where you have any-time, private access to",
-						String.format("You return home one day to find your {0} occupied by", randomFrom(["bed", "couch", "living room"])),
-						"One evening, you hear a noise at your door. You open it to find", 
+						"The next time you are out in nature alone, you will encounter", 
+						"You will land a job where you have any-time, private access to",
+						String.format("You will return home one day to find your {0} occupied by", randomFrom(["bed", "couch", "living room"])),
+						"One evening, you will hear a noise at your door. You will open it to find", 
 					]),
 					subjectArticle, 
 					subjectFemale == triggerFemale  ? curse.renderSubjectText : renderOppositeSex(curse.renderSubjectText),// this is required to cover merge cases.
@@ -426,11 +426,10 @@ function generateCurse() {
 			},
 			{
 				triggerText: randomFrom([
-					"After being prescribed a dangerous, experimental drug by accident,",
-					"A cult kidnaps you. They perform a profane ritual on you, and",
-					"You are abducted and put on display, naked and restrained, for a collection of rich secret-society members. They hold an auction to decide your fate. The winner types something into his phone, and moments later",
-					"A cruel witch spikes the punch at a party you're invited to, and all the guests' bodies twist into bizarre, inhuman shapes. This includes you, and",
-					"You are exposed to toxic sludge via a chemical spill. Instead of getting sick,"]), 
+					"You will be kidnapped by a cult. They will perform a profane ritual on you, and",
+					"You will be abducted and put on display, naked and restrained, for a collection of rich secret-society members. They hold an auction to decide your fate. The winner types something into his phone, and moments later",
+					"A cruel witch will spike the punch at the next party you attend, and all the guests' bodies twist into bizarre, inhuman shapes. This includes you, and",
+					"You will be exposed to toxic sludge via a chemical spill. Instead of getting sick,"]), 
 				durationText: "There's no way to return to normal.", 
 				chosen: function(){happensOnce = true;},
 			},
@@ -517,10 +516,9 @@ function generateCurse() {
 					curse.renderSubjectText());
 				return String.format("{0} {1} costume. {2} {3}",
 					randomFrom([
-						"While visiting an out-of-the-way antique store, you find", 
-						"While exploring your parents' attic, you find", 
-						"You've been chosen to be your school's new mascot at homecoming. They give you",
-						"You recieve a package in the mail containing"
+						"You will find", 
+						"You will be chosen to be your school's new mascot at homecoming. They give you",
+						"You will recieve a package in the mail containing"
 						]),
 					costume,
 					happensOnce ? "If you ever wear it," : "Whenever you wear it,",
