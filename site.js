@@ -289,6 +289,7 @@ function generateCurse() {
 	var filterGenderAgnosticSubject = false;
 	var inanimateTF = false;
 	var transformationAffectsSubjectSex = true;
+	var tfCannotAssignSubject = false;
 	
 
 	// TAGS 
@@ -305,6 +306,11 @@ function generateCurse() {
 	const subjectSexBecomesTriggerSex = {
 		shouldFilter: function() {return false;},
 		onChoice: function() {if(isDecided(triggerFemale)){subjectFemale = triggerFemale;}}
+	}
+	
+	const subjectSexBecomesSpecificTriggerSex = {
+		shouldFilter: function() {return false;},
+		onChoice: function() {if(isDecided(triggerFemale) && specificTarget){subjectFemale = triggerFemale;}}
 	}
 	
 	const triggerSexBecomesOppositeSubjectSex = {
@@ -351,6 +357,15 @@ function generateCurse() {
 			subjectFemale = null;}
 	}
 
+	const subjectTransformation = {
+		shouldFilter: function(){return false;},
+		onChoice: function() {tfCannotAssignSubject = true;}
+	}
+
+	const tfSuppliesOwnSubject = {
+		shouldFilter: function(){return tfCannotAssignSubject;},
+		onChoice: function() {}
+	}
 	
 	
 	// DATA
@@ -368,10 +383,10 @@ function generateCurse() {
 			makeTriggerText: function(){
 				var drawAndTrigger = [
 						["They are always happy to see you", happensOnce ? "upset them" : "pet them"],
-						["However, they are frightened of you and often try to flee", "restrain them"]
+						["They never leave you alone", "escape them"]
 				]; 
 				if (lewdSelected) {
-					drawAndTrigger.push(["You find yourselves hopelessly attracted to each other", "give in to temptation and decide to have sex with them"]);
+					drawAndTrigger.push(["You find yourselves hopelessly attracted to each other", "give in to temptation and touch them sexually"]);
 					drawAndTrigger.push(triggerFemale ? ["They are prone to entering intense, sexual heats where they produce pheramones that you find irresitably arousing", "give in to temptation and try having sex with them"]
 						: ["They are prone to entering intense, sexual heats where they view you as a potential mate", "you touch their penis"]);
 				}
@@ -394,7 +409,7 @@ function generateCurse() {
 					happensOnce ? "If you ever" : "Each time you",
 					selectedDrawAndTrigger[1],
 					)},
-			sets: [determinesRandomSex, triggerSexBecomesOppositeSubjectSex, subjectMustDetermineSex, touchTransformation]
+			sets: [determinesRandomSex, triggerSexBecomesOppositeSubjectSex, subjectMustDetermineSex, touchTransformation, subjectTransformation]
 		},
 		// You find a glory hole in the bathroom of xyz. A XYZ dick is uncermoneously shoved through. you find it addictve and each time you go back, turn female animal.
 		
@@ -437,7 +452,6 @@ function generateCurse() {
 			{
 				triggerText: randomFrom([
 					"You will be kidnapped by a cult. They will perform a profane ritual on you, and",
-					"You will be abducted and put on display, naked and restrained, for a collection of rich secret-society members. They hold an auction to decide your fate. The winner types something into his phone, and moments later",
 					"A cruel witch will spike the punch at the next party you attend, and all the guests' bodies twist into bizarre, inhuman shapes. This includes you, and",
 					"You will be exposed to toxic sludge via a chemical spill. Instead of getting sick,"]), 
 				durationText: "There's no way to return to normal.", 
@@ -533,7 +547,7 @@ function generateCurse() {
 					costume,
 					happensOnce ? "If you ever wear it," : "Whenever you wear it,",
 					randomFrom([
-						String.format("the zipper disappears, the fabric turns to flesh, and you find yourself stuck as a strangely-proportioned version of {0}", costume),
+						String.format("the zipper disappears, the fabric turns to flesh, and you find yourself stuck as a cartoonish version of {0}", costume),
 						String.format("the costume merges with your flesh, turning you into {0}", costume),
 						String.format("the costume merges with your flesh and disappears, leaving you as {0}", costume),
 						String.format("the costume's fabric replaces your flesh, leaving you trapped as a giant, animated plushy that looks like {0}", costume),
@@ -561,12 +575,12 @@ function generateCurse() {
 		},
 		{
 			makeTransformationText:function(){return String.format("you {0} shift into {1}", 
-						randomFrom(["pleasurably", "painfully", "instantly", "slowly"]), specificTarget ? "a copy of the" : subjectArticle);},
-			sets: [subjectSexBecomesTriggerSex]
+						randomFrom(["pleasurably", "painfully", "quickly", "slowly"]), specificTarget ? "a copy of the" : subjectArticle);},
+			sets: [subjectSexBecomesSpecificTriggerSex]
 		},
 		{
 			makeTransformationText:function(){return String.format("you become {0}", specificTarget ? "a copy of the" : subjectArticle);}, 
-			sets: [subjectSexBecomesTriggerSex]
+			sets: [subjectSexBecomesSpecificTriggerSex]
 		},
 		randomFrom([ // make head transformations a little less common.
 			{
@@ -596,7 +610,7 @@ function generateCurse() {
 						"The moment when your conciousness shifts from one head to the other is very disorienting.",
 						"The moment when your conciousness shifts from one head to the other is very disorienting.",
 					]));},
-				sets: [subjectSexBecomesTriggerSex],
+				sets: [subjectSexBecomesSpecificTriggerSex],
 				requires: [lewd]
 			},
 		]),
@@ -605,7 +619,7 @@ function generateCurse() {
 				? "you spend the next 24 hours transforming" : "you transform a little bit more",
 			specificTarget ? "a copy of the" : subjectArticle);}, durationText: "",
 			closingRemarkText: "I looooove the slow burn.",
-			sets: [subjectSexBecomesTriggerSex]
+			sets: [subjectSexBecomesSpecificTriggerSex]
 		},
 		{
 			makeTransformationText:function(){return String.format("your genitals are replaced by those of {0}", specificTarget ? "the" : subjectArticle);},
@@ -624,10 +638,11 @@ function generateCurse() {
 				"You find yourself hopelessly attracted to all your friends."]),
 			chosen: function(){shouldRenderSubjectText = false; subjectHuman = true;},
 			subjectText: "",
+			requires: [tfSuppliesOwnSubject]
 		},
 		{
 			makeTransformationText:function(){return String.format("you become a taur version of {0}", specificTarget ? "the" : subjectArticle);},
-			sets: [subjectSexBecomesTriggerSex]
+			sets: [subjectSexBecomesSpecificTriggerSex]
 		},
 		randomFrom([ // less genital-mouths
 			{
@@ -635,7 +650,7 @@ function generateCurse() {
 					? String.format("you grow a copy of the {0}'s genitals in your mouth", curse.renderSubjectText())
 					: String.format("your {0} transforms into the {1} of {2} {3}", 
 						subjectFemale ? "mouth" : "tongue", subjectFemale ? "pussy" : "penis", subjectArticle, curse.renderSubjectText());},
-				sets: [subjectSexBecomesTriggerSex, determinesRandomSex],
+				sets: [subjectSexBecomesSpecificTriggerSex, determinesRandomSex],
 				requires: [lewd],
 				chosen: function(){shouldRenderSubjectText = false;},
 			},
@@ -657,7 +672,7 @@ function generateCurse() {
 				"Mental conditioning makes fufilling your duties a pleasure.",
 				"Whenever anyone sees you, they have an urge to use you.",
 				"You cannot refuse any command."]),
-			sets: [subjectSexBecomesTriggerSex],
+			sets: [subjectSexBecomesSpecificTriggerSex],
 			requires: [nsfw]
 		},
 		{
@@ -687,7 +702,7 @@ function generateCurse() {
 			chosen: function(){shouldRenderSubjectText = false;},
 			subjectText: "",
 			sets: [doNotAssignSubjectSex],
-			requires: [subjectInhuman],
+			requires: [subjectInhuman, tfSuppliesOwnSubject],
 		},
 		// Inhuman transformations
 		{
@@ -704,9 +719,9 @@ function generateCurse() {
 		{
 			makeTransformationText:function(){return String.format("you transform into a {0} version of {1}",
 				isDecided(subjectFemale) ? subjectFemale ? "monstergirl" : "monsterboy" : "kemono",
-				specificTarget ? "the" : subjectArticle);
+				specificTarget ? "the" : subjectArticle);},
 			closingRemarkText: randomFrom([
-				"Just inhuman enough for mass appeal.", "How kawaii!"])},
+				"Just inhuman enough for mass appeal.", "How kawaii!"]),
 			chosen: function(){becomingHybrid = true;},
 			requires: [subjectInhuman],
 		},
