@@ -459,7 +459,8 @@ function generateCurse() {
 			},
 		]),
 		{
-			makeTriggerText: function(){return happensOnce ? "If you happen to touch an animal," : "Whenever you touch an animal,";},
+			makeTriggerText: function(){return String.format(happensOnce ? "If you happen to touch {0}," : "Whenever you touch {0},", 
+				randomFrom(["someone's pet", "a wild animal", nsfwSelected || lewdSelected ? "an animal in heat" : "an angry animal", "an animal"]));},
 			subjectText: "touched animal", 
 			chosen: function(){specificTarget = true;},
 			sets: [touchTransformation]
@@ -489,7 +490,7 @@ function generateCurse() {
 		},
 		{
 			makeTriggerText: function(){
-				return String.format(happensOnce ? "When you next touch {0}": "Whenever you touch {0},",
+				return String.format(happensOnce ? "When you next touch {0},": "Whenever you touch {0},",
 				randomFrom(["someone", "your best friend", "your romantic partner", "a stranger in public", "your boss"]));},
 			subjectText: "touched person",
 			chosen: function(){specificTarget = true; subjectHuman = true;},
@@ -625,7 +626,7 @@ function generateCurse() {
 			makeTransformationText:function(){return String.format("your genitals are replaced by those of {0}", specificTarget ? "the" : subjectArticle);},
 			additionalExplaination: randomFrom([
 				"You adopt the donor's sex drive.",
-				"You obtain your new privates via a swap.",]),
+				"You adpot the doner's sexual preferences",]),
 			requires: [nsfw]
 		},
 		{
@@ -699,7 +700,7 @@ function generateCurse() {
 					: "Your new tentacles are exceptionally large.",
 				lewdSelected ? "The tips of your tentacles are erogenous zones." 
 					: "Your tentacles can't stay still for long."]),
-			chosen: function(){shouldRenderSubjectText = false;},
+			chosen: function(){shouldRenderSubjectText = false; becomingHybrid = true;},
 			subjectText: "",
 			sets: [doNotAssignSubjectSex],
 			requires: [subjectInhuman, tfSuppliesOwnSubject],
@@ -796,12 +797,27 @@ function generateCurse() {
 			sets: [determinesRandomSex],
 		},
 		{
-			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "rottweiler bitch" : "rottweiler stud" : "rottweiler";},
+			makeSubjectText: function(){return String.format("{0}{1}",
+				randomFrom([
+					"rottweiler",
+					"doberman",
+					"mastiff",
+					"great dane",
+					"burmese mountain dog",
+					"husky"]),
+				isDecided(subjectFemale) ? subjectFemale ? " bitch" : " stud" : "")},
 			closingRemarkText: randomFrom(["That's a solid breed.","Beg for the biscuit!"]),
 			sets: [determinesRandomSex],
 		},
 		{
-			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "german shepherd bitch" : "german shepherd stud" : "german shepherd";},
+			makeSubjectText: function(){return String.format("{0}{1}",
+				randomFrom([
+					"german shepherd",
+					"austrialian shepherd",
+					"corgi",
+					"labrador",
+					"poodle"]),
+				isDecided(subjectFemale) ? subjectFemale ? " bitch" : " stud" : "")},
 			closingRemarkText: randomFrom(["Do you know any tricks?","Are you going to pretend to be someone's pet?"]),
 			sets: [determinesRandomSex],
 		},
@@ -816,8 +832,8 @@ function generateCurse() {
 			sets: [determinesRandomSex],
 		},
 		{
-			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "ewe" : "ram" : "sheep";},
-			chosen: function(){extemitiesName = "hooves"; subjectArticle = isDecided(subjectFemale) ? subjectFemale ? "an" :"a" : "a";},
+			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "fluffy ewe" : "ram" : "sheep";},
+			chosen: function(){extemitiesName = "hooves";},
 			sets: [determinesRandomSex],
 		},
 		{
