@@ -736,6 +736,7 @@ function generateCurse() {
 			additionalExplaination: randomFrom([
 				"You go unconcious when deflated.",
 				"You can still move when transformed.", 
+				"Everyone loves playing with you.",
 				"Your valve is an erogenous zone"]),
 			requires: [subjectInhuman],
 		},
@@ -834,6 +835,7 @@ function generateCurse() {
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "fluffy ewe" : "ram" : "sheep";},
 			chosen: function(){extemitiesName = "hooves";},
+			additionalExplaination: "Your wool needs to be sheared regularly, but it makes great blankets.",
 			sets: [determinesRandomSex],
 		},
 		{
@@ -849,11 +851,15 @@ function generateCurse() {
 		{
 			makeSubjectText: function(){return decidedAndTrue(subjectFemale) ? "vixen" : "fox";},
 			sets: [determinesRandomSex],
+			closingRemarkText: "I've never understood the appeal of foxes, but I have a feeling you'll appretiate this one.",
 		},
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "nanny goat" : "billy goat" : "goat";},
 			chosen: function(){extemitiesName = "hooves";},
 			sets: [determinesRandomSex],
+			additionalExplaination: decidedAndTrue(subjectFemale) 
+				? "You have a swollen pair of dugs between your legs that must be milked twice a day."
+				: "Your pupils are horizontal, and you attract the attention of a lot of cultists.",
 			closingRemarkText: "Maybe it'll make you a better climber."
 		},
 		{
@@ -870,8 +876,9 @@ function generateCurse() {
 			requires: [genderAgnostic],
 		},
 		{
-			subjectText: randomFrom(["tiger", "lion", "cheetah"]),
-			requires: [genderAgnostic],
+			makeSubjectText: function() {String.format(randomFrom(["tiger{0}", "lion{0}"]), 
+				decidedAndTrue(subjectFemale) ? "ess" : "")},
+			sets: [determinesRandomSex]
 		},
 		{
 			subjectText: "hyena",
@@ -917,7 +924,7 @@ function generateCurse() {
 			requires: [genderAgnostic, nonSpecificSubject],
 		},
 		{
-			subjectText: "whale", 
+			subjectText: randomFrom(["whale", "dolphin"]), 
 			chosen: function(){extemitiesName = "fins";},
 			requires: [genderAgnostic],
 		},
@@ -931,7 +938,7 @@ function generateCurse() {
 		},
 		{
 			subjectText: randomFrom(["bee", "spider", "scorpion"]),
-			chosen: function(){extemitiesName = "pointed extremities";},
+			chosen: function(){extemitiesName = "pointed legs";},
 			requires: [genderAgnostic],
 		},
 		{
@@ -1114,9 +1121,9 @@ function generateCurse() {
 		},
 		{
 			makeDurationText: function(){return isUndecided(subjectFemale)
-				? "You remain this way until you have sex with 10 different people." 
-				: subjectFemale ? "You will be restored to your original form once 10 people cum inside of you." 
-					: "You will be restored to your original form once you cum inside 10 people.";},
+				? "You remain this way until you have sex with 5 different people." 
+				: subjectFemale ? "You will be restored to your original form once 5 people cum inside of you." 
+					: "You will be restored to your original form once you cum inside 5 people.";},
 			requires: [lewd]
 		},
 	]
@@ -1129,10 +1136,11 @@ function generateCurse() {
 		{
 			makeComplicationText: function(){return happensOnce 
 				? "No one remembers you being any other way." 
-				: "While transformed, everyone thinks you've always been this way.";}
+				: "While transformed, everyone thinks you've always been this way.";},
+			closingRemarkText: "But you and I will always know the truth. ;)",
 		},
 		{
-			complicationText: "Your sex drive and production of bodily fluids are greatly increased.",
+			complicationText: "Your sex drive and production of bodily fluids are greatly increased. When you're hungy, you drool. When you're horny, well. . .",
 			closingRemarkText: "Does bodily fluids include sweat? That could be kinda gross.",
 			requires: [nsfw]
 		},
@@ -1143,16 +1151,16 @@ function generateCurse() {
 				requires: [lewd]
 		},
 		{
-			complicationText: "Your curse is sexually transmittable.",
+			complicationText: randomFrom(["Your curse is sexually transmittable.", "People you come in contact with catch your curse like the common cold."]),
 			closingRemarkText: "It won't be long before prospective lovers ask each other to get tested for it.",
 			requires: [nsfw]
 		},
 		{
-			complicationText: "Your bodily fluids are a potent aphrodesiac when consumed.",
+			complicationText: "Your bodily fluids are a potent aphrodesiac, but you must trick your target into drinking something tainted with them.",
 			requires: [nsfw]
 		},
 		{
-			complicationText: "Your pheromones allow you to seduce almost any creature.",
+			complicationText: "Your pheromones allow you to seduce any creature with a nose.",
 			requires: [nsfw]
 		},
 		{
@@ -1175,12 +1183,11 @@ function generateCurse() {
 			requires: [lewd]
 		},
 		{
-			complicationText: "You grow an extra penis.", 
-			sets: [subjectIsFemale],
+			complicationText: decidedAndTrue(subjectFemale) ? "A penis grows above your pussy." : "You grow an additional penis.", 
 			requires: [lewd],
 		},
 		{
-			complicationText: "You grow an extra vagina.", 
+			complicationText: isUndecided(subjectFemale) ? "You grow a pussy." : subjectFemale ? "You grow an additional pussy next to your first." : "Your taint splits open to reveal a freshly formed pussy.", 
 			requires: [lewd], 
 			sets: [subjectIsFemale]
 		},
@@ -1191,16 +1198,12 @@ function generateCurse() {
 			complicationText: "No one seems to think your new curse is at all unusual."
 		},
 		{
-			complicationText: "Your current romantic interest is also afflicted with a similar curse."
+			complicationText: "Your current romantic interest is afflicted with a similar curse.",
+			closingRemarkText: "At least you have a friend.",
 		},
 		{
 			makeComplicationText: function(){return String.format(
 				"If you weren't before, you are now {0}.", randomFrom(["bisexual", "gay"]));}
-		},
-		{
-			makeComplicationText: function(){return String.format(
-				"{0} a hermaphrodite.", happensOnce ? "You become" : "While transformed, you are");},
-			requires: [nsfw]
 		},
 		{
 			makeComplicationText: function(){return String.format(
@@ -1219,7 +1222,7 @@ function generateCurse() {
 				: "While transformed, you don't remember being any other way."}
 		},
 		{
-			makeComplicationText: function(){return String.format("Immediately after your transformation, {0}",
+			makeComplicationText: function(){return String.format("After your transformation, {0}",
 				isUndecided(subjectFemale) ? "you feel compelled to reproduce until you are successful." : 
 					subjectFemale ? "you feel a kicking and realize you're pregnant!" 
 					: "the nearest female becomes pregnant with your children.");},
@@ -1234,14 +1237,7 @@ function generateCurse() {
 			makeComplicationText: function(){return isUndecided(subjectFemale) 
 				? "Your genitals are oversized." : 
 					subjectFemale ? "Your pussy is oversized and gets dripping wet whenever you're aroused." 
-					: "Your penis is exceptionally large.";},
-			requires: [lewd]
-		},
-		{
-			makeComplicationText: function(){return isUndecided(subjectFemale) 
-				? "Your genitals are massively oversized." 
-				: subjectFemale ? "Your pussy is absolutely enormous, impossible to hide, and is constantly dripping wet." 
-					: "Your penis is absolutely enormous.";},
+					: "Your penis is exceptionally large, and there's no way to hide it.";},
 			requires: [lewd]
 		},
 	]
@@ -1266,12 +1262,12 @@ function generateCurse() {
 		},
 		{
 			makeComplicationText: function(){return happensOnce 
-				? "You are sold to a rich, private collector." 
+				? "You are sold to a rich, private collector who uses you for his own entertainment."
 				: "While in human form, you retain some parts of your other form.";}
 		},
 		{
 			makeComplicationText: function(){return happensOnce 
-				? "You are captured for scientific research." : "Each time you revert to human, you retain more parts of your other form.";}
+				? "You are captured for scientific research. Most tests seem to be focused around reproduction." : "Each time you revert to human, you retain more parts of your other form.";}
 		},
 	]
 	var subjectHumanComplications = [
@@ -1321,14 +1317,12 @@ function generateCurse() {
 	if (curse.renderDurationText == null) {
 		updateCurse(curse, randomFrom(buildDurations()));
 	}
-	var chosenComplication;
 	if (curse.renderComplicationText == null) {
 		var chance = lewdSelected ? .8 : nsfwSelected ? .35 : .15;
 		if(Math.random() < chance) {
-			chosenComplication = randomFrom(buildComplications(imaginarySpeciesAllowed, subjectHuman));
+			var chosenComplication = randomFrom(buildComplications(imaginarySpeciesAllowed, subjectHuman));
 			updateCurse(curse, chosenComplication);
 		} else {
-			chosenComplication = "the empty one";
 			updateCurse(curse, {complicationText: ""});
 		}
 	}
