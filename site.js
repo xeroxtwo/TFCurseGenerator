@@ -136,7 +136,7 @@ function generateCurse() {
 			if (!imaginarySpeciesAllowed) {
 				output = output.concat(mundaneAnimalComplications);
 			}
-		} else {
+		} else if (decidedAndTrue(specificTarget)) {
 			output = output.concat(subjectHumanComplications);
 		}
 		return filterComponents(output);
@@ -451,7 +451,7 @@ function generateCurse() {
 			},
 			{
 				triggerText: randomFrom([
-					"You will be kidnapped by a cult. They will perform a profane ritual on you, and",
+					"You will be kidnapped by a cult. They will perform a profane ritual on you where",
 					"A cruel witch will spike the punch at the next party you attend, and all the guests' bodies twist into bizarre, inhuman shapes. This includes you, and",
 					"You will be exposed to toxic sludge via a chemical spill. Instead of getting sick,"]), 
 				durationText: "There's no way to return to normal.", 
@@ -876,7 +876,7 @@ function generateCurse() {
 			requires: [genderAgnostic],
 		},
 		{
-			makeSubjectText: function() {String.format(randomFrom(["tiger{0}", "lion{0}"]), 
+			makeSubjectText: function() {return String.format(randomFrom(["tiger{0}", "lion{0}"]), 
 				decidedAndTrue(subjectFemale) ? "ess" : "")},
 			sets: [determinesRandomSex]
 		},
