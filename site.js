@@ -570,7 +570,7 @@ function generateCurse() {
 		{
 			makeTriggerText: function(){
 				var costume = String.format("{0} {1}", 
-					randomFrom(["a humanoid", "an anthro", "a cartoonish", subjectArticle, "a polka-dot", "a bright pink", "a neon green", "a neon striped", "a bright blue", "a checkerboard-patterned", "a purple", "a glow-in-the-dark"]),
+					randomFrom(["a humanoid", "an anthro", "a jolly", subjectArticle, "a polka-dot", "a bright pink", "a neon green", "a day-glow orange", "a bright blue", "a checkerboard-patterned", "a purple", "a glow-in-the-dark"]),
 					curse.renderSubjectText());
 				return String.format("{0} {1} costume. {2} {3}",
 					randomFrom([
@@ -890,9 +890,9 @@ function generateCurse() {
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "nanny goat" : "billy goat" : "goat";},
 			chosen: function(){extemitiesName = "hooves";},
 			sets: [determinesRandomSex],
-			additionalExplaination: decidedAndTrue(subjectFemale) 
+			makeAdditionalExplaination: function(){return decidedAndTrue(subjectFemale) 
 				? "You have a swollen pair of dugs between your legs that must be milked twice a day."
-				: "Your pupils are horizontal, and you attract the attention of a lot of cultists.",
+				: "Your pupils are horizontal, and you attract the attention of a lot of cultists.";},
 			closingRemarkText: "Maybe it'll make you a better climber."
 		},
 		{
@@ -900,9 +900,9 @@ function generateCurse() {
 			sets: [determinesRandomSex],
 		},
 		{
-			subjectText: "zebra", 
+			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "zebra mare" : "zebra stallion" : "zebra";},
 			chosen: function(){extemitiesName = "hooves";},
-			requires: [genderAgnostic],
+			sets: [determinesRandomSex],
 		},
 		{
 			subjectText: "snow leopard",
@@ -943,6 +943,9 @@ function generateCurse() {
 		{
 			subjectText: "skunk",
 			closingRemarkText: "Do you smell something?",
+			additionalExplaination: randomFrom([
+				"You spray reflexively when startled.",
+				"You find cats strangely alluring."]),
 			requires: [genderAgnostic],
 		},
 		{
@@ -956,11 +959,26 @@ function generateCurse() {
 			closingRemarkText: "Is it better or worse if it's your own pet?",
 			requires: [genderAgnostic, nonSpecificSubject],
 		},
-		{
-			subjectText: randomFrom(["whale", "dolphin"]), 
-			chosen: function(){extemitiesName = "fins";},
-			requires: [genderAgnostic],
-		},
+		randomFrom([
+			{
+				subjectText: randomFrom(["whale", "dolphin"]), 
+				chosen: function(){extemitiesName = "fins";},
+				makeAdditionalExplaination: function() {return randomFrom([
+					"A fishy smell follows you around.",
+					"Your rubbery skin must be moistened regularly.",
+					lewdSelected && decidedAndFalse(subjectFemale) ? "Your penis is prehensile, but it often moves with a mind of its own." : ""]);},
+				requires: [genderAgnostic],
+			},
+			{
+				subjectText: randomFrom(["goldfish", "catfish"]), 
+				chosen: function(){extemitiesName = "fins";},
+				makeAdditionalExplaination: function() {return randomFrom([
+					"A fishy smell follows you around.",
+					"You have both gills and lungs, allowing you to live comfortably in the water and on land.",
+					lewdSelected && decidedAndFalse(subjectFemale) ? "You cum whenever you smell fish eggs." : ""]);},
+				requires: [genderAgnostic],
+			}
+		]),
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "jenny" : "jackass": "donkey";}, 
 			chosen: function(){extemitiesName = "hooves";},
@@ -1089,6 +1107,11 @@ function generateCurse() {
 			subjectText: "cerberus",
 			requires: [genderAgnostic],
 			closingRemarkText: "Stop fighting with yourself!",
+		},
+		{
+			makeSubjectText: function(){return !isDecided(subjectFemale) ? "mer-person" : subjectFemale ? "mermaid": "mer-man";},
+			closingRemarkText: "Something smells fishy.",
+			sets: [determinesRandomSex]
 		},
 		{
 			makeSubjectText: function(){return decidedAndTrue(subjectFemale) ?  "gorgon": "minotaur";},
