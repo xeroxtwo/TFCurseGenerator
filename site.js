@@ -475,13 +475,20 @@ function generateCurse() {
 				chosen: function(){happensOnce = true;},
 			},
 		]),
-		{
-			makeTriggerText: function(){return String.format(happensOnce ? "If you happen to touch {0}," : "Whenever you touch {0},", 
-				randomFrom(["someone's pet", "a wild animal", nsfwSelected || lewdSelected ? "an animal in heat" : "an angry animal", "an animal"]));},
-			subjectText: "touched animal", 
-			chosen: function(){specificTarget = true;},
-			sets: [touchTransformation]
-		},
+		randomFrom([{
+				makeTriggerText: function(){return String.format(happensOnce ? "If you happen to touch {0}," : "Whenever you touch {0},", 
+					randomFrom(["someone's pet", "a wild animal", nsfwSelected || lewdSelected ? "an animal in heat" : "an angry animal", "an animal"]));},
+				subjectText: "touched animal", 
+				chosen: function(){specificTarget = true;},
+				sets: [touchTransformation]
+			},
+			{
+				triggerText: happensOnce ? "If you are ever bitten by an animal," : "Whenever you touch an animal's tail,", 
+				subjectText: "biting animal", 
+				chosen: function(){specificTarget = true;},
+				sets: [touchTransformation]
+			}
+		]),
 		randomFrom([ // fewer gendered animal touch options
 			{
 				makeTriggerText: function(){return happensOnce ? "If you ever touch a female animal," : "Whenever you touch a male animal,";},
@@ -766,11 +773,13 @@ function generateCurse() {
 				"Hopefully you can warn people ahead of time.",
 				"I'd put my lips on your nozzle ;)",
 				"I've always wondered what it feels like to get inflated. You'll have to tell me."]),
-			additionalExplaination: randomFrom([
+			makeAdditionalExplaination: function() {return randomFrom([
 				"You go unconcious when deflated.",
 				"You can still move when transformed.", 
 				"Everyone loves playing with you.",
-				"Your valve is an erogenous zone"]),
+				lewdSelected || nsfwSelected ? "Your asshole turns into your new nozzle." 
+					: "Your nozzle is in the place of your belly button.",
+				"Your valve is an erogenous zone"])},
 			requires: [subjectInhuman],
 		},
 		{
@@ -917,16 +926,23 @@ function generateCurse() {
 			subjectText: "hyena",
 			requires: [genderAgnostic],
 			makeAdditionalExplaination: function(){return decidedAndTrue(subjectFemale) 
-				? "You have a pseudopenis and fake testicles." 
+				? "You have a pseudopenis, complete with a fatty sack standing in for testicles." 
 				: "Remember: male hyenas are submissive to the females.";},
 			closingRemarkText: "Yeen Queen is my favorite band!"
 		},
 		{
 			subjectText: "squirrel",
+			additionalExplaination: randomFrom([
+				"You become twitchy and skittish.",
+				lewdSelected || nsfwSelected ? "You develop a strange fascination with caressing, licking, and sucking people's nuts." : "You have a strange craving for nuts.",
+			]),
 			requires: [genderAgnostic],
 		},
 		{
 			subjectText: "kangaroo",
+			makeAdditionalExplaination: function(){return decidedAndTrue(subjectFemale) 
+				? "Each hop causes a lot of jiggling." 
+				: "Walking and running become more difficult than hopping.";},
 			requires: [genderAgnostic],
 			closingRemarkText: "G'day, mate!"
 		},
@@ -1055,9 +1071,9 @@ function generateCurse() {
 			sets: [determinesRandomSex],
 		},
 		{
-			subjectText: "unicorn", 
+			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "unicorn mare": "unicorn stallion" : "unicorn";},
 			chosen: function(){extemitiesName = "hooves";},
-			requires: [genderAgnostic],
+			sets: [determinesRandomSex],
 		},
 		{
 			subjectText: "kobold",
@@ -1075,9 +1091,9 @@ function generateCurse() {
 	];
 	var imaginaryNonHybridable = [
 		{
-			subjectText: "demon", 
+			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "demoness": "demon" : "demon";},
+			sets: [determinesRandomSex],
 			chosen: function(){extemitiesName = "claws";},
-			requires: [genderAgnostic],
 		}, 
 		{
 			subjectText: "last character you played in a video game", 
@@ -1357,6 +1373,7 @@ function generateCurse() {
 		{closingRemarkText: "How could you possibly adapt?"},
 		{closingRemarkText: "I wonder if you can use that as a way to make money. . ."},
 		{closingRemarkText: "Guess I was wrong about you being lucky."},
+		{closingRemarkText: "Ooof. Well, not everyone gets off that easy."},
 		{closingRemarkText: "I think I'll like you more this way."},
 		{closingRemarkText: "I think people will like you more this way."},
 		{closingRemarkText: "You may have to get a new job."},
