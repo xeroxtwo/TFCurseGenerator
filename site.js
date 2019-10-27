@@ -32,7 +32,7 @@ $(document).ready(function() {
 		var curseOutput = generateCurse();
 		
 		$("#goButton").html("Wait, can I get a different one?");
-		$("#output").html(curseOutput.curseText);
+		$(".curseOutput").html(curseOutput.curseText);
 		$("#circePost").html(curseOutput.circeText);
 		$("#secretCopyField").html(String.format("{0}\n\n\"{1}\"", curseOutput.curseText, curseOutput.circeText));
 		$(".curseRow").css("display", "block");
@@ -73,6 +73,21 @@ function getCircePreText() {
 }
 
 function generateCurse() {
+	selectAnother = function(components) {
+		var anotherSelected = randomFrom(components);
+		if (chosenTrigger == anotherSelected
+			|| chosenTransformation == anotherSelected
+			|| chosenSubject == anotherSelected
+			|| chosenDuration == anotherSelected
+			|| chosenComplication == anotherSelected) {
+			return selectAnother(components);
+		} else {
+			return anotherSelected;
+		}
+
+
+	}
+
 	function setTagsForComponent(component) {
 		if (component.sets != null) {
 			for (var i = 0; i < component.sets.length; i++) {
@@ -191,7 +206,7 @@ function generateCurse() {
 		
 		renderAdditionalExplainations : function () {
 			if (this.additionalExplainations.length > 1) {
-				return String.format("<br>{0}", this.additionalExplainations.join(' '));
+				return String.format("<br></p><p>{0}", this.additionalExplainations.join(' '));
 			} else {
 				return "";
 			}
@@ -206,7 +221,7 @@ function generateCurse() {
 		},
 		
 		renderText : function() {
-			return String.format("{0} {1}{2}{3}. {4} {5}{6}",
+			return String.format("<p>{0} {1}{2}{3}. {4} {5}{6}</p>",
 				this.renderTriggerText(),
 				this.renderTransformationText(),
 				shouldRenderSubjectText ? " " : "",
@@ -350,7 +365,7 @@ function generateCurse() {
 
 	const specificIndividualTarget = {
 		shouldFilter: function(){return !specificTarget;},
-		onChoice: function() {specificTarget = true;}
+		onChoice: function() {specificTarget = true; subjectArticle = "the";}
 	}
 	
 	const mundaneAnimalSubject = {
@@ -1288,6 +1303,37 @@ function generateCurse() {
 
 	var complications = [
 		{
+			// Double complications
+			makeComplicationText: function(){
+				var comp1 = selectAnother(filterComponents(complications));
+				var comp2 = selectAnother(filterComponents(complications));
+				var compText1 = comp1.complicationText == null ? comp1.makeComplicationText() : comp1.complicationText;
+				var compText2 = comp2.complicationText == null ? comp2.makeComplicationText() : comp2.complicationText;
+				return String.format("<br></p><p>{0} {1}", 
+					compText1,
+					compText2);
+			},
+			requires: [nsfw],
+
+		},
+		{
+			// Triple complications
+			makeComplicationText: function(){
+				var comp1 = selectAnother(filterComponents(complications));
+				var comp2 = selectAnother(filterComponents(complications));
+				var comp3 = selectAnother(filterComponents(complications));
+				var compText1 = comp1.complicationText == null ? comp1.makeComplicationText() : comp1.complicationText;
+				var compText2 = comp2.complicationText == null ? comp2.makeComplicationText() : comp2.complicationText;
+				var compText3 = comp3.complicationText == null ? comp3.makeComplicationText() : comp3.complicationText;
+				return String.format("<br></p><p>{0} {1} {2}", 
+					compText1,
+					compText2,
+					compText3,);
+			},
+			requires: [lewd],
+
+		},
+		{
 			makeComplicationText: function(){return String.format("{0} must obey the orders of any human.",
 				happensOnce ? "You" : "While transformed, you");}
 		},
@@ -1407,7 +1453,7 @@ function generateCurse() {
 			requires: [mundaneAnimalSubject],
 		},
 		{
-			makeComplicationText: function() {return String.format("The longer you remain transformed, the more your thoughts become the simple instincts of {0} {1}",
+			makeComplicationText: function() {return String.format("The longer you remain transformed, the more your thoughts become the simple instincts of {0} {1}.",
 				subjectArticle,
 				curse.renderSubjectText());},
 			requires: [mundaneAnimalSubject],
@@ -1485,24 +1531,34 @@ function generateCurse() {
 		}
 	}*/
 	
-	updateCurse(curse, randomFrom(filterComponents(triggers)));
+
+	var chosenTrigger = randomFrom(filterComponents(triggers));
+	updateCurse(curse, chosenTrigger);
+	
+	var chosenTransformation = randomFrom(filterComponents(transformations));
 	if (curse.renderTransformationText == null) {
-		updateCurse(curse, randomFrom(filterComponents(transformations)));
+		updateCurse(curse, chosenTransformation);
 	}
+
+	var chosenSubject = randomFrom(filterComponents(subjects));
 	if (curse.renderSubjectText == null) {
-		updateCurse(curse, randomFrom(filterComponents(subjects)));
+		updateCurse(curse, chosenSubject);
 	}
+
+	var chosenDuration = randomFrom(buildDurations());
 	if (curse.renderDurationText == null) {
-		updateCurse(curse, randomFrom(buildDurations()));
+		updateCurse(curse, chosenDuration);
 	}
+
+	var chosenComplication = null;
 	if (curse.renderComplicationText == null) {
 		var chance = lewdSelected ? .8 : nsfwSelected ? .35 : .15;
 		if(Math.random() < chance) {
-			var chosenComplication = randomFrom(filterComponents(complications));
-			updateCurse(curse, chosenComplication);
+			chosenComplication = randomFrom(filterComponents(complications));
 		} else {
-			updateCurse(curse, {complicationText: ""});
+			chosenComplication = {complicationText:""};
 		}
+		updateCurse(curse, chosenComplication);
 	}
 	if (curse.renderClosingRemarkText == null) {
 		if(Math.random() < .3) {
@@ -1510,6 +1566,7 @@ function generateCurse() {
 		}
 	}
 	return {curseText: curse.renderText(), circeText: curse.renderCirceText()};
+
 }
 
 
