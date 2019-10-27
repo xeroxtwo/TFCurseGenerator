@@ -30,6 +30,7 @@ body {
 .curseOutput {
 	background-color: violet;
 	color: black;
+	text-indent: 40px;
 }
 
 .circeTalk {
