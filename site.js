@@ -264,7 +264,7 @@ function generateCurse() {
 	var transformationAffectsSubjectSex = true;
 	var tfCannotAssignSubject = false;
 	var specificTarget = false;
-	var mundaneAnimalSubject = null;
+	var isMundaneAnimalSubject = null;
 	var subjectHybrid = false;
 	
 
@@ -352,15 +352,15 @@ function generateCurse() {
 		shouldFilter: function(){return !specificTarget;},
 		onChoice: function() {specificTarget = true;}
 	}
-
+	
 	const mundaneAnimalSubject = {
-		shouldFilter: function(){return decidedAndFalse(mundaneAnimalSubject);},
-		onChoice: function() {subjectInhuman = true; mundaneAnimalSubject = true; subjectHuman = false;}
+		shouldFilter: function(){return decidedAndFalse(isMundaneAnimalSubject);},
+		onChoice: function() {subjectHuman = false; isMundaneAnimalSubject = true;}
 	}
 
 	const nonMundaneSubject = {
 		shouldFilter: function(){return decidedAndTrue(mundaneAnimalSubject);},
-		onChoice: function() {subjectInhuman = true;  mundaneAnimalSubject = false;}
+		onChoice: function() {subjectHuman = false;  isMundaneAnimalSubject = false;}
 
 	}
 	
@@ -684,7 +684,7 @@ function generateCurse() {
 				"You find yourself hopelessly attracted to all your friends."]),
 			chosen: function(){shouldRenderSubjectText = false;},
 			subjectText: "",
-			sets: [subjectHuman]
+			sets: [subjectIsHuman],
 			requires: [tfSuppliesOwnSubject]
 		},
 		{
@@ -875,7 +875,7 @@ function generateCurse() {
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "doe" : "buck" : "deer";},
 			chosen: function(){extemitiesName = "hooves";},
-			closingRemarkText: "A noble animal with a great rack."
+			closingRemarkText: "A noble animal with a great rack.",
 			sets: [determinesRandomSex, mundaneAnimalSubject],
 		},
 		{
@@ -940,7 +940,7 @@ function generateCurse() {
 			makeAdditionalExplaination: function(){return decidedAndTrue(subjectFemale) 
 				? "You have a pseudopenis, complete with a fatty sack standing in for testicles." 
 				: "Remember: male hyenas are submissive to the females.";},
-			closingRemarkText: "Yeen Queen is my favorite band!"
+			closingRemarkText: "Yeen Queen is my favorite band!",
 			requires: [genderAgnostic],
 			sets: [mundaneAnimalSubject],
 		},
@@ -1093,7 +1093,7 @@ function generateCurse() {
 					"purple", "green", "red", "pink", "blue"
 				]),
 				randomFrom(["goo", "slime", "jelly"]),
-				isDecided(subjectFemale) ? subjectFemale ? "girl": "boy" : "person";},
+				isDecided(subjectFemale) ? subjectFemale ? "girl": "boy" : "person");},
 			additionalExplaination: randomFrom([
 				lewdSelected ? "You can form fully-sensitive reproductive organs anywhere on your body."
 					: "Holding your form takes a lot of concentration.",
@@ -1185,17 +1185,17 @@ function generateCurse() {
 		{
 			makeSubjectText: function(){return !isDecided(subjectFemale) ? "mer-person" : subjectFemale ? "mermaid": "mer-man";},
 			closingRemarkText: "Something smells fishy.",
-			sets: [determinesRandomSex, subjectInhuman]
+			sets: [determinesRandomSex, subjectInhuman],
 			requires: [notBecomingHybrid, nonMundaneSubject],
 		},
 		{
 			makeSubjectText: function(){return decidedAndTrue(subjectFemale) ?  "gorgon": "minotaur";},
-			sets: [determinesRandomSex, subjectInhuman]
+			sets: [determinesRandomSex, subjectInhuman],
 			requires: [notBecomingHybrid, nonMundaneSubject],
 		},
 		{
 			makeSubjectText: function(){return decidedAndTrue(subjectFemale) ? "succubus": "incubus";},
-			sets: [determinesRandomSex, subjectInhuman]
+			sets: [determinesRandomSex, subjectInhuman],
 		},
 	]
 	
@@ -1277,7 +1277,7 @@ function generateCurse() {
 			makeDurationText: function() {return String.format(
 				"You remain this way until you have sex with {0} {1}.",
 				subjectArticle,
-				renderOppositeSex());},
+				renderOppositeSex(curse.renderSubjectText));},
 			closingRemarkText: randomFrom([
 				"It's not really amoral if you're the same species, right?",
 				"It's okay. I don't think anyone will judge you."
@@ -1413,7 +1413,8 @@ function generateCurse() {
 			requires: [mundaneAnimalSubject],
 		},
 		{
-			makeComplicationText: function(){return String.format("{0} lose your ability to read and write", happensOnce ? "You" : "While transformed, you");}
+			makeComplicationText: function(){return String.format(
+				"{0} lose your ability to read and write", happensOnce ? "You" : "While transformed, you");},
 			requires: [mundaneAnimalSubject],
 		},
 		{
@@ -1438,19 +1439,19 @@ function generateCurse() {
 		{
 			complicationText: "You gain the memories of the other person.",
 			closingRemarkText: "Pilfer their dirty secrets.",
-			requires: [subjectHuman],
+			requires: [subjectIsHuman],
 		},
 		{
 			complicationText: "Whenever the other person becomes aroused, you are as well. And vice-versa.",
-			requires: [nsfw, subjectHuman],
+			requires: [nsfw, subjectIsHuman],
 		},
 		{
 			complicationText: "Whenever the other person orgasms, so do you. And vice-versa.",
-			requires: [nsfw, subjectHuman],
+			requires: [nsfw, subjectIsHuman],
 		},
 		{
-			complicationText: "You cannot refuse orders from the other person."
-			requires: [subjectHuman],
+			complicationText: "You cannot refuse orders from the other person.",
+			requires: [subjectIsHuman],
 		},
 	]
 	
@@ -1497,7 +1498,7 @@ function generateCurse() {
 	if (curse.renderComplicationText == null) {
 		var chance = lewdSelected ? .8 : nsfwSelected ? .35 : .15;
 		if(Math.random() < chance) {
-			var chosenComplication = randomFrom(filtercomponents(complications));
+			var chosenComplication = randomFrom(filterComponents(complications));
 			updateCurse(curse, chosenComplication);
 		} else {
 			updateCurse(curse, {complicationText: ""});
@@ -1508,7 +1509,6 @@ function generateCurse() {
 			updateCurse(curse, randomFrom(filterComponents(generalClosingRemarks)));
 		}
 	}
-	
 	return {curseText: curse.renderText(), circeText: curse.renderCirceText()};
 }
 
