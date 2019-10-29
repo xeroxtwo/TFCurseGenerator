@@ -666,7 +666,7 @@ function generateCurse() {
 		{
 			makeTriggerText: function(){
 				var costume = String.format("{0} {1}", 
-					randomFrom(["a humanoid", "an anthro", "a jolly", subjectArticle, "a polka-dot", "a bright pink", "a neon green", "a bright orange", "a bright blue", "a checkerboard-patterned", "a purple", "a glow-in-the-dark"]),
+					randomFrom(["a humanoid", "an anthro", "a jolly", "a polka-dot", "a bright pink", "a neon green", "a bright orange", "a bright blue", "a checkerboard-patterned", "a purple", "a glow-in-the-dark"]),
 					curse.renderSubjectText());
 				return String.format("{0} {1} costume. {2} {3}",
 					randomFrom([
@@ -1260,7 +1260,7 @@ function generateCurse() {
 		},
 		{
 			subjectText: "orc", 
-			chosen: function(){extemitiesName = "hands";},
+			chosen: function(){extemitiesName = "hands"; subjectArticle = "an";},
 			sets: [subjectInhuman],
 			requires: [genderAgnostic, notBecomingHybrid, nonMundaneSubject],
 		},
@@ -1562,7 +1562,7 @@ function generateCurse() {
 		},
 		{
 			makeComplicationText: function(){return happensOnce 
-				? "You don't quite remember your life before the transformation" 
+				? "You don't quite remember your life before the transformation." 
 				: "While transformed, you don't remember being any other way."}
 		},
 		{
