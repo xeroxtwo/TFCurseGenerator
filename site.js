@@ -774,7 +774,7 @@ function generateCurse() {
 		},
 		{
 			makeTransformationText:function(){return String.format("you become a taur version of {0}", specificTarget ? "the" : subjectArticle);},
-			sets: [subjectSexBecomesSpecificTriggerSex]
+			sets: [subjectSexBecomesSpecificTriggerSex, becomingCreatureHybrid]
 		},
 		randomFrom([ // less genital-mouths
 			{
