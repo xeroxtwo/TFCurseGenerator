@@ -281,7 +281,7 @@ function generateCurse() {
 	var specificTarget = false;
 	var isMundaneAnimalSubject = null;
 	var subjectHybrid = false;
-	
+	var replacingGenitals = null;
 
 	// TAGS 
 	const subjectInhuman = {
@@ -364,7 +364,7 @@ function generateCurse() {
 	}
 
 	const specificIndividualTarget = {
-		shouldFilter: function(){return !specificTarget;},
+		shouldFilter: function(){return decidedAndFalse(specificTarget);},
 		onChoice: function() {specificTarget = true; subjectArticle = "the";}
 	}
 	
@@ -387,6 +387,16 @@ function generateCurse() {
 	const notBecomingHybrid = {
 		shouldFilter: function(){return decidedAndTrue(subjectHybrid)},
 		onChoice: function() {subjectHybrid = false;}
+	}
+	
+	const genitalReplacementAllowed = {
+		shouldFilter: function(){return decidedAndTrue(replacingGenitals)},
+		onChoice: function() {}
+	}
+	
+	const replacesGenitals = {
+		shouldFilter: function(){return false;},
+		onChoice: function() {replacingGenitals = true;}
 	}
 	
 	
@@ -425,7 +435,7 @@ function generateCurse() {
 						"One evening, you will hear a noise at your door. You open it to find", 
 					]),
 					subjectArticle, 
-					subjectFemale == triggerFemale  ? curse.renderSubjectText : renderOppositeSex(curse.renderSubjectText),// this is required to cover merge cases.
+					subjectFemale == triggerFemale ? curse.renderSubjectText : renderOppositeSex(curse.renderSubjectText),// this is required to cover merge cases.
 					randomFrom(["Any time you are separated, you have an urge to return to them", "You are compelled to adopt them as a new pet", "You cannot stand to be away from them"]),
 					selectedDrawAndTrigger[0],
 					happensOnce ? "If you ever" : "Each time you",
@@ -433,8 +443,38 @@ function generateCurse() {
 					)},
 			sets: [determinesRandomSex, triggerSexBecomesOppositeSubjectSex, subjectMustDetermineSex, touchTransformation, subjectTransformation]
 		},
-		// You find a glory hole in the bathroom of xyz. A XYZ dick is uncermoneously shoved through. you find it addictve and each time you go back, turn female animal.
-		
+		{
+			// SCENARIO TRIGGER: Genitals first animal
+			makeTriggerText: function(){
+				var pussyWords = ["pussy", "vulva", "sex"];
+				var dickWords = ["dick", "cock", "penis"];
+				var conditionPrep = happensOnce ? "if you ever" : "each time you";
+				var cursedBodyPart = String.format("{0}'s {1}", renderOppositeSex(curse.renderSubjectText), subjectFemale ? randomFrom(dickWords) : randomFrom(pussyWords));
+				var grownBodyPart = String.format("{0} of {1} {2}", subjectFemale ? randomFrom(pussyWords) : randomFrom(dickWords), subjectArticle,  curse.renderSubjectText());
+				var initialTransformation = String.format("Tomorrow morning, you awake to discover the {0} between your legs.", grownBodyPart);
+				if (Math.random() < 0.5) {
+					var gloryHoleDescription = subjectFemale ? 
+						String.format("A moment later, a {0} is thrust through the hole. It sits there, dripping precum and waiting.", cursedBodyPart)
+						: String.format("Peering through, you find a {0} pressed against the other side, sopping wet and ready for action.", cursedBodyPart);
+					return String.format("{0} As if this wasn't strange enough, "
+						+ "any time you are alone in a bathroom stall, a glory hole appears on the wall. {1} The scent is strong, but not unpleasant, "
+						+ "and you find yourself missing it when you're away. However, {2} indulge in the pleasures of the glory hole,",
+						initialTransformation,
+						gloryHoleDescription,
+						conditionPrep);
+				} else {
+					var sexToy = subjectFemale ? "dildo" : "masturbator";
+					return String.format("{0} The next day, you recieve a package containing a lifelike {1} shaped like a {2}. "
+						+ "It looks like it would it would feel delightful with your new equipment, but {3} use it,",
+						initialTransformation,
+						sexToy,
+						cursedBodyPart,
+						conditionPrep);
+				}
+			},
+			requires: [nsfw],
+			sets: [determinesRandomSex, triggerSexBecomesOppositeSubjectSex, subjectMustDetermineSex, subjectTransformation, replacesGenitals]
+		},
 		{
 			makeTriggerText: function() {return String.format("{0} go without {1}{2}",
 				happensOnce ? "If you ever" : "The longer you",
@@ -667,7 +707,7 @@ function generateCurse() {
 					"Your new form's head emerges from your crotch, while your own head turns into its new backside. {0}",
 					randomFrom([
 						"Your conciousness remains confined to your new body's backside, leaving you a helpless passenger. Your body's new owner is horny, mischevious, and has access to your memories.",
-						"Your conciousness remains confined to your new body's backside, leaving you a helpless passenger. Your body's new owner appears to be a duplicate of yourself and has no idea you still exist.",
+						"Your conciousness remains confined to your new body's backside, leaving you a helpless passenger. Your body's new owner appears to be a mental duplicate of yourself and has no idea you still exist.",
 						"The moment when your conciousness shifts from one head to the other is very disorienting.",
 						"The moment when your conciousness shifts from one head to the other is very disorienting.",
 					]));},
@@ -686,8 +726,8 @@ function generateCurse() {
 			makeTransformationText:function(){return String.format("your genitals are replaced by those of {0}", specificTarget ? "the" : subjectArticle);},
 			additionalExplaination: randomFrom([
 				"You adopt the donor's sex drive.",
-				"You adopt the donor's sexual preferences",]),
-			requires: [nsfw]
+				"You adopt the donor's sexual preferences.",]),
+			requires: [nsfw, genitalReplacementAllowed]
 		},
 		{
 			transformationText: "you switch genders",
@@ -846,11 +886,20 @@ function generateCurse() {
 		},
 	];
 	
+	var breed1 = randomFrom([
+					"rottweiler",
+					"doberman",
+					"mastiff",
+					"great dane",
+					"burmese mountain dog",
+					"husky"]);
+	var breed2 = randomFrom([
+					"german shepherd",
+					"austrialian shepherd",
+					"corgi",
+					"labrador",
+					"poodle"]);
 	var subjects = [
-		{
-			makeSubjectText: function() {return String.format("{0} member of your favorite species", subjectFemale ? "female" : "male")},
-			sets: [determinesRandomSex, mundaneAnimalSubject],
-		},
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "cow" : "bull" : "cow";}, //[sic] gender-neutral is "cattle" but everyone just calls them cows
 			closingRemarkText: "Uhh. . . Moo?",
@@ -861,26 +910,17 @@ function generateCurse() {
 			sets: [determinesRandomSex, mundaneAnimalSubject],
 		},
 		{
+
 			makeSubjectText: function(){return String.format("{0}{1}",
-				randomFrom([
-					"rottweiler",
-					"doberman",
-					"mastiff",
-					"great dane",
-					"burmese mountain dog",
-					"husky"]),
+				breed1,
 				isDecided(subjectFemale) ? subjectFemale ? " bitch" : " stud" : "");},
 			closingRemarkText: randomFrom(["That's a solid breed.","Beg for the biscuit!"]),
 			sets: [determinesRandomSex, mundaneAnimalSubject],
 		},
 		{
+
 			makeSubjectText: function(){return String.format("{0}{1}",
-				randomFrom([
-					"german shepherd",
-					"austrialian shepherd",
-					"corgi",
-					"labrador",
-					"poodle"]),
+				breed2,
 				isDecided(subjectFemale) ? subjectFemale ? " bitch" : " stud" : "")},
 			closingRemarkText: randomFrom(["Do you know any tricks?","Are you going to pretend to be someone's pet?"]),
 			sets: [determinesRandomSex, mundaneAnimalSubject],
@@ -947,8 +987,7 @@ function generateCurse() {
 		{
 			makeSubjectText: function() {return String.format(randomFrom(["tiger{0}", "lion{0}"]), 
 				decidedAndTrue(subjectFemale) ? "ess" : "")},
-			requires: [genderAgnostic],
-			sets: [mundaneAnimalSubject],
+			sets: [mundaneAnimalSubject, determinesRandomSex],
 		},
 		{
 			subjectText: "hyena",
@@ -1211,6 +1250,7 @@ function generateCurse() {
 		{
 			makeSubjectText: function(){return decidedAndTrue(subjectFemale) ? "succubus": "incubus";},
 			sets: [determinesRandomSex, subjectInhuman],
+			requires: [notBecomingHybrid],
 		},
 	]
 	
@@ -1243,13 +1283,14 @@ function generateCurse() {
 					"I hope the people you tell don't use their knowledge against you."])
 		},
 		{
-			durationText: String.format("You remain this way until {0}.", 
+			makeDurationText: function() {return String.format("You remain this way until {0}.", 
 				randomFrom([
 					"someone has sex with you",
 					isDecided(subjectFemale) ? 
 						subjectFemale ? "someone eats you out" : "someone gives you a blow job" 
 						: "someone brings you to climax with their mouth",
-				])),
+				])
+			);},
 			requires: [nsfw]
 		},
 		{
@@ -1277,7 +1318,7 @@ function generateCurse() {
 			durationText: String.format("You remain this way until you have been owned by a human for at least a {0}.", 
 				randomFrom(["week", "month", "year"])),
 			closingRemarkText: "You'd better learn to follow commands and be docile. Don't want them to get rid of you.",
-			requires: [mundaneAnimalSubject],
+			requires: [mundaneAnimalSubject, notBecomingHybrid],
 		},
 		{
 			durationText: "You return to normal in one year.",
@@ -1359,7 +1400,7 @@ function generateCurse() {
 			closingRemarkText: "But you and I will always know the truth. ;)",
 		},
 		{
-			complicationText: "Your sex drive and production of bodily fluids are greatly increased. When you're hungy, you drool. When you're horny, well. . .",
+			complicationText: "Your sex drive and production of bodily fluids are greatly increased. When you're hungry, you drool. When you're horny, well. . .",
 			closingRemarkText: "Does bodily fluids include sweat? That could be kinda gross.",
 			requires: [nsfw]
 		},
@@ -1500,19 +1541,19 @@ function generateCurse() {
 		{
 			complicationText: "You gain the memories of the other person.",
 			closingRemarkText: "Pilfer their dirty secrets.",
-			requires: [subjectIsHuman],
+			requires: [subjectIsHuman, specificIndividualTarget],
 		},
 		{
 			complicationText: "Whenever the other person becomes aroused, you are as well. And vice-versa.",
-			requires: [nsfw, subjectIsHuman],
+			requires: [nsfw, subjectIsHuman, specificIndividualTarget],
 		},
 		{
 			complicationText: "Whenever the other person orgasms, so do you. And vice-versa.",
-			requires: [nsfw, subjectIsHuman],
+			requires: [nsfw, subjectIsHuman, specificIndividualTarget],
 		},
 		{
 			complicationText: "You cannot refuse orders from the other person.",
-			requires: [subjectIsHuman],
+			requires: [subjectIsHuman, specificIndividualTarget],
 		},
 	]
 	
