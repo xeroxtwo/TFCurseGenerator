@@ -15,18 +15,29 @@ const nsfw = {
 const lewd = {
 	shouldFilter: function() {return sfwSelected || nsfwSelected;},
 }
+const humanOption = {
+	shouldFilter: function() {return !humansSelected;},
+}
+const beastOption = {
+	shouldFilter: function() {return !beastsSelected;},
+}
+const extantCreaturesAllowed = {
+	shouldFilter: function() {return !beastsSelected && !humansSelected;},
+}
 
 
 var generation = 0;
 var sfwSelected = false;
 var nsfwSelected = false;
 var lewdSelected = false;
+var humansSelected = true;
+var beastsSelected = true;
 
 $(document).ready(function() {
     $("#goButton").click(function(){
 		// curse counter
 		fetch("https://www.freevisitorcounters.com/en/home/counter/588546/t/3", {credentials: "omit", mode: 'no-cors',});
-		updateExplicitSuggestion();
+		updateOptionStatuses();
 		$("#circePre").html(getCircePreText());
 		generation = generation + 1;
 		var curseOutput = generateCurse();
@@ -42,7 +53,7 @@ $(document).ready(function() {
 	fetch("https://www.freevisitorcounters.com/en/home/counter/588555/t/3", {mode: 'no-cors',});
 });
 
-function updateExplicitSuggestion() {
+function updateOptionStatuses() {
 	var radios = document.getElementsByName('inlineRadioOptions');
 	for (var i = 0, length = radios.length; i < length; i++) {
 		if (radios[i].checked) {
@@ -62,6 +73,8 @@ function updateExplicitSuggestion() {
 			break;
 		}
 	}
+	humansSelected = document.getElementById("humanCheckbox").checked;
+	beastsSelected = document.getElementById("beastCheckbox").checked;
 }
 
 function getCircePreText() {
@@ -321,6 +334,13 @@ function generateCurse() {
 				subjectFemale = Math.random() < 0.5}}, // 50% chance}
 	}
 	
+	const determinesMostlyFemaleSex = {
+		shouldFilter: function(){return false;},
+		onChoice: function() {
+			if(isUndecided(subjectFemale) && transformationAffectsSubjectSex){
+				subjectFemale = Math.random() < 0.8}}, // 80% chance}
+	}
+	
 	const subjectIsMale = {
 		shouldFilter: function(){return decidedAndTrue(subjectFemale)},
 		onChoice: function() {subjectFemale = false;}
@@ -374,7 +394,7 @@ function generateCurse() {
 	}
 
 	const nonMundaneSubject = {
-		shouldFilter: function(){return decidedAndTrue(mundaneAnimalSubject);},
+		shouldFilter: function(){return decidedAndTrue(isMundaneAnimalSubject);},
 		onChoice: function() {subjectHuman = false;  isMundaneAnimalSubject = false;}
 
 	}
@@ -441,7 +461,7 @@ function generateCurse() {
 					happensOnce ? "If you ever" : "Each time you",
 					selectedDrawAndTrigger[1],
 					)},
-			sets: [determinesRandomSex, triggerSexBecomesOppositeSubjectSex, subjectMustDetermineSex, touchTransformation, subjectTransformation]
+			sets: [determinesRandomSex, triggerSexBecomesOppositeSubjectSex, subjectMustDetermineSex, touchTransformation, subjectTransformation, subjectInhuman]
 		},
 		{
 			// SCENARIO TRIGGER: Genitals first animal
@@ -473,7 +493,7 @@ function generateCurse() {
 				}
 			},
 			requires: [nsfw],
-			sets: [determinesRandomSex, triggerSexBecomesOppositeSubjectSex, subjectMustDetermineSex, subjectTransformation, replacesGenitals]
+			sets: [determinesRandomSex, triggerSexBecomesOppositeSubjectSex, subjectMustDetermineSex, subjectTransformation, replacesGenitals, subjectInhuman]
 		},
 		{
 			makeTriggerText: function() {return String.format("{0} go without {1}{2}",
@@ -543,11 +563,13 @@ function generateCurse() {
 					randomFrom(["someone's pet", "a wild animal", nsfwSelected || lewdSelected ? "an animal in heat" : "an angry animal", "an animal"]));},
 				subjectText: "touched animal", 
 				sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject],
+				requires: [beastOption]
 			},
 			{
 				triggerText: happensOnce ? "If you are ever bitten by an animal," : "Whenever you touch an animal's tail,", 
 				subjectText: "animal", 
 				sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject],
+				requires: [beastOption]
 			}
 		]),
 		randomFrom([ // fewer gendered animal touch options
@@ -556,31 +578,36 @@ function generateCurse() {
 				subjectText: "touched animal", 
 				chosen: function(){triggerFemale = true;},
 				sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject],
+				requires: [beastOption],
 			},
 			{
 				makeTriggerText: function(){return happensOnce ? "If you ever touch a male animal," : "Whenever you touch a male animal,";},
 				subjectText: "touched animal", 
 				chosen: function(){triggerFemale = false;},
 				sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject],
+				requires: [beastOption]
 			},
 		]),
 		{
 			makeTriggerText: function(){return happensOnce ? "If you ever eat meat or another animal product," : "Whenever you eat meat or another animal product,";},
 			subjectText: "consumed species", 
 			sets: [specificIndividualTarget, mundaneAnimalSubject],
+			requires: [beastOption],
 		},
 		randomFrom([ // fewer gendered human touch triggers
 			{
 				makeTriggerText: function(){return happensOnce ? "When you next touch a man,": "Whenever you touch a man";},
 				subjectText: "touched man", 
 				chosen: function(){triggerFemale = false;},
-				sets: [touchTransformation, specificIndividualTarget, subjectIsHuman]
+				sets: [touchTransformation, specificIndividualTarget, subjectIsHuman],
+				requires: [humanOption],
 			},
 			{
 				makeTriggerText: function(){return happensOnce ? "When you next touch a woman": "Whenever you touch a woman";},
 				subjectText: "touched woman", 
 				chosen: function(){triggerFemale = true;},
-				sets: [touchTransformation, specificIndividualTarget, subjectIsHuman]
+				sets: [touchTransformation, specificIndividualTarget, subjectIsHuman],
+				requires: [humanOption]
 			},
 		]),
 		{
@@ -589,6 +616,7 @@ function generateCurse() {
 				randomFrom(["someone", "your best friend", "your romantic partner", "a stranger in public", "your boss"]));},
 			subjectText: "touched person",
 			sets: [touchTransformation, specificIndividualTarget, subjectIsHuman],
+			requires: [humanOption],
 		},
 		{
 			makeTriggerText: function(){return happensOnce ? "The next time someone sees your privates,": "Whenever anyone sees your privates,";}, 
@@ -627,12 +655,13 @@ function generateCurse() {
 				"How's that for an afterglow?",
 				"Hopefully your partner doesn't die of surprise."]),
 			sets: [touchTransformation],
-			requires: [nsfw]
+			requires: [nsfw, humanOption]
 		},
 		{
 			makeTriggerText: function(){return happensOnce ? "The next time you see an animal" : "Whenever you see an animal,";},
 			subjectText: "sighted animal", 
 			sets: [specificIndividualTarget],
+			requires: [beastOption]
 		},
 		{
 			makeTriggerText: function(){
@@ -657,7 +686,8 @@ function generateCurse() {
 				)}, 
 			transformationText: "",
 			chosen: function(){shouldRenderSubjectText = false;},
-			sets: [specificIndividualTarget],
+			sets: [specificIndividualTarget, subjectInhuman],
+			requires: [beastOption],
 			closingRemarkText: randomFrom(["I have the strangest urge to beat you up right now.", "I just want to cuddle you!"])
 		},
 		{
@@ -740,7 +770,7 @@ function generateCurse() {
 			chosen: function(){shouldRenderSubjectText = false;},
 			subjectText: "",
 			sets: [subjectIsHuman],
-			requires: [tfSuppliesOwnSubject]
+			requires: [tfSuppliesOwnSubject, humanOption]
 		},
 		{
 			makeTransformationText:function(){return String.format("you become a taur version of {0}", specificTarget ? "the" : subjectArticle);},
@@ -779,13 +809,15 @@ function generateCurse() {
 		},
 		{
 			makeTransformationText:function(){return String.format("you swap minds with {0}", specificTarget ? "the" : "the nearest");},
-			sets: [subjectSexBecomesTriggerSex, mundaneAnimalSubject]
+			requires: [extantCreaturesAllowed],
+			sets: [subjectSexBecomesTriggerSex, mundaneAnimalSubject, subjectIsHuman]
 		},
 		{
 			makeTransformationText: function() {return String.format("your {0} and legs transform into those of {1}", 
 				randomSelectionFrom(["arms", "hands", "backside", "head"]).join(', '),
 				specificTarget ? "the" : subjectArticle)},
 			sets: [doNotAssignSubjectSex, becomingCreatureHybrid],
+			requires: [beastOption],
 		},
 		{
 			makeTransformationText: function() {return String.format("your {0} transform into {1} tentacles", 
@@ -803,18 +835,18 @@ function generateCurse() {
 			chosen: function(){shouldRenderSubjectText = false;},
 			subjectText: "",
 			sets: [doNotAssignSubjectSex, becomingCreatureHybrid],
-			requires: [subjectInhuman, tfSuppliesOwnSubject],
+			requires: [subjectInhuman, tfSuppliesOwnSubject, beastOption],
 		},
 		// Inhuman transformations
 		{
 			makeTransformationText:function(){return String.format("you transform into an anthro version of {0}", specificTarget ? "the" : subjectArticle);},
 			sets: [becomingCreatureHybrid],
-			requires: [subjectInhuman],
+			requires: [subjectInhuman, beastOption],
 		},
 		{
 			makeTransformationText:function(){return String.format("you grow the tail and {0} of {1}", extemitiesName, specificTarget ? "the" : subjectArticle);},
 			sets: [doNotAssignSubjectSex, becomingCreatureHybrid],
-			requires: [subjectInhuman],
+			requires: [subjectInhuman, beastOption],
 		},
 		{
 			makeTransformationText:function(){return String.format("you transform into a {0} version of {1}",
@@ -822,6 +854,7 @@ function generateCurse() {
 				specificTarget ? "the" : subjectArticle);},
 			closingRemarkText: randomFrom([
 				"Just inhuman enough for mass appeal.", "How kawaii!"]),
+			chosen: function() {beastsSelected = true;}, // Allow beasts in this one case.
 			sets: [becomingCreatureHybrid],
 			requires: [subjectInhuman],
 		},
@@ -839,7 +872,7 @@ function generateCurse() {
 				lewdSelected || nsfwSelected ? "Your asshole turns into your new nozzle." 
 					: "Your nozzle is in the place of your belly button.",
 				"Your valve is an erogenous zone"])},
-			requires: [subjectInhuman],
+			requires: [subjectInhuman, beastOption],
 		},
 		{
 			makeTransformationText:function(){return randomFrom([
@@ -851,14 +884,14 @@ function generateCurse() {
 				? "Over the next year, the rest of your body transforms to match." 
 				: "Each time you transform, an additional bodypart also changes.",
 			sets: [doNotAssignSubjectSex, becomingCreatureHybrid],
-			requires: [subjectInhuman],
+			requires: [subjectInhuman, beastOption],
 		},
 		{
 			makeTransformationText:function(){return String.format("you become {0} {1} from the waist down",
 				specificTarget ? "the" : subjectArticle, curse.renderSubjectText());},
 			chosen: function(){shouldRenderSubjectText = false;},
 			sets: [becomingCreatureHybrid],
-			requires: [subjectInhuman],
+			requires: [subjectInhuman, beastOption],
 		},
 		// touch transformations
 		{
@@ -908,6 +941,7 @@ function generateCurse() {
 				? "You also have an udder and give milk." 
 				: "You hate the color red, and you find cows strangely alluring.";},
 			sets: [determinesRandomSex, mundaneAnimalSubject],
+			requires: [beastOption],
 		},
 		{
 
@@ -916,6 +950,7 @@ function generateCurse() {
 				isDecided(subjectFemale) ? subjectFemale ? " bitch" : " stud" : "");},
 			closingRemarkText: randomFrom(["That's a solid breed.","Beg for the biscuit!"]),
 			sets: [determinesRandomSex, mundaneAnimalSubject],
+			requires: [beastOption],
 		},
 		{
 
@@ -924,16 +959,19 @@ function generateCurse() {
 				isDecided(subjectFemale) ? subjectFemale ? " bitch" : " stud" : "")},
 			closingRemarkText: randomFrom(["Do you know any tricks?","Are you going to pretend to be someone's pet?"]),
 			sets: [determinesRandomSex, mundaneAnimalSubject],
+			requires: [beastOption],
 		},
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "doe" : "buck" : "deer";},
 			chosen: function(){extemitiesName = "hooves";},
 			closingRemarkText: "A noble animal with a great rack.",
 			sets: [determinesRandomSex, mundaneAnimalSubject],
+			requires: [beastOption],
 		},
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "female cat" : "tom cat" :  "cat";},
 			sets: [determinesRandomSex, mundaneAnimalSubject],
+			requires: [beastOption],
 		},
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "fluffy ewe" : "ram" : "sheep";},
@@ -941,23 +979,25 @@ function generateCurse() {
 			additionalExplaination: String.format("Your wool needs to be sheared regularly, but it makes great {0}.",
 				randomFrom(["blankets", "sweaters", "yarn"])),
 			sets: [determinesRandomSex, mundaneAnimalSubject],
+			requires: [beastOption],
 		},
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "hen" : "rooster" : "chicken";},
 			chosen: function(){extemitiesName = "talons";},
 			sets: [determinesRandomSex, mundaneAnimalSubject],
-			requires: [becomingCreatureHybrid],
+			requires: [becomingCreatureHybrid, beastOption],
 		},
 		{
 			subjectText: randomFrom(["hawk", "bluebird", "secretary bird"]), 
 			chosen: function(){extemitiesName = "talons";},
-			requires: [genderAgnostic],
+			requires: [genderAgnostic, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		{
 			makeSubjectText: function(){return decidedAndTrue(subjectFemale) ? "vixen" : "fox";},
 			closingRemarkText: "I've never understood the appeal of foxes, but I have a feeling you'll appretiate this one.",
 			sets: [determinesRandomSex, mundaneAnimalSubject],
+			requires: [beastOption],
 		},
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "nanny goat" : "billy goat" : "goat";},
@@ -967,26 +1007,28 @@ function generateCurse() {
 				: "Your pupils are horizontal, and you attract the attention of a lot of cultists.";},
 			closingRemarkText: "Maybe it'll make you a better climber.",
 			sets: [determinesRandomSex, mundaneAnimalSubject],
+			requires: [beastOption],
 		},
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "she-bear" : "he-bear" : "bear";},
-			requires: [mundaneAnimalSubject],
-			sets: [determinesRandomSex],
+			requires: [beastOption],
+			sets: [mundaneAnimalSubject, determinesRandomSex],
 		},
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "zebra mare" : "zebra stallion" : "zebra";},
 			chosen: function(){extemitiesName = "hooves";},
-			requires: [mundaneAnimalSubject],
-			sets: [determinesRandomSex],
+			requires: [beastOption],
+			sets: [mundaneAnimalSubject, determinesRandomSex],
 		},
 		{
 			subjectText: "snow leopard",
-			requires: [genderAgnostic],
+			requires: [genderAgnostic, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		{
 			makeSubjectText: function() {return String.format(randomFrom(["tiger{0}", "lion{0}"]), 
 				decidedAndTrue(subjectFemale) ? "ess" : "")},
+			requires: [beastOption],
 			sets: [mundaneAnimalSubject, determinesRandomSex],
 		},
 		{
@@ -995,7 +1037,7 @@ function generateCurse() {
 				? "You have a pseudopenis, complete with a fatty sack standing in for testicles." 
 				: "Remember: male hyenas are submissive to the females.";},
 			closingRemarkText: "Yeen Queen is my favorite band!",
-			requires: [genderAgnostic],
+			requires: [genderAgnostic, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		{
@@ -1004,7 +1046,7 @@ function generateCurse() {
 				"You become twitchy and skittish.",
 				lewdSelected || nsfwSelected ? "You develop a strange fascination with caressing, licking, and sucking people's nuts." : "You have a strange craving for nuts.",
 			]),
-			requires: [genderAgnostic, becomingCreatureHybrid],
+			requires: [genderAgnostic, becomingCreatureHybrid, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		{
@@ -1013,19 +1055,19 @@ function generateCurse() {
 				? "Each hop causes a lot of jiggling." 
 				: "Walking and running become more difficult than hopping.";},
 			closingRemarkText: "G'day, mate!",
-			requires: [genderAgnostic],
+			requires: [genderAgnostic, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		{
 			subjectText: randomFrom(["monkey", "baboon", "lemur"]),
 			closingRemarkText: "Maybe you should try living in a treehouse.",
-			requires: [genderAgnostic],
+			requires: [genderAgnostic, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		{
 			subjectText: "squid",
 			chosen: function(){extemitiesName = "spades";},
-			requires: [genderAgnostic, becomingCreatureHybrid],
+			requires: [genderAgnostic, becomingCreatureHybrid, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		{
@@ -1034,20 +1076,20 @@ function generateCurse() {
 			additionalExplaination: randomFrom([
 				"You spray reflexively when startled.",
 				"You find cats strangely alluring."]),
-			requires: [genderAgnostic],
+			requires: [genderAgnostic, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		{
 			subjectText: "otter", 
 			chosen: function(){extemitiesName = "webbed paws"; subjectArticle = "an"},
-			requires: [genderAgnostic],
+			requires: [genderAgnostic, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		{
 			subjectText: "closest pet", 
 			chosen: function(){specificTarget = true;},
 			closingRemarkText: "Is it better or worse if it's your own pet?",
-			requires: [genderAgnostic, nonSpecificSubject],
+			requires: [genderAgnostic, nonSpecificSubject, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		randomFrom([
@@ -1058,7 +1100,7 @@ function generateCurse() {
 					"A fishy smell follows you around.",
 					"Your rubbery skin must be moistened regularly.",
 					lewdSelected && decidedAndFalse(subjectFemale) ? "Your penis is prehensile, but it often moves with a mind of its own." : ""]);},
-				requires: [genderAgnostic, becomingCreatureHybrid],
+				requires: [genderAgnostic, becomingCreatureHybrid, beastOption],
 				sets: [mundaneAnimalSubject],
 			},
 			{
@@ -1068,7 +1110,7 @@ function generateCurse() {
 					"A fishy smell follows you around.",
 					"You have both gills and lungs, allowing you to live comfortably in the water and on land.",
 					lewdSelected && decidedAndFalse(subjectFemale) ? "You cum whenever you smell fish eggs." : ""]);},
-				requires: [genderAgnostic, becomingCreatureHybrid],
+				requires: [genderAgnostic, becomingCreatureHybrid, beastOption],
 				sets: [mundaneAnimalSubject],
 			}
 		]),
@@ -1079,35 +1121,37 @@ function generateCurse() {
 				"Too bad it had to be such an awkward animal.",
 				"Don't make an ass out of yourself."]),
 			sets: [determinesRandomSex, mundaneAnimalSubject],
+			requires: [beastOption],
 		},
 		{
-			subjectText: randomFrom(["bee", "spider", "scorpion"]),
+			subjectText: randomFrom(["bee", "spider", "scorpion", "ant", "centipede", "wasp", "fly"]),
 			chosen: function(){extemitiesName = "pointed legs";},
-			requires: [genderAgnostic, becomingCreatureHybrid],
+			requires: [genderAgnostic, becomingCreatureHybrid, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "mare" : "stallion" : "horse";}, 
 			chosen: function(){extemitiesName = "hooves";},
 			sets: [determinesRandomSex, mundaneAnimalSubject],
+			requires: [beastOption],
 		},
 		{
 			subjectText: randomFrom(["komodo dragon", "skink", "newt"]), 
 			chosen: function(){extemitiesName = "claws";},
-			requires: [genderAgnostic, becomingCreatureHybrid],
+			requires: [genderAgnostic, becomingCreatureHybrid, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		{
 			subjectText: "anaconda", 
 			chosen: function(){subjectArticle = "an"; extemitiesName = "nothings";},
 			closingRemarkText: "Just as I like 'em: thick and slithery.",
-			requires: [genderAgnostic],
+			requires: [genderAgnostic, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		{
 			subjectText: "last animal you touched", 
 			chosen: function(){specificTarget = true;},
-			requires: [genderAgnostic, nonSpecificSubject],
+			requires: [genderAgnostic, nonSpecificSubject, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		{
@@ -1116,7 +1160,7 @@ function generateCurse() {
 			closingRemarkText: randomFrom([
 				"Sample any exotic meats lately?",
 				"Mmm-mm. This beef tastes just like you."]),
-			requires: [genderAgnostic, nonSpecificSubject],
+			requires: [genderAgnostic, nonSpecificSubject, beastOption],
 			sets: [mundaneAnimalSubject],
 		},
 		{
@@ -1124,22 +1168,22 @@ function generateCurse() {
 			chosen: function(){specificTarget = true;},
 			closingRemarkText: "Mana really does flow from computer monitors these days.",
 			sets: [specificIndividualTarget, subjectInhuman],
-			requires: [genderAgnostic, nonSpecificSubject, nonMundaneSubject],
+			requires: [genderAgnostic, nonSpecificSubject, nonMundaneSubject, beastOption],
 		},
 		{
 			subjectText: "current year's Chinese zodiac animal", 
 			sets: [specificIndividualTarget, subjectInhuman],
-			requires: [genderAgnostic, nonSpecificSubject, nonMundaneSubject],
+			requires: [genderAgnostic, nonSpecificSubject, nonMundaneSubject, beastOption],
 		},
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "dire wolf bitch": "dire wolf stud" : "dire wolf";},
 			sets: [subjectInhuman, determinesRandomSex],
-			requires: [nonMundaneSubject],
+			requires: [nonMundaneSubject, beastOption],
 		},
 		{
 			subjectText: "Chinese zodiac animal assigned to you at birth", 
 			sets: [specificIndividualTarget, subjectInhuman],
-			requires: [genderAgnostic, nonSpecificSubject, nonMundaneSubject],
+			requires: [genderAgnostic, nonSpecificSubject, nonMundaneSubject, beastOption],
 		},
 		{
 			makeSubjectText: function(){return String.format("{0} {1}-{2}", 
@@ -1171,35 +1215,35 @@ function generateCurse() {
 				]),
 			closingRemarkText: "I said you looked lucky, didn't I?",
 			sets: [determinesRandomSex, subjectInhuman],
-			requires: [nonMundaneSubject],
+			requires: [nonMundaneSubject, beastOption],
 		},
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "unicorn mare": "unicorn stallion" : "unicorn";},
 			chosen: function(){extemitiesName = "hooves";},
 			sets: [determinesRandomSex, subjectInhuman],
-			requires: [nonMundaneSubject],
+			requires: [nonMundaneSubject, beastOption],
 		},
 		{
 			subjectText: "kobold",
 			closingRemarkText: randomFrom(["I think you'll be adorable.", "I love those thick, lizardy tails!"]),
 			sets: [subjectInhuman],
-			requires: [genderAgnostic, nonMundaneSubject],
+			requires: [genderAgnostic, nonMundaneSubject, beastOption],
 		},
 		{
 			subjectText: "wyvern",
 			closingRemarkText: "Is trading your hands for the power of flight worth it?",
 			sets: [subjectInhuman],
-			requires: [genderAgnostic, nonMundaneSubject],
+			requires: [genderAgnostic, nonMundaneSubject, beastOption],
 		},
 		{
 			subjectText: "sea serpent",
 			sets: [subjectInhuman],
-			requires: [genderAgnostic, nonMundaneSubject],
+			requires: [genderAgnostic, nonMundaneSubject, beastOption],
 		},
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "demoness": "demon" : "demon";},
 			sets: [subjectInhuman, determinesRandomSex],
-			requires: [notBecomingHybrid, nonMundaneSubject],
+			requires: [nonMundaneSubject],
 			chosen: function(){extemitiesName = "claws";},
 		}, 
 		{
@@ -1223,17 +1267,17 @@ function generateCurse() {
 		{
 			subjectText: "sphinx",
 			sets: [subjectInhuman],
-			requires: [genderAgnostic, notBecomingHybrid, nonMundaneSubject],
+			requires: [genderAgnostic, notBecomingHybrid, nonMundaneSubject, beastOption],
 		},
 		{
 			subjectText: "naga",
 			sets: [subjectInhuman],
-			requires: [genderAgnostic, notBecomingHybrid, nonMundaneSubject],
+			requires: [genderAgnostic, notBecomingHybrid, nonMundaneSubject, beastOption],
 		},
 		{
 			subjectText: "cerberus",
 			sets: [subjectInhuman],
-			requires: [genderAgnostic, notBecomingHybrid, nonMundaneSubject],
+			requires: [genderAgnostic, notBecomingHybrid, nonMundaneSubject, beastOption],
 			closingRemarkText: "Stop fighting with yourself!",
 		},
 		{
@@ -1250,7 +1294,47 @@ function generateCurse() {
 		{
 			makeSubjectText: function(){return decidedAndTrue(subjectFemale) ? "succubus": "incubus";},
 			sets: [determinesRandomSex, subjectInhuman],
-			requires: [notBecomingHybrid],
+			requires: [notBecomingHybrid, humanOption],
+		},
+		{
+			makeSubjectText: function() {
+				var primaryDescriptors = [
+					decidedAndTrue(subjectFemale) ? "big-breasted" : "musclebound",
+					decidedAndTrue(subjectFemale) ? "curvy" : "feminine",
+					"sexy",
+					"gorgeous",
+					"tall",
+					randomFrom(["short", "five foot tall", "six foot tall", "four-and-a-half foot tall", "tall", "seven foot tall"]),
+					decidedAndTrue(subjectFemale) ? "leggy" : "fit",
+					"fit"
+				];
+				var secondaryDescriptors = [
+					"brunette",
+					"blonde",
+					"redheaded",
+					"asian",
+					"black",
+					"white",
+					"latino",
+				];
+				var afterDescriptor = [
+					decidedAndTrue(subjectFemale) ? " with breast implants" : "",
+					decidedAndTrue(subjectFemale) ? " with fake-looking breast implants" : "",
+					decidedAndTrue(subjectFemale) ? " with an enormous ass" : "",
+					decidedAndTrue(subjectFemale) ? " with massive, natural breasts" : "",
+				];
+				var usePrimary = Math.random() <.7;
+				var useSecondary = Math.random() <.9;
+				return String.format("{0}{1}{2}{3}{4}{5}", 
+					usePrimary ? randomFrom(primaryDescriptors) : "",
+					usePrimary ? " " : "",
+					useSecondary ? randomFrom(secondaryDescriptors) : "",
+					useSecondary ? " " : "",
+					isDecided(subjectFemale) ? subjectFemale ? "woman": "man" : "person",
+					usePrimary ? "" : randomFrom(afterDescriptor));
+			},
+			sets: [determinesMostlyFemaleSex],
+			requires: [humanOption, subjectIsHuman, notBecomingHybrid],
 		},
 	]
 	
