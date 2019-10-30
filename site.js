@@ -700,6 +700,16 @@ function generateCurse() {
 	// =====================
 	//    TRANSFORMATIONS
 	// =====================
+	
+	var bodyType = randomFrom([
+		"a thicc",
+		"a plump",
+		decidedAndTrue(subjectFemale) ? "a volumptuous" : "a muscular", 
+		"an athletic",
+		"a musclebound",
+		"a curvy",
+		decidedAndTrue(subjectFemale) ? "a tomboy" : "a feminine", 
+		decidedAndTrue(subjectFemale) ? "a shortstack" : "a short",]);
 	var transformations = [
 		// general transformations
 		{
@@ -839,7 +849,9 @@ function generateCurse() {
 		},
 		// Inhuman transformations
 		{
-			makeTransformationText:function(){return String.format("you transform into an anthro version of {0}", specificTarget ? "the" : subjectArticle);},
+			makeTransformationText:function(){return String.format("you transform into {0} anthro version of {1}", 
+				Math.random() < .5 ? "an" : bodyType,
+				specificTarget ? "the" : subjectArticle);},
 			sets: [becomingCreatureHybrid],
 			requires: [subjectInhuman, beastOption],
 		},
@@ -849,7 +861,8 @@ function generateCurse() {
 			requires: [subjectInhuman, beastOption],
 		},
 		{
-			makeTransformationText:function(){return String.format("you transform into a {0} version of {1}",
+			makeTransformationText:function(){return String.format("you transform into {0} {1} version of {2}",
+				Math.random() < .5 ? "a" : bodyType,
 				isDecided(subjectFemale) ? subjectFemale ? "monstergirl" : "monsterboy" : "kemono",
 				specificTarget ? "the" : subjectArticle);},
 			closingRemarkText: randomFrom([
@@ -932,6 +945,33 @@ function generateCurse() {
 					"corgi",
 					"labrador",
 					"poodle"]);
+	var crotchBoobsDescription = function() {return decidedAndTrue(subjectFemale) ? 
+		String.format("You have a {0} pair of {1} teats nestled above your crotch.{2}",
+			randomFrom([
+				"small",
+				"petiite",
+				"motherly",
+				"large",
+				"wobbly",
+				"perky"
+			]),
+			randomFrom([
+				"breast-like",
+				"beastial",
+				"",
+			]),
+			randomFrom([
+				" They swell steadily throughout the day and, if they don't get milked, begin to ache.",
+				" You're lactating, but you can never milk yourself.",
+				" They bounce noticably with every step.",
+				"",
+			])) 
+		: String.format("You have the digestive system {0}of {1} {2}",
+			nsfwSelected || lewdSelected ? "and asshole " : "",
+			subjectArticle,
+			curse.renderSubjectText());};
+
+
 	var subjects = [
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "cow" : "bull" : "cow";}, //[sic] gender-neutral is "cattle" but everyone just calls them cows
@@ -965,6 +1005,7 @@ function generateCurse() {
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "doe" : "buck" : "deer";},
 			chosen: function(){extemitiesName = "hooves";},
 			closingRemarkText: "A noble animal with a great rack.",
+			makeAdditionalExplaination: function(){return Math.random() < .5 ? "" : crotchBoobsDescription()},
 			sets: [determinesRandomSex, mundaneAnimalSubject],
 			requires: [beastOption],
 		},
@@ -976,8 +1017,10 @@ function generateCurse() {
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "fluffy ewe" : "ram" : "sheep";},
 			chosen: function(){extemitiesName = "hooves";},
-			additionalExplaination: String.format("Your wool needs to be sheared regularly, but it makes great {0}.",
-				randomFrom(["blankets", "sweaters", "yarn"])),
+			makeAdditionalExplaination: function() {return randomFrom([
+				String.format("Your wool needs to be sheared regularly, but it makes great {0}.",
+					randomFrom(["blankets", "sweaters", "yarn"])),
+				crotchBoobsDescription(),]);},
 			sets: [determinesRandomSex, mundaneAnimalSubject],
 			requires: [beastOption],
 		},
@@ -1017,6 +1060,7 @@ function generateCurse() {
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "zebra mare" : "zebra stallion" : "zebra";},
 			chosen: function(){extemitiesName = "hooves";},
+			makeAdditionalExplaination: function(){return Math.random() < .5 ? "" : crotchBoobsDescription()},
 			requires: [beastOption],
 			sets: [mundaneAnimalSubject, determinesRandomSex],
 		},
@@ -1117,6 +1161,7 @@ function generateCurse() {
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "jenny" : "jackass": "donkey";}, 
 			chosen: function(){extemitiesName = "hooves";},
+			makeAdditionalExplaination: function(){return Math.random() < .5 ? "" : crotchBoobsDescription()},
 			closingRemarkText: randomFrom([
 				"Too bad it had to be such an awkward animal.",
 				"Don't make an ass out of yourself."]),
@@ -1132,6 +1177,7 @@ function generateCurse() {
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "mare" : "stallion" : "horse";}, 
 			chosen: function(){extemitiesName = "hooves";},
+			makeAdditionalExplaination: function(){return Math.random() < .5 ? "" : crotchBoobsDescription()},
 			sets: [determinesRandomSex, mundaneAnimalSubject],
 			requires: [beastOption],
 		},
@@ -1220,6 +1266,7 @@ function generateCurse() {
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "unicorn mare": "unicorn stallion" : "unicorn";},
 			chosen: function(){extemitiesName = "hooves";},
+			makeAdditionalExplaination: function(){return Math.random() < .5 ? "" : crotchBoobsDescription()},
 			sets: [determinesRandomSex, subjectInhuman],
 			requires: [nonMundaneSubject, beastOption],
 		},
@@ -1296,7 +1343,7 @@ function generateCurse() {
 			sets: [determinesRandomSex, subjectInhuman],
 			requires: [notBecomingHybrid, humanOption],
 		},
-		{
+		{	// Human types
 			makeSubjectText: function() {
 				var primaryDescriptors = [
 					decidedAndTrue(subjectFemale) ? "big-breasted" : "musclebound",
@@ -1536,7 +1583,7 @@ function generateCurse() {
 			sets: [subjectIsFemale]
 		},
 		{
-			complicationText: "Your wardrobe changes to accomodate your new form."
+			complicationText: "Your wardrobe changes to accommodate your new form."
 		},
 		{
 			complicationText: "No one seems to think your new curse is at all unusual."
