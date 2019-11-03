@@ -972,14 +972,13 @@ function generateCurse() {
 		{ // Dildo / masturbator TF
 			makeTransformationText:function(){
 				var subjectGenitals = subjectFemale ? pussyName : dickName;
+				var toyName = subjectFemale ? "pocket pussy" : "dildo";
 				var bodyPart = String.format("{0}'s {1}", 
 					curse.renderSubjectText, 
-					specificTarget ? 
-						isUndecided(triggerFemale) ? subjectGenitals : triggerFemale ? pussyName : dickName 
-					: subjectGenitals);
+					specificTarget ? isUndecided(triggerFemale) ? subjectGenitals : triggerFemale ? pussyName : dickName : subjectGenitals);
 				var sexToy = String.format("{0}{1} shaped like {2} {3}", 
 					randomFrom(["lifelike ", "large ", "wriggling ", "rubber ", "strangely realistic ", ""]), 
-					subjectFemale ? "masturbator" : "dildo", 
+					specificTarget ? isUndecided(triggerFemale) ? toyName : triggerFemale ? "pocket pussy" : "dildo" : toyName,
 					subjectArticle,
 					bodyPart);
 				var tfText = randomFrom([
