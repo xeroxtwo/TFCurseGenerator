@@ -585,6 +585,7 @@ function generateCurse() {
 					nsfwSelected || lewdSelected ? randomFrom(["go on a date", "bring a date home"]) : "shiver from being too cold",
 					"step into a bar",
 					"visit a park",
+					"dance",
 					"attend a wedding",
 					"enter a body of water",
 					"get caught in the rain",
@@ -808,6 +809,7 @@ function generateCurse() {
 					"You control the additional head fully.",
 					"Your personality is split between the heads. One gets your libido and passion, the other gets your logic and restraint.",
 					"You get along with your new head like a sibling most of the time, but it's always making sexual advances."]),
+				closingRemarkText: "It isn't always easy <a href=\"https://www.furaffinity.net/view/21328649/\"> sharing a body with others</a>.",
 				sets: [doNotAssignSubjectSex],
 				requires: [tfAtomic],
 			},			
@@ -1100,7 +1102,7 @@ function generateCurse() {
 
 
 	var subjects = [
-		{
+		{	
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "cow" : "bull" : "cow";}, //[sic] gender-neutral is "cattle" but everyone just calls them cows
 			closingRemarkText: "Uhh. . . Moo?",
 			chosen: function(){extemitiesName = "hooves";},
@@ -1115,7 +1117,11 @@ function generateCurse() {
 			makeSubjectText: function(){return String.format("{0}{1}",
 				breed1,
 				isDecided(subjectFemale) ? subjectFemale ? " bitch" : " stud" : "");},
-			closingRemarkText: randomFrom(["That's a solid breed.","Beg for the biscuit!"]),
+			closingRemarkText: randomFrom([
+				"That's a solid breed.",
+				"Now beg.",
+				"Some people have a hard time <a href=\"https://d.facdn.net/art/xerox2/stories/1557626425/1557626425.xerox2_a_hair_of_the_dog__1_.pdf\"> " +
+					"resisting the urge to let their inner dog out</a>.",]),
 			sets: [determinesRandomSex, mundaneAnimalSubject, setPussyName("puffy ".concat(pussyName)), setDickName("knotted ".concat(dickName))],
 			requires: [beastOption],
 		},
@@ -1124,7 +1130,7 @@ function generateCurse() {
 			makeSubjectText: function(){return String.format("{0}{1}",
 				breed2,
 				isDecided(subjectFemale) ? subjectFemale ? " bitch" : " stud" : "")},
-			closingRemarkText: randomFrom(["Do you know any tricks?","Are you going to pretend to be someone's pet?"]),
+			closingRemarkText: randomFrom(["That's a good doggy.","Are you going to pretend to be someone's pet?"]),
 			sets: [determinesRandomSex, mundaneAnimalSubject, setPussyName("puffy ".concat(pussyName)), setDickName("knotted ".concat(dickName))],
 			requires: [beastOption],
 		},
@@ -1165,7 +1171,9 @@ function generateCurse() {
 		},
 		{
 			makeSubjectText: function(){return decidedAndTrue(subjectFemale) ? "vixen" : "fox";},
-			closingRemarkText: "I've never understood the appeal of foxes, but I have a feeling you'll appretiate this one.",
+			closingRemarkText: randomFrom([
+				"I've never understood the appeal of foxes, but I have a feeling you'll appretiate this one.",
+				"Foxes always remind me of <a href=\"https://d.facdn.net/art/xerox2/stories/1545116203/1545116203.xerox2_comfort_zone_v1.pdf\">the time I visited your house.</a>",]),
 			sets: [determinesRandomSex, mundaneAnimalSubject, setDickName("knotted ".concat(dickName))],
 			requires: [beastOption],
 		},
@@ -1197,8 +1205,7 @@ function generateCurse() {
 			sets: [mundaneAnimalSubject, setDickName("barbed ".concat(dickName))],
 		},
 		{
-			makeSubjectText: function() {return String.format(randomFrom(["tiger{0}", "lion{0}"]), 
-				decidedAndTrue(subjectFemale) ? "ess" : "")},
+			makeSubjectText: function() {return decidedAndTrue(subjectFemale) ? randomFrom(["tigress", "lioness"]) : randomFrom(["tiger", "lion"]);},
 			requires: [beastOption],
 			sets: [mundaneAnimalSubject, determinesRandomSex, setDickName("barbed ".concat(dickName))],
 		},
@@ -1207,7 +1214,7 @@ function generateCurse() {
 			makeAdditionalExplaination: function(){return decidedAndTrue(subjectFemale) 
 				? "You have a pseudopenis, complete with a fatty sack standing in for testicles." 
 				: "Remember: male hyenas are submissive to the females.";},
-			closingRemarkText: "Yeen Queen is my favorite band!",
+			closingRemarkText: "<a href=\"https://d.facdn.net/art/xerox2/stories/1567301094/1567301094.xerox2_yeen_queen.pdf\">Yeen Queen</a> is my favorite band!",
 			requires: [genderAgnostic, beastOption],
 			sets: [mundaneAnimalSubject, setPussyName("pseudopenis")],
 		},
@@ -1303,6 +1310,7 @@ function generateCurse() {
 		{
 			subjectText: randomFrom(["bee", "spider", "scorpion", "ant", "centipede", "wasp", "fly"]),
 			chosen: function(){extemitiesName = "pointed legs";},
+			closingRemarkText: "Becoming a buggo isn't <a href=\"https://d.facdn.net/art/xerox2/stories/1550080085/1550080085.xerox2_catalyst__pilot.pdf\"> always so bad</a>.",
 			requires: [genderAgnostic, becomingCreatureHybrid, beastOption],
 			sets: [mundaneAnimalSubject, setPussyName("gaster"), setDickName("gaster")],
 		},
@@ -1391,7 +1399,10 @@ function generateCurse() {
 				"You have an uncanny ability to get others to follow your orders.", 
 				"People who spend a lot of time near you slowly transform into obedient kobold slaves.", 
 				]),
-			closingRemarkText: "I said you looked lucky, didn't I?",
+			closingRemarkText: randomFrom([
+				"I said you looked lucky, didn't I?",
+				"Dragons are such sluts.",
+				"Reminds me of that great story <a href=\"https://d.facdn.net/art/xerox2/stories/1577031098/1576996765.xerox2_mounted__secret_santa_.pdf\">Mounted</a>"]),
 			sets: [determinesRandomSex, subjectInhuman, setPussyName("powerful, scaled slit"), setDickName(randomFrom(["ridged ", "mighty ", "ribbed ", "massive "]).concat(dickName))],
 			requires: [nonMundaneSubject, beastOption],
 		},
@@ -1521,6 +1532,7 @@ function generateCurse() {
 			requires: [humanOption, subjectIsHuman, notBecomingHybrid],
 		},
 	]
+
 	
 	// =======================
 	//        DURATIONS
@@ -1577,6 +1589,7 @@ function generateCurse() {
 			requires: [nsfw],
 		},
 	]
+
 	var longDurations = [
 		{
 			durationText: "You remain this way for 24 hours.",
