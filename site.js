@@ -275,6 +275,14 @@ function generateCurse() {
 		return output;
 	}
 	
+	function renderUndecidedSex(method) {
+		tempFemale = subjectFemale;
+		subjectFemale = null;
+		var output = method();
+		subjectFemale = tempFemale;
+		return output;
+	}
+	
 	var subjectArticle = "a";
 	var happensOnce = (Math.random() <0.2); // 20% chance, more with some triggers that force it.
 	var shouldRenderSubjectText = true;
@@ -513,26 +521,44 @@ function generateCurse() {
 			// throughout the pregnancy you start to eat the same things as <subject>. 
 			// You immediately have the urge to get pregnant again.
 			//
-			makeTriggerText: function() {return String.format("{0}Over the next month, {1}. You're pregnant! An ultrasound reveals you are carrying the offspring of {2} {3}. As your pregnancy progresses",
+			// You're fucked by something, growing the pussy of a female and getting pregnant.
+			//
+			makeTriggerText: function() {return String.format("{0}When {1}, you take a pregnancy test. It comes back positive. As your pregnancy progresses,",
 				randomFrom([
 					"You wake up tomorrow feeling queasy. ",
 					"You notice that you're eating a lot more than usual. ",
-					"",
+					"Your chest feels sore. ",
 					"",
 				]),
 				randomFrom([
 					"your belly starts to descend",
-					"you start feeling a kicking in your tummy",
+					"you feel a kicking in your tummy",
+					"your nipples leak droplets of milk",
 					"your stomach grows so large you can no longer fit into your pants",
-					"something starts moving inside your stomach",
-				]),
-				subjectArticle,
-				curse.renderSubjectText());},
-			durationText: "By the time you go into labor, you are fully transformed.",
+					"something starts moving inside your belly",
+				])
+			);},
+			makeDurationText: function() {return String.format("The pregnancy lasts {0}, and by the time you go into labor, you are fully transformed.",
+				randomFrom(["nine months", "just one hour", "just one day", "a year", "six months", "three months"]));},
+			makeAdditionalExplaination: function() {return String.format("You give birth to {0}.{1}",
+				randomFrom([
+					String.format("{0} {1}",renderUndecidedSex(curse.renderSubjectText), randomFrom(["twins", "triplets", "quadruplets"])),
+					String.format("{0} {1}", randomFrom(["a baby", "an adorable little", "a full-grown", "a roudy little"]), curse.renderSubjectText())]),
+				randomFrom([
+					String.format("{0} {1} {2}.",
+						" You immediately crave the same foods as",
+						subjectArticle,
+						curse.renderSubjectText()),
+					" You have an urge to get pregnant again as soon as possible.",
+					" You're willing to do whatever it takes to be a good mom.",
+					" A few weeks later, you realize you're pregnant again!",
+					"",
+				])
+			)},
 			chosen: function(){happensOnce = true;},
-			requires: [humanoidOrBeastOption],
+			requires: [humanoidOrBeastOption, nsfw],
 			sets: [subjectIsFemale, subjectIsLiving, tfInStages, subjectTransformation],
-		},/*
+		},
 		{
 			// SCENARIO TRIGGER: touch animal
 			makeTriggerText: function(){
@@ -823,7 +849,7 @@ function generateCurse() {
 			makeTriggerText: function(){return happensOnce ? "Tomorrow morning" : String.format("Every {0},", randomFrom(["sunrise", "sunset", "night at midnight"]));},
 			chosen: function(){shortDurationOnly = true;},
 			closingRemarkText: randomFrom(["You just have to find a new routine.", "I hope you're at your own house.", "That's not that long from now!"])
-		},*/
+		},
 	];
 	
 	// =====================
@@ -950,7 +976,7 @@ function generateCurse() {
 			requires: [tfSuppliesOwnSubject, humanOption]
 		},
 		{
-			makeTransformationText:function(){return String.format("you become a taur version of {0}", specificTarget ? "the" : subjectArticle);},
+			makeTransformationText:function(){return String.format("you become a taur version of {0}", subjectArticle);},
 			sets: [subjectSexBecomesSpecificTriggerSex, becomingCreatureHybrid],
 			requires: [humanoidOption],
 		},
@@ -1094,7 +1120,7 @@ function generateCurse() {
 					randomFrom(["hands", "feet"]), extemitiesName, specificTarget ? "the" : subjectArticle),
 				String.format("you sprout the tail of {0}", 
 					specificTarget ? "the" : subjectArticle)]);},
-			makeAdditionalExplaination: function() {return happensOnce 
+			makeComplicationText: function() {return happensOnce 
 				? "Over the next year, the rest of your body transforms to match." 
 				: String.format("Each time you transform, {0} changes.", randomFrom(["an additional bodypart also", "a different bodypart"]));},
 			sets: [doNotAssignSubjectSex, becomingCreatureHybrid, tfInStages],
@@ -1433,10 +1459,9 @@ function generateCurse() {
 		},
 		{
 			subjectText: "closest pet", 
-			chosen: function(){specificTarget = true;},
 			closingRemarkText: "Is it better or worse if it's your own pet?",
 			requires: [genderAgnostic, nonSpecificSubject, beastOption, tfAtomic],
-			sets: [mundaneAnimalSubject],
+			sets: [mundaneAnimalSubject, specificIndividualTarget],
 		},
 		randomFrom([
 			{
@@ -1504,22 +1529,19 @@ function generateCurse() {
 		},
 		{
 			subjectText: "last animal you touched", 
-			chosen: function(){specificTarget = true;},
 			requires: [genderAgnostic, nonSpecificSubject, beastOption, tfAtomic],
-			sets: [mundaneAnimalSubject],
+			sets: [mundaneAnimalSubject, specificIndividualTarget],
 		},
 		{
 			subjectText: "last animal you ate", 
-			chosen: function(){specificTarget = true;},
 			closingRemarkText: randomFrom([
 				"Sample any exotic meats lately?",
 				"Mmm-mm. This beef tastes just like you."]),
 			requires: [genderAgnostic, nonSpecificSubject, beastOption, tfAtomic],
-			sets: [mundaneAnimalSubject],
+			sets: [mundaneAnimalSubject, specificIndividualTarget],
 		},
 		{
 			subjectText: "last fantasy creature you killed in a video game", 
-			chosen: function(){specificTarget = true;},
 			closingRemarkText: "Mana really does flow from computer monitors these days.",
 			sets: [specificIndividualTarget, subjectInhuman],
 			requires: [genderAgnostic, nonSpecificSubject, nonMundaneSubject, beastOption, tfAtomic],
