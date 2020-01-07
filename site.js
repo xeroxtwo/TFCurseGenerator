@@ -517,12 +517,6 @@ function generateCurse() {
 	// 		
 	var triggers = [
 		{
-			// You wake up feeling bloated. Soon, you realize that you're pregnant. An ultrasound reveals that you are carrying the offspring of a <subject>. The more your pregnancy progresses, the more 
-			// throughout the pregnancy you start to eat the same things as <subject>. 
-			// You immediately have the urge to get pregnant again.
-			//
-			// You're fucked by something, growing the pussy of a female and getting pregnant.
-			//
 			makeTriggerText: function() {return String.format("{0}When {1}, you take a pregnancy test. It comes back positive. As your pregnancy progresses,",
 				randomFrom([
 					"You wake up tomorrow feeling queasy. ",
