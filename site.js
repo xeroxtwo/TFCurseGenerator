@@ -1856,23 +1856,6 @@ function generateCurse() {
 
 		},
 		{
-			// Triple complications
-			makeComplicationText: function(){
-				var comp1 = selectAnother(filterComponents(complications));
-				var comp2 = selectAnother(filterComponents(complications));
-				var comp3 = selectAnother(filterComponents(complications));
-				var compText1 = comp1.complicationText == null ? comp1.makeComplicationText() : comp1.complicationText;
-				var compText2 = comp2.complicationText == null ? comp2.makeComplicationText() : comp2.complicationText;
-				var compText3 = comp3.complicationText == null ? comp3.makeComplicationText() : comp3.complicationText;
-				return String.format("<br></p><p>{0} {1} {2}", 
-					compText1,
-					compText2,
-					compText3,);
-			},
-			requires: [lewd],
-
-		},
-		{
 			makeComplicationText: function(){return String.format("{0} must obey the orders of any human.",
 				happensOnce ? "You" : "While transformed, you");},
 			requires: [subjectIsAnimate],
