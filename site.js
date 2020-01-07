@@ -346,7 +346,7 @@ function generateCurse() {
 	
 	const subjectIsLiving = {
 		shouldFilter: function(){return decidedAndTrue(subjectInanimate) || decidedAndTrue(subjectNonLiving);},
-		onChoice: function() {subjectNonLiving = false; subjectInanimate = false;}
+		onChoice: function() {subjectNonLiving = false; subjectInanimate = false; inanimateSelected = false;}
 	}
 	
 	const subjectIsAnimate = {
@@ -508,6 +508,31 @@ function generateCurse() {
 	//		is selected.
 	// 		
 	var triggers = [
+		{
+			// You wake up feeling bloated. Soon, you realize that you're pregnant. An ultrasound reveals that you are carrying the offspring of a <subject>. The more your pregnancy progresses, the more 
+			// throughout the pregnancy you start to eat the same things as <subject>. 
+			// You immediately have the urge to get pregnant again.
+			//
+			makeTriggerText: function() {return String.format("{0}Over the next month, {1}. You're pregnant! An ultrasound reveals you are carrying the offspring of {2} {3}. As your pregnancy progresses",
+				randomFrom([
+					"You wake up tomorrow feeling queasy. ",
+					"You notice that you're eating a lot more than usual. ",
+					"",
+					"",
+				]),
+				randomFrom([
+					"your belly starts to descend",
+					"you start feeling a kicking in your tummy",
+					"your stomach grows so large you can no longer fit into your pants",
+					"something starts moving inside your stomach",
+				]),
+				subjectArticle,
+				curse.renderSubjectText());},
+			durationText: "By the time you go into labor, you are fully transformed.",
+			chosen: function(){happensOnce = true;},
+			requires: [humanoidOrBeastOption],
+			sets: [subjectIsFemale, subjectIsLiving, tfInStages, subjectTransformation],
+		},/*
 		{
 			// SCENARIO TRIGGER: touch animal
 			makeTriggerText: function(){
@@ -798,7 +823,7 @@ function generateCurse() {
 			makeTriggerText: function(){return happensOnce ? "Tomorrow morning" : String.format("Every {0},", randomFrom(["sunrise", "sunset", "night at midnight"]));},
 			chosen: function(){shortDurationOnly = true;},
 			closingRemarkText: randomFrom(["You just have to find a new routine.", "I hope you're at your own house.", "That's not that long from now!"])
-		},
+		},*/
 	];
 	
 	// =====================
@@ -957,8 +982,8 @@ function generateCurse() {
 				"Time passes quickly.",]),
 			chosen: function(){shouldRenderSubjectText = false;},
 			subjectText: "",
-			sets: [subjectSexBecomesSpecificTriggerSex, subjectIsInanimate, tfSuppliesOwnSubject],
-			requires: [nsfw, inanimateOption]
+			sets: [subjectSexBecomesSpecificTriggerSex, subjectIsInanimate],
+			requires: [nsfw, inanimateOption, tfSuppliesOwnSubject]
 		},
 		{
 			makeTransformationText: function() {return String.format("your {0} and legs transform into those of {1}", 
@@ -2063,10 +2088,6 @@ function generateCurse() {
 		return {curseText: "You turn into nothing.", circeText: "What did you expect?"};
 	}
 	
-	if (happensOnce) {
-		updateCurse(curse, {durationText: "The transformation is permanent."});
-	}
-
 	var chosenTrigger = randomFrom(filterComponents(triggers));
 	updateCurse(curse, chosenTrigger);
 	
@@ -2078,6 +2099,10 @@ function generateCurse() {
 	var chosenSubject = randomFrom(filterComponents(subjects));
 	if (curse.renderSubjectText == null) {
 		updateCurse(curse, chosenSubject);
+	}
+
+	if (happensOnce) {
+		updateCurse(curse, {durationText: "The transformation is permanent."});
 	}
 
 	var chosenDuration = randomFrom(buildDurations());
