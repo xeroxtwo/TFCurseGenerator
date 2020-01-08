@@ -15,6 +15,9 @@ const nsfw = {
 const lewd = {
 	shouldFilter: function() {return sfwSelected || nsfwSelected;},
 }
+const tgOption = {
+	shouldFilter: function() {return !tgSelected;},
+}
 const humanOption = {
 	shouldFilter: function() {return !humansSelected;},
 }
@@ -44,11 +47,15 @@ var generation = 0;
 var sfwSelected = false;
 var nsfwSelected = false;
 var lewdSelected = false;
+var maleSelected= false;
+var femaleSelected = false;
+var otherSexSelected = false;
 var humansSelected = true;
 var humanoidsSelected = true;
 var beastsSelected = true;
 var inanimateSelected = true;
 var mentalSelected = true;
+var tgSelected = true;
 
 $(document).ready(function() {
     $("#goButton").click(function(){
@@ -90,11 +97,31 @@ function updateOptionStatuses() {
 			break;
 		}
 	}
+	radios = document.getElementsByName('sexOptions');
+	for (var i = 0, length = radios.length; i < length; i++) {
+		if (radios[i].checked) {
+			if (i == 0) {
+				maleSelected = true;
+				femaleSelected = false;
+				otherSexSelected = false;
+			} else if (i == 1) {
+				maleSelected = false;
+				femaleSelected = true;
+				otherSexSelected = false;
+			} else {
+				maleSelected = false;
+				femaleSelected = false;
+				otherSexSelected = true;
+			}
+			break;
+		}
+	}
 	humansSelected = document.getElementById("humanCheckbox").checked;
 	humanoidsSelected = document.getElementById("humanoidCheckbox").checked;
 	beastsSelected = document.getElementById("beastCheckbox").checked;
 	inanimateSelected = document.getElementById("inanimateCheckbox").checked;
 	mentalSelected = document.getElementById("mentalCheckbox").checked;
+	tgSelected = document.getElementById("transgenderCheckbox").checked;
 }
 
 function getCircePreText() {
@@ -117,8 +144,6 @@ function generateCurse() {
 		} else {
 			return anotherSelected;
 		}
-
-
 	}
 
 	function setTagsForComponent(component) {
@@ -310,15 +335,17 @@ function generateCurse() {
 	
 	// Status variables
 	// The convention is this:
-	// 	subject* = status of the person transforming
-	//  target* = status of the target (if applicable)
+	// 	subject* = status of the transformation's end result
+	//  target* = status of the target / other participant (if applicable)
+	//  starting* = status of user before the curse hits.
 	//  a null value signifies that the status is not decided and ambiguous verbage should be used.
 	//  ALL STATUS VARIABLE CHECKS MUST INCLUDE NULL CHECKS FOR THIS REASON.
 	//	USE THE decidedAndTrue() and isDecided() CONVENIENCE METHODS FOR CLARITY
 	var subjectHuman = null;
 	var touchTrigger = false;
 	var triggerFemale =  null;
-	var subjectFemale = null;
+	var startingFemale = maleSelected ? false : femaleSelected ? true : null;
+	var subjectFemale = !tgSelected ? startingFemale : null; // if TG is disabled, set the end result sex same as starting.
 	var filterGenderAgnosticSubject = false;
 	var inanimateTF = false;
 	var transformationAffectsSubjectSex = true;
@@ -522,6 +549,10 @@ function generateCurse() {
 					"You wake up tomorrow feeling queasy. ",
 					"You notice that you're eating a lot more than usual. ",
 					"Your chest feels sore. ",
+					decidedAndFalse(startingFemale) ? String.format("You wake up with the {0} of {1} {2} between your legs. ",
+						pussyName, subjectArticle, curse.renderSubjectText()) : "",
+					decidedAndFalse(startingFemale) ? String.format("You wake up to find you've grown a pair of breasts. ",
+						pussyName, subjectArticle, curse.renderSubjectText()) : "",
 					"",
 				]),
 				randomFrom([
@@ -860,7 +891,7 @@ function generateCurse() {
 		decidedAndTrue(subjectFemale) ? "a tomboy" : "a feminine", 
 		decidedAndTrue(subjectFemale) ? "a shortstack" : "a short",
 		"a gigantic",]);
-	var pussyName = randomFrom(["pussy", "vulva", "sex"]);
+	var pussyName = randomFrom(["pussy", "vulva", "vagina"]);
 	var dickName = randomFrom(["dick", "cock", "penis"]);
 	var transformations = [
 		// general transformations
