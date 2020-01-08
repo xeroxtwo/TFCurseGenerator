@@ -802,7 +802,9 @@ function generateCurse() {
 					"The other person will take advantage of your curse.", 
 					"The other person will help you hide your curse."
 					]);},
-			sets: [specificIndividualTarget],
+			subjectText: "the other person",
+			sets: [specificIndividualTarget, subjectIsHuman],
+			requires: [humanOption],
 		},
 		{
 			makeTriggerText: function(){return happensOnce ? "The next time someone sees your privates,": "Whenever anyone sees your privates,";}, 
@@ -903,6 +905,7 @@ function generateCurse() {
 		"a musclebound",
 		"a curvy",
 		decidedAndTrue(subjectFemale) ? "a tomboy" : "a feminine", 
+		decidedAndTrue(subjectFemale) ? "a flat-chested" : "an androgynous", 
 		decidedAndTrue(subjectFemale) ? "a shortstack" : "a short",
 		"a gigantic",]);
 	var pussyName = randomFrom(["pussy", "vulva", "vagina"]);
