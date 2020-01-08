@@ -408,8 +408,7 @@ function generateCurse() {
 		shouldFilter: function() {
 			return isDecided(startingFemale) 
 				&& !tgSelected
-				&& isDecided(triggerFemale)
-				&& triggerFemale != startingFemale;
+				&& ((isDecided(triggerFemale) && triggerFemale != startingFemale) || (isUndecided(triggerFemale)));
 		},
 		onChoice: function() {if(isDecided(triggerFemale)){subjectFemale = triggerFemale;}}
 	}
@@ -1661,7 +1660,7 @@ function generateCurse() {
 		},
 		{
 			subjectText: "kobold",
-			chosen: function(){extremitiesName = "claws", facialfeatureName = "tiny horns";},
+			chosen: function(){extemitiesName = "claws", facialfeatureName = "tiny horns";},
 			additionalExplaination: randomFrom([
 				"You have a hopeless need to be commanded by a powerful, preferably scaled master.", 
 				"When you're upset, puffs of smoke erupt from your nostrils."
