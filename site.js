@@ -369,6 +369,7 @@ function generateCurse() {
 	var stagesTF = null;
 	var renderSubjectGender = true;
 	var singularSubject = null;
+	var noTransformation = false;
 
 	// TAGS
 	const tfInStages = {
@@ -576,6 +577,15 @@ function generateCurse() {
 	}
 	const nonDefaultExtremities = {
 		shouldFilter: function() {return extremitiesName == defaultExtremitiesName;},
+		onChoice: function() {},
+	}
+	const mentalOnly = {
+		shouldFilter: function() {return false;},
+		onChoice: function() {noTransformation = true;},
+	}
+
+	const beingTransformed = {
+		shouldFilter: function() {return noTransformation;},
 		onChoice: function() {},
 	}
 		
@@ -1039,8 +1049,9 @@ function generateCurse() {
 			sets: [subjectSexBecomesSpecificTriggerSex, tfInStages]
 		},
 		{
-			makeTransformationText:function(){return String.format("your {0} of {1}", 
-				decidedAndTrue(startingFemale) ? "pussy is replaced by that" : decidedAndFalse(startingFemale) ? "cock and balls are replaced by those" : "genitals are replaced by those",
+			makeTransformationText:function(){return String.format("your {0} replaced with the {1} of {2}", 
+				decidedAndTrue(startingFemale) ? "pussy is" : decidedAndFalse(startingFemale) ? "cock and balls are" : "genitals are",
+				decidedAndTrue(subjectFemale) ? pussyName : decidedAndFalse(subjectFemale) ? dickName: "genitals",
 				specificTarget ? "the" : subjectArticle);},
 			additionalExplaination: randomFrom([
 				"You adopt the donor's sexual urges.",
@@ -1258,7 +1269,7 @@ function generateCurse() {
 		{
 			makeTransformationText:function(){return String.format("you swap minds with {0}", specificTarget ? "the" : "the nearest");},
 			requires: [extantCreaturesAllowed, tfAtomic, mentalOption, subjectIsAnimate, subjectSexBecomesTriggerSex],
-			sets: [subjectSexBecomesTriggerSex, mundaneAnimalSubject]
+			sets: [subjectSexBecomesTriggerSex, mundaneAnimalSubject, mentalOnly]
 		},
 		{
 			makeTransformationText:function(){return String.format("you are possessed by the {0} spirit of {1}", 
@@ -1275,6 +1286,7 @@ function generateCurse() {
 					"it just wants to party.",
 					"it wants you to find it a better vessel.",
 					"you black out when it is in control."])),
+			sets: [mentalOnly, allowBeasts],
 			requires: [mentalOption, nsfw, subjectIsAnimate],
 		},
 	];
@@ -1754,6 +1766,17 @@ function generateCurse() {
 			requires: [notBecomingHybrid, nonMundaneSubject, humanoidOption],
 		},
 		{
+			subjectText: randomFrom(["ilithid", "mind-flayer"]),
+			chosen: function(){subjectArticle = "an";},
+			additionalExplaination: randomFrom([
+				"People who spend time around you become obsessed with you.",
+				"You can read minds.",
+				"You discover that you can influence the toughts of others.",
+			]),
+			sets: [subjectInhuman, nonMundaneSubject, setFacialFeature("writhing tentacles"), setDickName("prehensile ".concat(dickName)), setPussyName("tentacle-crowned ".concat(pussyName))],
+			requires: [notBecomingHybrid, nonMundaneSubject, humanoidOption],
+		},
+		{
 			subjectText: randomFrom(["orc", "ogre"]),
 			chosen: function(){subjectArticle = "an"; facialFeatureName = randomFrom(["horns", "tusks"]);},
 			sets: [subjectInhuman, setPussyName("powerful ".concat(pussyName)), nonMundaneSubject],
@@ -1761,8 +1784,8 @@ function generateCurse() {
 		},
 		{
 			subjectText: randomFrom(["watermelon", "peach", "pumpkin", "pear", "apple", "squash", "orange"]),
-			chosen: function(){extremitiesName = "leaves";},
-			sets: [subjectInhuman, subjectIsInanimate, setPussyName("flower"), setDickName("flower"), nonMundaneSubject, setFacialFeature("leaves")],
+			chosen: function(){extremitiesName = "leaves"; renderSubjectGender = false},
+			sets: [subjectInhuman, subjectIsInanimate, setPussyName("flower"), setDickName("flower"), setFacialFeature("leaves")],
 			makeAdditionalExplaination: function(){return String.format("Being eaten is incredibly pleasurable, and you regenerate quickly. {0}",
 				randomFrom([
 					"Your body is an aphrodesiac.",
@@ -1772,7 +1795,21 @@ function generateCurse() {
 					"You can feel pieces of your body a while after they're separated from you.",
 					"People have an urge to take bites from you.",
 				]));},
-			requires: [notBecomingHybrid, inanimateOption, subjectIsLiving],
+			requires: [notBecomingHybrid, inanimateOption, subjectIsLiving, beingTransformed],
+		},
+		{
+			subjectText: randomFrom(["oak tree", "redwood tree", "vine of ivy", "pine tree", "rose bush", "lilly plant", "hedge trimmed to look like you", "venus fly-trap", "pitcher-plant"]),
+			chosen: function(){extremitiesName = "leaves"; renderSubjectGender = false},
+			sets: [subjectInhuman, subjectIsInanimate, setPussyName("flower"), setDickName("flower"), setFacialFeature("leaves")],
+			makeAdditionalExplaination: function(){return randomFrom([
+					"You can feel your roots absorbing nutrients from the earth.",
+					nsfwSelected || lewdSelected ? "Being touched by a human brings sexual pleasure." : "You enjoy being touched.",
+					"You're most aware when the sun is beating on your leaves.",
+					"Bugs and squirrels make you their new home.",
+					"You're fully aware of your surroundings, but plants cannot move.",
+				]);},
+			closingRemarkText: "I hope you end up somewhere sunny.",
+			requires: [notBecomingHybrid, inanimateOption, subjectIsLiving, beingTransformed],
 		},
 		{
 			subjectText: "sphinx",
