@@ -1567,7 +1567,7 @@ function generateCurse() {
 			requires: [genderAgnostic, becomingCreatureHybrid, beastOption],
 			sets: [mundaneAnimalSubject, setPussyName("gaster"), setDickName("gaster")],
 		},
-		/*{
+		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "mare" : "stallion" : "horse";}, 
 			chosen: function(){extemitiesName = "hooves";},
 			makeAdditionalExplaination: function(){return Math.random() < .5 ? "" : crotchBoobsDescription()},
@@ -1843,7 +1843,7 @@ function generateCurse() {
 			},
 			sets: [determinesMostlyFemaleSex],
 			requires: [humanOption, subjectIsHuman, notBecomingHybrid],
-		},*/
+		},
 	]
 
 	
@@ -2199,6 +2199,7 @@ function generateCurse() {
 	}
 
 	var chosenSubject = randomFrom(filterComponents(subjects));
+	console.log(chosenSubject);
 	if (curse.renderSubjectText == null) {
 		updateCurse(curse, chosenSubject);
 	}
