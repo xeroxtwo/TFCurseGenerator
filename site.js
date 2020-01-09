@@ -600,6 +600,16 @@ function generateCurse() {
 	//		field, the tag make whatever state changes it needs to signal it has been set if and when the component
 	//		is selected.
 	// 		
+	const activity = randomFrom([
+		randomFrom(["running", "walking"]),
+		randomFrom(["watching TV", "playing video games"]),
+		randomFrom(["intoxicated", "high"]),
+		randomFrom(["dancing", "speaking to someone"]),
+		nsfwSelected || lewdSelected ? "aroused" : "bicycling",
+		nsfwSelected || lewdSelected ? "masturbating" : "cuddling",
+		nsfwSelected || lewdSelected ? "orgasming" : "cuddling",
+		nsfwSelected || lewdSelected ? "having sex" : "cuddling",
+	]);
 	var triggers = [
 		{
 			makeTriggerText: function() {return String.format("{0}{1}When {2}, you take a pregnancy test. It comes back positive. As your pregnancy progresses,",
@@ -719,6 +729,17 @@ function generateCurse() {
 				happensOnce ? "," : ", the more");},
 			durationText: happensOnce ? "If you don't fulfill the curse's requirement in one week, you are fully and permanently transformed.":
 				"Each time you return to normal, you miss your curse a little bit more.",
+			sets: [tfInStages],
+		},
+		{
+			makeTriggerText: function() {return String.format("The longer you spend {0}, the more", activity);},
+			makeDurationText: function() {
+				var hours = randomFrom(["two", "ten", "a hundred", "fifty", "twenty-four"]);
+				return happensOnce ? 
+					String.format("Once you spend a total of {0} hours {1}, you are fully and permanently transformed.", 
+						hours,
+						activity)
+				: String.format("If you abstain from the cursed activity for {1} hours, you slowly return to normal.", activity, hours)},
 			sets: [tfInStages],
 		},
 		{
