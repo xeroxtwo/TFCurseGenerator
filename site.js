@@ -550,7 +550,7 @@ function generateCurse() {
 	const setExtremitiesName = function(newExtremityName) {
 		return {
 			shouldFilter: function(){return false;},
-			onChoice: function() {extremityName = newExtremityName;},
+			onChoice: function() {extremitiesName = newExtremityName;},
 		}
 	}
 	const setFacialFeature = function(newFacialFeature) {
