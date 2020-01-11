@@ -321,7 +321,7 @@ function generateCurse() {
 	var happensOnce = (Math.random() <0.2); // 20% chance, more with some triggers that force it.
 	var shouldRenderSubjectText = true;
 	var shortDurationOnly = false;
-	const defaultExtremitiesName = "hands";
+	const defaultExtremitiesName = "feet";
 	var extremitiesName = defaultExtremitiesName;
 	const defaultFacialFeatureName = "ears";
 	var facialFeatureName = defaultFacialFeatureName;
@@ -494,6 +494,10 @@ function generateCurse() {
 		shouldFilter: function(){return decidedAndFalse(specificTarget);},
 		onChoice: function() {specificTarget = true; subjectArticle = "the"; singularSubject = true;}
 	}
+	const noSpecificIndividualTarget = {
+		shouldFilter: function(){return decidedAndTrue(specificTarget);},
+		onChoice: function() {},
+	}
 	
 	const oneSubject = {
 		shouldFilter: function(){return decidedAndFalse(singularSubject);},
@@ -506,7 +510,7 @@ function generateCurse() {
 	}
 	
 	const mundaneAnimalSubject = {
-		shouldFilter: function(){return decidedAndFalse(isMundaneAnimalSubject) || decidedAndTrue(subjectHuman) || !isDecided(mundaneAnimalSubject);},
+		shouldFilter: function(){return decidedAndFalse(isMundaneAnimalSubject) || decidedAndTrue(subjectHuman) || !isDecided(isMundaneAnimalSubject);},
 		onChoice: function() {subjectHuman = false; isMundaneAnimalSubject = true;}
 	}
 
@@ -547,6 +551,7 @@ function generateCurse() {
 			onChoice: function() {dickName = newDickName;},
 		}
 	}
+	
 	const setExtremitiesName = function(newExtremityName) {
 		return {
 			shouldFilter: function(){return false;},
@@ -601,14 +606,14 @@ function generateCurse() {
 	//		is selected.
 	// 		
 	const activity = randomFrom([
-		randomFrom(["running", "walking"]),
-		randomFrom(["watching TV", "playing video games"]),
-		randomFrom(["intoxicated", "high"]),
-		randomFrom(["dancing", "speaking to someone"]),
-		nsfwSelected || lewdSelected ? "aroused" : "bicycling",
-		nsfwSelected || lewdSelected ? "masturbating" : "cuddling",
-		nsfwSelected || lewdSelected ? "orgasming" : "cuddling",
-		nsfwSelected || lewdSelected ? "having sex" : "cuddling",
+		randomFrom([{a: "running", b: "running"}, {a:"walking", b:"walking"}]),
+		randomFrom([{a: "watching TV", b: "vegging out"}, {a: "playing video games", b: "vegging out"}]),
+		randomFrom([{a: "intoxicated", b: "getting drunk"}, {a: "high", b: "getting stoned"}]),
+		randomFrom([{a: "dancing", b: "dancing"}, {a: "speaking to someone", b: "talking to anyone"}]),
+		nsfwSelected || lewdSelected ? {a: "aroused", b: "getting horny"} : {a: "bicycling", b: "riding your bike"},
+		nsfwSelected || lewdSelected ? {a: "masturbating", b: "pleasuring yourself"} : {a: "cuddling", b: "cuddling"},
+		nsfwSelected || lewdSelected ? {a: "orgasming", b: "climaxing"} : {a: "cuddling", b: "cuddling"},
+		nsfwSelected || lewdSelected ? {a: "having sex", b: "having sex"} : {a: "cuddling", b: "cuddling"},
 	]);
 	var triggers = [
 		{
@@ -732,14 +737,14 @@ function generateCurse() {
 			sets: [tfInStages],
 		},
 		{
-			makeTriggerText: function() {return String.format("The longer you spend {0}, the more", activity);},
+			makeTriggerText: function() {return String.format("The longer you spend {0}, the more", activity.a);},
 			makeDurationText: function() {
 				var hours = randomFrom(["two", "ten", "a hundred", "fifty", "twenty-four"]);
 				return happensOnce ? 
 					String.format("Once you spend a total of {0} hours {1}, you are fully and permanently transformed.", 
 						hours,
-						activity)
-				: String.format("If you abstain from the cursed activity for {1} hours, you slowly return to normal.", activity, hours)},
+						activity.b)
+				: String.format("If you can resist {0} for {1} hours, you slowly return to normal.", activity.b, hours)},
 			sets: [tfInStages],
 		},
 		{
@@ -1060,7 +1065,7 @@ function generateCurse() {
 			);}, 
 			durationText: happensOnce ? "" :
 				randomFrom([
-					"After each change, you lose control of yourself for a time as your new instincts overwhelm you.", 
+					"After each change, your new instincts overwhelm you, and you lose control for a while.", 
 					"If you focus, you can suppress the changes for up to an hour at a time.", 
 					nsfwSelected || lewdSelected ? "You can suppress the changes, but it makes you unbearably horny." : "You can suppress the changes, but it makes you unbearably hungry.", 
 					""
@@ -1068,17 +1073,6 @@ function generateCurse() {
 			closingRemarkText: "I looooove the slow burn.",
 			requres: [subjectSexBecomesSpecificTriggerSex],
 			sets: [subjectSexBecomesSpecificTriggerSex, tfInStages]
-		},
-		{
-			makeTransformationText:function(){return String.format("your {0} replaced with the {1} of {2}", 
-				decidedAndTrue(startingFemale) ? "pussy is" : decidedAndFalse(startingFemale) ? "cock and balls are" : "genitals are",
-				decidedAndTrue(subjectFemale) ? pussyName : decidedAndFalse(subjectFemale) ? dickName: "genitals",
-				specificTarget ? "the" : subjectArticle);},
-			additionalExplaination: randomFrom([
-				"You adopt the donor's sexual urges.",
-				"You adopt the donor's sexual preferences.",]),
-			requires: [nsfw, genitalReplacementAllowed, tfAtomic],
-			sets: [allowBeastsIfHumanoid],
 		},
 		{
 			transformationText: "you switch genders",
@@ -1120,7 +1114,7 @@ function generateCurse() {
 		},
 		{
 			makeTransformationText:function(){return String.format("your skin hardens, your joints freeze, and you become a {0} yourself",
-				randomFrom(["stone statue of ", "wooden carving of", "fountain shaped like", "cake shaped like"]));},
+				randomFrom(["stone statue of ", "wooden carving of", "fountain shaped like"]));},
 			additionalExplaination: randomFrom([
 				"You retain your senses.",
 				"Time passes quickly.",]),
@@ -1130,17 +1124,9 @@ function generateCurse() {
 			requires: [nsfw, inanimateOption, tfSuppliesOwnSubject, subjectSexBecomesSpecificTriggerSex]
 		},
 		{
-			makeTransformationText: function() {return String.format("your {0} and {1} transform into those of {2}", 
-				randomSelectionFrom(["arms", "hands", "torso", "legs", "head"]).join(', '),
-				nsfwSelected ? "genitals" : "backside",
-				specificTarget ? "the" : subjectArticle)},
-			sets: [becomingCreatureHybrid],
-			requires: [humanoidOption, subjectInhuman],
-		},
-		{
 			makeTransformationText: function() {return String.format("your {0} transform into {1} tentacles", 
 				randomFrom(["arms", "legs", "arms and legs", "arms, legs, and tailbone"]),
-				randomFrom(["squid", "octopus", "alien"]))},
+				randomFrom(["squid", "octopus", "alien", "muscular", "writhing", "thick and stubby"]))},
 			additionalExplaination: randomFrom([
 				"You have no control over your new tentacles.",
 				"Your tentacles constantly produce slime.",
@@ -1162,11 +1148,6 @@ function generateCurse() {
 				specificTarget ? "the" : subjectArticle);},
 			sets: [becomingCreatureHybrid],
 			requires: [subjectInhuman, humanoidOption],
-		},
-		{
-			makeTransformationText:function(){return String.format("you grow the tail, {0}, and {1} of {2}", facialFeatureName, extremitiesName, specificTarget ? "the" : subjectArticle);},
-			sets: [doNotAssignSubjectSex, becomingCreatureHybrid],
-			requires: [subjectInhuman, humanoidOption, tfAtomic],
 		},
 		{
 			makeTransformationText:function(){return String.format("you transform into {0} {1} version of {2}",
@@ -1233,11 +1214,27 @@ function generateCurse() {
 			requires: [inanimateOption, lewd, tfAtomic],
 		},
 		{
-			makeTransformationText:function(){return randomFrom([
-				String.format("your {0} turn into the {1} of {2}", 
-					randomFrom(["hands", "feet"]), extremitiesName, specificTarget ? "the" : subjectArticle),
-				String.format("you sprout the tail of {0}", 
-					specificTarget ? "the" : subjectArticle)]);},
+			makeTransformationText:function(){return String.format("your {0} replaced with the {1} of {2}", 
+				decidedAndTrue(startingFemale) ? "pussy is" : decidedAndFalse(startingFemale) ? "penis is" : "genitals are",
+				decidedAndTrue(subjectFemale) ? pussyName : decidedAndFalse(subjectFemale) ? dickName: "genitals",
+				specificTarget ? "the" : subjectArticle);},
+			additionalExplaination: beastsSelected ? randomFrom([
+				"You adopt the donor's sexual urges.",
+				"You adopt the donor's sexual preferences.",]) 
+				: "At least you're still mostly human.",
+			requires: [nsfw, genitalReplacementAllowed, tfAtomic, subjectSexBecomesSpecificTriggerSex],
+			sets: [allowBeastsIfHumanoid, subjectSexBecomesSpecificTriggerSex, becomingCreatureHybrid],
+		},
+		{
+			makeTransformationText:function(){return String.format("you grow the {0} of {1}", 
+				randomFrom([
+					extremitiesName,
+					facialFeatureName,
+					nsfwSelected || lewdSelected 
+						? decidedAndTrue(subjectFemale) ? pussyName : decidedAndFalse(subjectFemale) ? dickName: "genitals"
+						: "tail",
+					"tail"]),
+				subjectArticle);},
 			makeComplicationText: function() {return happensOnce 
 				? "Over the next year, the rest of your body transforms to match." 
 				: String.format("Each time you transform, {0} changes.", randomFrom(["an additional bodypart also", "a different bodypart"]));},
@@ -1245,7 +1242,17 @@ function generateCurse() {
 			requires: [subjectInhuman, beastOption],
 		},
 		{
-			makeTransformationText: function() {return String.format("you sprout the {0} of {1}", facialFeatureName, specificTarget ? "the" : subjectArticle, )},
+			makeTransformationText: function() {return String.format("your {0} and {1} transform into those of {2}", 
+				randomSelectionFrom(["arms", "hands", "torso", "legs", "head", "feet"]).join(', '),
+				nsfwSelected ? "genitals" : "backside",
+				specificTarget ? "the" : subjectArticle)},
+			sets: [becomingCreatureHybrid],
+			requires: [humanoidOption, subjectInhuman],
+		},
+		{
+			makeTransformationText: function() {return String.format("you sprout the tail and {0} of {1}", 
+				randomFrom([facialFeatureName, extremitiesName]), 
+				specificTarget ? "the" : subjectArticle)},
 			makeAdditionalExplaination: function() {return randomFrom([
 				nsfwSelected || lewdSelected ? "Your transformed parts are erogenous zones." : "Other people find your face hypnotically cute.",
 				String.format("Animal noises slip out of your mouth when you're {0}.", randomFrom(["nervous", "excited", nsfwSelected || lewdSelected ? "aroused" : "hungry"])),
@@ -1258,8 +1265,8 @@ function generateCurse() {
 			makeTransformationText:function(){return String.format("you become {0} {1} from the waist down",
 				specificTarget ? "the" : subjectArticle, curse.renderGenderedSubjectText());},
 			chosen: function(){shouldRenderSubjectText = false;},
-			sets: [becomingCreatureHybrid],
-			requires: [subjectInhuman, humanoidOption],
+			sets: [becomingCreatureHybrid, subjectSexBecomesSpecificTriggerSex],
+			requires: [subjectInhuman, humanoidOption, subjectSexBecomesSpecificTriggerSex],
 		},
 		// touch transformations
 		{
@@ -1308,7 +1315,7 @@ function generateCurse() {
 					"it wants you to find it a better vessel.",
 					"you black out when it is in control."])),
 			sets: [mentalOnly, allowBeasts],
-			requires: [mentalOption, nsfw, subjectIsAnimate],
+			requires: [mentalOption, nsfw, subjectIsAnimate, noSpecificIndividualTarget],
 		},
 	];
 	
