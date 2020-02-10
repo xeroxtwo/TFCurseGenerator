@@ -1390,7 +1390,7 @@ function generateCurse() {
 			closingRemarkText: randomFrom([
 				"That's a solid breed.",
 				"Now beg.",
-				"Some people have a hard time <a href=\"https://d.facdn.net/art/xerox2/stories/1557626425/1557626425.xerox2_a_hair_of_the_dog__1_.pdf\"> " +
+				"Some people have a hard time <a href=\"https://www.furaffinity.net/view/31505769/"> " +
 					"resisting the urge to let their inner dog out</a>.",]),
 			sets: [determinesRandomSex, mundaneAnimalSubject, setPussyName("puffy ".concat(pussyName)), setDickName("knotted ".concat(dickName)), setExtremitiesName("paws")],
 			requires: [beastOption],
@@ -1453,7 +1453,7 @@ function generateCurse() {
 			makeSubjectText: function(){return decidedAndTrue(subjectFemale) ? "vixen" : "fox";},
 			closingRemarkText: randomFrom([
 				"I've never understood the appeal of foxes, but I have a feeling you'll appretiate this one.",
-				"Foxes always remind me of <a href=\"https://d.facdn.net/art/xerox2/stories/1545116203/1545116203.xerox2_comfort_zone_v1.pdf\">the time I visited your house.</a>",]),
+				"Foxes always remind me of <a href=\"https://www.furaffinity.net/view/29782152/\">the time I visited your house.</a>",]),
 			sets: [determinesRandomSex, mundaneAnimalSubject, setDickName("knotted ".concat(dickName)), setExtremitiesName("paws")],
 			requires: [beastOption],
 		},
@@ -1498,7 +1498,7 @@ function generateCurse() {
 					: "Remember: male hyenas are submissive to the females.",
 				"An infectious laughter spills out from between your lips when you least expect it.",])
 				;},
-			closingRemarkText: "<a href=\"https://d.facdn.net/art/xerox2/stories/1567301094/1567301094.xerox2_yeen_queen.pdf\">Yeen Queen</a> is my favorite band!",
+			closingRemarkText: "<a href=\"https://www.furaffinity.net/view/32879967/\">Yeen Queen</a> is my favorite band!",
 			requires: [beastOption],
 			sets: [mundaneAnimalSubject, setPussyName("pseudopenis"), setExtremitiesName("paws")],
 		},
@@ -1623,7 +1623,7 @@ function generateCurse() {
 		{
 			subjectText: randomFrom(["bee", "spider", "scorpion", "ant", "centipede", "wasp", "fly"]),
 			chosen: function(){extremitiesName = "pointed legs"; facialFeatureName = "insectoid eyes";},
-			closingRemarkText: "Becoming a buggo isn't <a href=\"https://d.facdn.net/art/xerox2/stories/1550080085/1550080085.xerox2_catalyst__pilot.pdf\"> always so bad</a>.",
+			closingRemarkText: "Becoming a buggo isn't <a href=\"https://www.furaffinity.net/view/30458776/\"> always so bad</a>.",
 			requires: [becomingCreatureHybrid, beastOption],
 			sets: [mundaneAnimalSubject, setPussyName("gaster"), setDickName("gaster")],
 		},
@@ -1720,7 +1720,7 @@ function generateCurse() {
 			closingRemarkText: randomFrom([
 				"I said you looked lucky, didn't I?",
 				"Dragons are such sluts.",
-				"Reminds me of that great story <a href=\"https://d.facdn.net/art/xerox2/stories/1577031098/1576996765.xerox2_mounted__secret_santa_.pdf\">Mounted</a>"]),
+				"Reminds me of that great story <a href=\"https://www.furaffinity.net/view/34314071/\">Mounted</a>"]),
 			sets: [determinesRandomSex, nonMundaneSubject, subjectInhuman,
 				setPussyName("powerful, scaled slit"), 
 				setDickName(randomFrom(["ridged ", "mighty ", "ribbed ", "massive "]).concat(dickName))],
