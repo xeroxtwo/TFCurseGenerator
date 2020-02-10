@@ -1390,7 +1390,7 @@ function generateCurse() {
 			closingRemarkText: randomFrom([
 				"That's a solid breed.",
 				"Now beg.",
-				"Some people have a hard time <a href=\"https://www.furaffinity.net/view/31505769/"> " +
+				"Some people have a hard time <a href=\"https://www.furaffinity.net/view/31505769/\"> " +
 					"resisting the urge to let their inner dog out</a>.",]),
 			sets: [determinesRandomSex, mundaneAnimalSubject, setPussyName("puffy ".concat(pussyName)), setDickName("knotted ".concat(dickName)), setExtremitiesName("paws")],
 			requires: [beastOption],
