@@ -365,8 +365,9 @@ function generateCurse() {
 	var subjectHybrid = false;
 	var replacingGenitals = null;
 	var subjectNonLiving = null;
-	var subjectInanimate = null;
+	var subjectInanimate = false;
 	var stagesTF = null;
+	var isAnExpansionTF = null;
 	var renderSubjectGender = true;
 	var singularSubject = null;
 	var noTransformation = false;
@@ -406,6 +407,16 @@ function generateCurse() {
 		shouldFilter: function() {return decidedAndTrue(subjectHuman);},
 		onChoice: function() {subjectHuman = false;} 
 	}
+
+	const chosenTFNotExpansion = {
+		shouldFilter: function() {return decidedAndTrue(isAnExpansionTF);},
+		onChoice: function() {},
+	}
+
+	const isExpansionTF = {
+		shouldFilter: function() {},
+		onChoice: function() {isAnExpansionTF = true;},
+	}
 	
 	const subjectIsHuman  = {
 		shouldFilter: function() {return decidedAndFalse(subjectHuman);},
@@ -438,6 +449,11 @@ function generateCurse() {
 				subjectFemale = triggerFemale;
 			}
 		}
+	}
+
+	const subjectSexBecomesStartingSex = {
+		shouldFilter: function() {return false;},
+		onChoice: function() {if(!isDecided(subjectFemale)){subjectFemale = startingFemale;}}
 	}
 	
 	const triggerSexBecomesOppositeSubjectSex = {
@@ -803,13 +819,13 @@ function generateCurse() {
 				makeTriggerText: function(){return String.format(happensOnce ? "If you happen to touch {0}," : "Whenever you touch {0},", 
 					randomFrom(["someone's pet", "a wild animal", nsfwSelected || lewdSelected ? "an animal in heat" : "an angry animal", "an animal"]));},
 				subjectText: "touched animal", 
-				sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject],
+				sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject, doNotAssignSubjectSex],
 				requires: [beastOption]
 			},
 			{
 				triggerText: happensOnce ? "If you are ever bitten by an animal," : "Whenever you touch an animal's tail,", 
 				subjectText: "animal", 
-				sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject],
+				sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject, doNotAssignSubjectSex],
 				requires: [beastOption]
 			}
 		]),
@@ -832,7 +848,7 @@ function generateCurse() {
 		{
 			makeTriggerText: function(){return happensOnce ? "If you ever eat meat or another animal product," : "Whenever you eat meat or another animal product,";},
 			subjectText: "consumed species", 
-			sets: [specificIndividualTarget, mundaneAnimalSubject],
+			sets: [specificIndividualTarget, mundaneAnimalSubject, doNotAssignSubjectSex],
 			requires: [beastOption],
 		},
 		randomFrom([ // fewer gendered human touch triggers
@@ -889,6 +905,7 @@ function generateCurse() {
 		{
 			makeTriggerText: function(){return happensOnce ? "The next time you get blackout drunk,": "Whenever you get drunk,";},
 			makeAdditionalExplaination: function() {return happensOnce ? "If you only have a couple drinks, you transform partially." : "The more intoxicated you are, the more you change.";},
+			makeDurationText: function(){return happensOnce ? "The transformation is permanent." : ""},
 			sets: [tfInStages],
 		},
 		{
@@ -978,6 +995,84 @@ function generateCurse() {
 		"a gigantic",]);
 	var pussyName = randomFrom(["pussy", "vulva", "vagina"]);
 	var dickName = randomFrom(["dick", "cock", "penis"]);
+
+	var expansionTF = {
+		makeTransformationText:function(){
+			var growthWordSingular = ["swells", "grows"];
+			var growthWordPlural = ["swell", "grow", "expand"];
+			var breastSize = decidedAndTrue(stagesTF) ? "an additional cup size" 
+				: String.format("{0} {1}", 
+					randomFrom(["into head-sized", 
+						"into E-cup",
+						"into G-cup", 
+						"into pillow-sized",
+						"into watermelon-sized",
+						"as silicon forms beneath your flesh, leaving you with giant, fake-looking"]),
+					randomFrom(["tits", "breasts", "jugs", "boobs"]));
+			var defaultSize = decidedAndTrue(stagesTF) ? "noticably larger"
+				: randomFrom(["large enough to always create a noticable bulge",
+					"to an inconvenient size",
+					"until your pants no longer fit",
+					"to freakish proportions",
+					"so large, walking becomes a chore"]);
+			var assSize = decidedAndTrue(stagesTF) ? "noticably larger"
+				: randomFrom(["until your pants burst",
+					"until your pants no longer fit",
+					"to freakish proportions",
+					"so large, walking becomes a chore"]);
+			var penisSize= decidedAndTrue(stagesTF) ? "an additional inch"
+				: randomFrom(["to the length of your forearm",
+					"so large that no human could possibly take you",
+					"large enough to make a stallion jealous",
+					"large enough to hit your chin when you're erect"]);
+			var lipsSize = decidedAndTrue(stagesTF) ? "a bit bigger" : randomFrom([
+				"to be unnaturally large",
+				"and become an erogenous zone",
+				"so large that everyone stares at your mouth when you're speaking",
+				"into a permanent, pillowy pucker",
+			]);
+			var passageSize = decidedAndTrue(stagesTF) ? "a little larger"
+				: randomFrom(["unnaturally deep and large",
+					"to be unnaturally accomodating, shifting your guts to make room",
+					"large enough to easily take a fist",
+					"large enough to leave a visible bulge in your pants"]);
+			var bodypartGrowth = decidedAndTrue(subjectFemale) ? randomFrom([
+					{a: "breasts", b: randomFrom(growthWordPlural.concat(["balloon", "expand"])), c: breastSize},
+					{a: "ass", b: randomFrom(growthWordSingular.concat(["balloons", "expands"])), c: assSize},
+					{a: "lips", b: randomFrom(growthWordPlural.concat(["balloon", "expand"])), c: lipsSize}
+					])
+				: randomFrom([
+					{a: "asshole", b: randomFrom(growthWordSingular), c: passageSize}
+					// bodyshape?
+						]);
+			var genitalGrowth = decidedAndTrue(subjectFemale) ? randomFrom([
+					{a: "pussy", b: randomFrom(growthWordSingular), c: randomFrom([defaultSize, passageSize])},
+					// clit
+					])
+				: decidedAndFalse(subjectFemale) ? randomFrom([
+					{a: "penis", b: randomFrom(growthWordSingular), c: randomFrom([defaultSize, penisSize])},
+					{a: "balls", b: randomFrom(growthWordPlural), c: defaultSize},
+					{a: "cock and balls", b: randomFrom(growthWordPlural), c: defaultSize}
+					])
+				: {a: "genitals", b: randomFrom(growthWordPlural), c: defaultSize};
+			var partAndGrowth = randomFrom([bodypartGrowth, genitalGrowth]);
+			return randomFrom([
+				String.format("your {0} {1} {2}",
+					partAndGrowth.a,
+					partAndGrowth.b,
+					partAndGrowth.c),
+				String.format("your {0} {1} {2}, and your {3} {4} {5}",
+					bodypartGrowth.a, bodypartGrowth.b, bodypartGrowth.c,
+					genitalGrowth.a, genitalGrowth.b, genitalGrowth.c)
+			]);
+		},
+		chosen: function(){shouldRenderSubjectText = false;},
+		subjectText: "",
+		closingRemarkText: "Bigger, bigger bigger!",
+		sets: [subjectIsHuman, subjectSexBecomesStartingSex, doNotAssignSubjectSex, isExpansionTF],
+		requires: [tfSuppliesOwnSubject, humanOption, nsfw]
+	};
+
 	var transformations = [
 		// general transformations
 		{
@@ -1213,6 +1308,7 @@ function generateCurse() {
 			sets: [determinesRandomSex, subjectIsInanimate, oneSubject, allowBeasts],
 			requires: [inanimateOption, lewd, tfAtomic],
 		},
+		expansionTF,
 		{
 			makeTransformationText:function(){return String.format("your {0} replaced with the {1} of {2}", 
 				decidedAndTrue(startingFemale) ? "pussy is" : decidedAndFalse(startingFemale) ? "penis is" : "genitals are",
@@ -1655,7 +1751,7 @@ function generateCurse() {
 		{
 			subjectText: "last animal you touched", 
 			requires: [varyingSubject, beastOption, tfAtomic],
-			sets: [mundaneAnimalSubject, specificIndividualTarget, setExtremitiesName("paws")],
+			sets: [mundaneAnimalSubject, specificIndividualTarget, setExtremitiesName("paws"), doNotAssignSubjectSex],
 		},
 		{
 			subjectText: "last animal you ate", 
@@ -1663,23 +1759,23 @@ function generateCurse() {
 				"Sample any exotic meats lately?",
 				"Mmm-mm. This beef tastes just like you."]),
 			requires: [varyingSubject, beastOption, tfAtomic],
-			sets: [mundaneAnimalSubject, specificIndividualTarget, setExtremitiesName("hooves")],
+			sets: [mundaneAnimalSubject, specificIndividualTarget, setExtremitiesName("hooves"), doNotAssignSubjectSex],
 		},
 		{
 			subjectText: "last fantasy creature you killed in a video game", 
 			closingRemarkText: "Mana really does flow from computer monitors these days.",
-			sets: [specificIndividualTarget, subjectInhuman, nonMundaneSubject, setExtremitiesName("paws")],
+			sets: [specificIndividualTarget, subjectInhuman, nonMundaneSubject, setExtremitiesName("paws"), doNotAssignSubjectSex],
 			requires: [varyingSubject, nonMundaneSubject, beastOption, tfAtomic],
 		},
 		randomFrom([// less zodiac
 			{
 				subjectText: "current year's Chinese zodiac animal", 
-				sets: [specificIndividualTarget, subjectInhuman, nonMundaneSubject, setExtremitiesName("paws")],
+				sets: [specificIndividualTarget, subjectInhuman, nonMundaneSubject, setExtremitiesName("paws"), doNotAssignSubjectSex],
 				requires: [varyingSubject, nonMundaneSubject, beastOption],
 			},
 			{
 				subjectText: "Chinese zodiac animal assigned to you at birth", 
-				sets: [specificIndividualTarget, subjectInhuman, nonMundaneSubject, setExtremitiesName("paws")],
+				sets: [specificIndividualTarget, subjectInhuman, nonMundaneSubject, setExtremitiesName("paws", doNotAssignSubjectSex)],
 				requires: [varyingSubject, nonMundaneSubject, beastOption],
 			},]),
 		{
@@ -2055,6 +2151,13 @@ function generateCurse() {
 			},
 			requires: [nsfw],
 
+		},
+		{ // expansion complication
+			makeComplicationText: function(){
+				var lower = String.format("{0}.", expansionTF.makeTransformationText());
+				return lower.charAt(0).toUpperCase() + lower.substring(1);
+			},
+			requires: [chosenTFNotExpansion, subjectIsAnimate, nsfw],
 		},
 		{
 			makeComplicationText: function(){return String.format("{0} must obey the orders of any human.",
