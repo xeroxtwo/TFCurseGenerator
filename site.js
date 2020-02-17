@@ -5,6 +5,8 @@ const circeTexts = [
 	"God, you mortals are so picky. Here, how's this one?"
 ]
 
+const noValidComponent = "no valid component";
+
 // Tags for global status.
 const sfw = {
 	shouldFilter: function() {return false;},
@@ -53,6 +55,7 @@ var otherSexSelected = false;
 var humansSelected = true;
 var humanoidsSelected = true;
 var beastsSelected = true;
+var mythicalSelected = true;
 var inanimateSelected = true;
 var mentalSelected = true;
 var tgSelected = true;
@@ -62,11 +65,23 @@ $(document).ready(function() {
 		// curse counter
 		fetch("https://www.freevisitorcounters.com/en/home/counter/588546/t/3", {credentials: "omit", mode: 'no-cors',});
 		updateOptionStatuses();
-		$("#circePre").html(getCircePreText());
-		generation = generation + 1;
-		var curseOutput = generateCurse();
+		var curseOutput;
+	        var i;
+	    	for (i = 0; i < 3; i++) {
+			try {
+				curseOutput = generateCurse();
+				break;
+			} catch(err) {
+				console.log("failed to generate curse " + i + ": " + err);
+			}
+		}
+	    	if (i == 3) {
+			return;
+		}
 		
+		generation = generation + 1;
 		$("#goButton").html("Wait, can I get a different one?");
+		$("#circePre").html(getCircePreText());
 		$(".curseOutput").html(curseOutput.curseText);
 		$("#circePost").html(curseOutput.circeText);
 		$("#secretCopyField").html(String.format("{0}\n\n\"{1}\"", curseOutput.curseText, curseOutput.circeText));
@@ -119,6 +134,7 @@ function updateOptionStatuses() {
 	humansSelected = document.getElementById("humanCheckbox").checked;
 	humanoidsSelected = document.getElementById("humanoidCheckbox").checked;
 	beastsSelected = document.getElementById("beastCheckbox").checked;
+	mythicalSelected = document.getElementById("mythicalCheckbox").checked;
 	inanimateSelected = document.getElementById("inanimateCheckbox").checked;
 	mentalSelected = document.getElementById("mentalCheckbox").checked;
 	tgSelected = document.getElementById("transgenderCheckbox").checked;
@@ -191,6 +207,9 @@ function generateCurse() {
 	}
 	
 	function updateCurse(curse, update) {
+		if (update == null) {
+			throw noValidComponent;
+		}
 		setTagsForComponent(update);
 		if (update.chosen != null) {
 			update.chosen();
@@ -531,7 +550,7 @@ function generateCurse() {
 	}
 
 	const nonMundaneSubject = {
-		shouldFilter: function(){return decidedAndTrue(isMundaneAnimalSubject);},
+		shouldFilter: function(){return decidedAndTrue(isMundaneAnimalSubject) || !mythicalSelected;},
 		onChoice: function() {subjectHuman = false;  isMundaneAnimalSubject = false;}
 
 	}
@@ -1533,12 +1552,14 @@ function generateCurse() {
 		{
 			subjectText: randomFrom(["rat", "mouse", "kangaroo mouse"]),
 			chosen: function(){facialFeatureName = randomFrom(["whiskers", "pointed snout"]);},
-			sets: [determinesRandomSex],
 			requires: [beastOption],
 		},
 		{
 			makeSubjectText: function(){return randomFrom(["hawk", 
 				"bluebird", 
+				"crow", 
+				"seagull", 
+				"harpy eagle", 
 				isDecided(subjectFemale) ? subjectFemale ? "peahen" : "peacock" : "peafowl",
 				"secretary bird"]);}, 
 			chosen: function(){extremitiesName = "talons"; facialFeatureName = randomFrom(["beak", "plumage"]);},
