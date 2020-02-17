@@ -1089,7 +1089,7 @@ function generateCurse() {
 		subjectText: "",
 		closingRemarkText: "Bigger, bigger bigger!",
 		sets: [subjectIsHuman, subjectSexBecomesStartingSex, doNotAssignSubjectSex, isExpansionTF],
-		requires: [tfSuppliesOwnSubject, humanOption, nsfw]
+		requires: [tfSuppliesOwnSubject, humanOption, nsfw, noSpecificIndividualTarget]
 	};
 
 	var transformations = [
@@ -1109,6 +1109,25 @@ function generateCurse() {
 			makeTransformationText:function(){return String.format("you become {0}", specificTarget ? "a copy of the" : subjectArticle);}, 
 			requires: [subjectSexBecomesSpecificTriggerSex],
 			sets: [subjectSexBecomesSpecificTriggerSex]
+		},
+		{ // body mod
+		makeTransformationText:function(){
+			//TODO: redo these so they can have additionalExplainations.
+			return randomFrom([
+				(nsfwSelected || lewdSelected) && decidedAndTrue(subjectFemale) ? "your nipples invert, your areola reform into smacking lips, and you are left with fully-functioning mouths in the place of nipples"
+					: "your fingers shrink, your palms swell, and you are left with feet in the place of hands",
+				(lewdSelected) ? "you grow a prehensile tail tipped with a functioning penis"
+					: "your toes twitch and stretch as your feet become copies of your hands",
+				"your fingers shrink, your palms swell, and you are left with feet in the place of hands",
+				"your toes twitch and stretch as your feet become copies of your hands"]);
+			//"You grow a prehensile tail tipped with a {staillion's dick}" // its balls rest at its base against your asscheeks
+			// you can pee through it
+			// asshole transforms into pussy, no longer poo, clit grinds against whatever you're sitting on.
+			},
+		chosen: function(){shouldRenderSubjectText = false;},
+		subjectText: "",
+		sets: [subjectIsHuman, subjectSexBecomesStartingSex, doNotAssignSubjectSex],
+		requires: [tfSuppliesOwnSubject, humanOption, noSpecificIndividualTarget, tfAtomic]
 		},
 		randomFrom([ // make head transformations a little less common.
 			{
@@ -1154,6 +1173,11 @@ function generateCurse() {
 						decidedAndFalse(subjectFemale) ? "tongue" : "mouth",
 						subjectFemale ? pussyName : dickName, subjectArticle, curse.renderGenderedSubjectText());},
 				sets: [subjectSexBecomesSpecificTriggerSex, determinesRandomSex, becomingCreatureHybrid, allowBeastsIfHumanoid],
+				makeAdditionalExplaination: function() {
+					return String.format("Whenever you're aroused, your {0}.",
+					decidedAndFalse(subjectFemale) ? "penis-tongue slides past your lips" 
+					: "mouth dribbles sexual fluids");
+				},
 				requires: [lewd, subjectSexBecomesSpecificTriggerSex],
 				chosen: function(){shouldRenderSubjectText = false;},
 			},
@@ -1253,7 +1277,7 @@ function generateCurse() {
 			chosen: function(){shouldRenderSubjectText = false;},
 			subjectText: "",
 			sets: [doNotAssignSubjectSex, becomingCreatureHybrid],
-			requires: [subjectInhuman, tfSuppliesOwnSubject, humanoidOption],
+			requires: [subjectInhuman, tfSuppliesOwnSubject, humanoidOption, noSpecificIndividualTarget],
 		},
 		// Inhuman transformations
 		{
@@ -1633,7 +1657,7 @@ function generateCurse() {
 		},
 		{
 			makeSubjectText: function(){return isDecided(subjectFemale) ? subjectFemale ? "rabbit doe" : "rabbit buck" : randomFrom(["rabbit", "bunny"]);},
-			chosen: function(){facialFeatureName = randomFrom(["nose and whiskers", "long ears"]);},
+			chosen: function(){facialFeatureName = randomFrom(["buck teeth", "long ears"]);},
 			additionalExplaination: randomFrom([
 				decidedAndTrue(subjectFemale) 
 					? "Each hop causes a lot of jiggling." 
@@ -1666,7 +1690,7 @@ function generateCurse() {
 			subjectText: randomFrom(["monkey", "baboon", "lemur"]),
 			closingRemarkText: "Maybe you should try living in a treehouse.",
 			requires: [beastOption],
-			sets: [mundaneAnimalSubject, setExtremitiesName("hand-like paws")],
+			sets: [mundaneAnimalSubject, setExtremitiesName("hand-like feet")],
 		},
 		{
 			subjectText: "squid",
