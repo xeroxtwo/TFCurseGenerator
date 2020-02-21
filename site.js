@@ -1507,6 +1507,26 @@ function generateCurse() {
 			sets: [mentalOnly, allowBeasts],
 			requires: [mentalOption, nsfw, subjectIsAnimate, noSpecificIndividualTarget],
 		},
+		{
+			makeTransformationText:function(){return String.format("{1} {0}",
+				happensOnce ? "your body expands, envoloping your limbs as you dribble juice"
+					: "your skin changes hue and your body expands a little more, eventually",
+				"leaving you swollen up into a giant, barely-human"
+			},
+			subjectText: randomFrom(["watermelon", "blueberry", "peach", "pumpkin", "pear", "apple", "squash", "orange"]),
+			chosen: function(){extremitiesName = "leaves"; renderSubjectGender = false},
+			makeAdditionalExplaination: function(){return String.format("Being eaten is incredibly pleasurable, and you regenerate quickly. {0}",
+				randomFrom([
+					"Your body is an aphrodesiac.",
+					"You are absolutely delicious.",
+					"You drool tasty juice.",
+					"Your smell makes people hungry.",
+					"You can feel pieces of your body a while after they're separated from you.",
+					"People have an urge to take bites from you.",
+				]));},
+			sets: [subjectInhuman, subjectIsInanimate, setPussyName("flower"), setDickName("flower"), setFacialFeature("leaves")],
+			requires: [notBecomingHybrid, inanimateOption, noSpecificIndividualTarget, subjectIsLiving, beingTransformed, canSupplySubject],
+		},
 	];
 	
 	var breed1 = randomFrom([
@@ -2002,21 +2022,6 @@ function generateCurse() {
 			requires: [notBecomingHybrid, nonMundaneSubject, humanoidOption],
 		},
 		{
-			subjectText: randomFrom(["watermelon", "peach", "pumpkin", "pear", "apple", "squash", "orange"]),
-			chosen: function(){extremitiesName = "leaves"; renderSubjectGender = false},
-			sets: [subjectInhuman, subjectIsInanimate, setPussyName("flower"), setDickName("flower"), setFacialFeature("leaves")],
-			makeAdditionalExplaination: function(){return String.format("Being eaten is incredibly pleasurable, and you regenerate quickly. {0}",
-				randomFrom([
-					"Your body is an aphrodesiac.",
-					"You are absolutely delicious.",
-					"You drool tasty juice.",
-					"Your smell makes people hungry.",
-					"You can feel pieces of your body a while after they're separated from you.",
-					"People have an urge to take bites from you.",
-				]));},
-			requires: [notBecomingHybrid, inanimateOption, subjectIsLiving, beingTransformed],
-		},
-		{
 			subjectText: randomFrom(["oak tree", "redwood tree", "vine of ivy", "pine tree", "rose bush", "lilly plant", "hedge trimmed to look like you", "venus fly-trap", "pitcher-plant"]),
 			chosen: function(){extremitiesName = "leaves"; renderSubjectGender = false},
 			sets: [subjectInhuman, subjectIsInanimate, setPussyName("flower"), setDickName("flower"), setFacialFeature("leaves")],
@@ -2028,7 +2033,7 @@ function generateCurse() {
 					"You're fully aware of your surroundings, but plants cannot move.",
 				]);},
 			closingRemarkText: "I hope you end up somewhere sunny.",
-			requires: [notBecomingHybrid, inanimateOption, subjectIsLiving, beingTransformed],
+			requires: [notBecomingHybrid, inanimateOption, subjectIsLiving, beingTransformed, uncommon],
 		},
 		{
 			subjectText: "sphinx",
