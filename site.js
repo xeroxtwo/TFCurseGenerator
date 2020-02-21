@@ -73,6 +73,7 @@ $(document).ready(function() {
 				break;
 			} catch(err) {
 				console.log("failed to generate curse " + i + ": " + err);
+				console.log(err.stack);
 			}
 		}
 	    	if (i == 3) {
@@ -149,14 +150,10 @@ function getCircePreText() {
 }
 
 function generateCurse() {
-	selectAnother = function(components) {
+	selectAnotherComplication = function(components) {
 		var anotherSelected = randomFrom(components);
-		if (chosenTrigger == anotherSelected
-			|| chosenTransformation == anotherSelected
-			|| chosenSubject == anotherSelected
-			|| chosenDuration == anotherSelected
-			|| chosenComplication == anotherSelected) {
-			return selectAnother(components);
+		if (chosenComplication == anotherSelected) {
+			return selectAnotherComplication(components);
 		} else {
 			return anotherSelected;
 		}
@@ -483,6 +480,11 @@ function generateCurse() {
 		onChoice: function() {if(!isDecided(subjectFemale)){subjectFemale = startingFemale;}}
 	}
 	
+	const transgenderTF = {
+		shouldFilter: function() {return false;},
+		onChoice: function() {if(isDecided(startingFemale)){subjectFemale = !startingFemale;}}
+	}
+	
 	const triggerSexBecomesOppositeSubjectSex = {
 		shouldFilter: function() {return false;},
 		onChoice: function() {if(isDecided(subjectFemale)){triggerFemale = !subjectFemale;}}
@@ -524,7 +526,7 @@ function generateCurse() {
 	}
 
 	const subjectTransformation = {
-		shouldFilter: function(){return false;},
+		shouldFilter: function(){return tfCannotAssignSubject;},
 		onChoice: function() {tfCannotAssignSubject = true;}
 	}
 
@@ -1042,11 +1044,17 @@ function generateCurse() {
 					"until your pants no longer fit",
 					"to freakish proportions",
 					"so large, walking becomes a chore"]);
-			var penisSize= decidedAndTrue(stagesTF) ? "an additional inch"
+			var penisSize = decidedAndTrue(stagesTF) ? "an additional inch"
 				: randomFrom(["to the length of your forearm",
 					"so large that no human could possibly take you",
 					"large enough to make a stallion jealous",
 					"large enough to hit your chin when you're erect"]);
+			var clitSize = decidedAndTrue(stagesTF) ? "an additional inch"
+				: randomFrom(["to the size of your thumb",
+					"large enough to stroke it like a penis",
+					"large enough to penetrate a partner",
+					"large enough that it makes a bump in your pants when you're horny",
+					"so large you can reach it with your mouth"]);
 			var lipsSize = decidedAndTrue(stagesTF) ? "a bit bigger" : randomFrom([
 				"to be unnaturally large",
 				"and become an erogenous zone",
@@ -1069,7 +1077,7 @@ function generateCurse() {
 						]);
 			var genitalGrowth = decidedAndTrue(subjectFemale) ? randomFrom([
 					{a: "pussy", b: randomFrom(growthWordSingular), c: randomFrom([defaultSize, passageSize])},
-					// clit
+					{a: "clit", b: randomFrom(growthWordSingular), c: randomFrom([defaultSize, clitSize])},
 					])
 				: decidedAndFalse(subjectFemale) ? randomFrom([
 					{a: "penis", b: randomFrom(growthWordSingular), c: randomFrom([defaultSize, penisSize])},
@@ -1091,12 +1099,83 @@ function generateCurse() {
 		chosen: function(){shouldRenderSubjectText = false;},
 		subjectText: "",
 		closingRemarkText: "Bigger, bigger bigger!",
-		sets: [subjectIsHuman, subjectSexBecomesStartingSex, doNotAssignSubjectSex, isExpansionTF],
+		sets: [subjectIsHuman, subjectSexBecomesStartingSex, doNotAssignSubjectSex, isExpansionTF, subjectTransformation],
 		requires: [tfSuppliesOwnSubject, humanOption, nsfw, noSpecificIndividualTarget]
+	};
+	// var sentientGenitals = {}
+	//TODO: actually do these
+	var cockTailTF = {
+		makeTransformationText:function(){
+			return "you grow a prehensile tail tipped with a functioning penis";
+		},
+		chosen: function(){shouldRenderSubjectText = false;},
+		subjectText: "",
+		makeAdditionalExplaination: function() {
+			return randomFrom([
+				"Your tail has a pair of balls nestled at its base that jostle against your ass.",
+				"You don't have any control over your tail, and it's very horny.",
+				"Your tail attempts to penetrate and rub against things when you're horny.",
+				"You can pee through your tail."
+			]);
+		},
+		sets: [subjectIsHuman, subjectSexBecomesStartingSex, doNotAssignSubjectSex],
+		requires: [lewd, tfSuppliesOwnSubject, humanOption, noSpecificIndividualTarget, tfAtomic]
+	}
+	var handFootMixupTF = {
+		makeTransformationText:function(){
+			return randomFrom([
+				"your fingers shrink, your palms swell, and you are left with feet in the place of hands",
+				"your feet transform into hands, and your hands transform into feet",
+				"your toes twitch and stretch as your feet become copies of your hands"]);
+		},
+		chosen: function(){shouldRenderSubjectText = false;},
+		subjectText: "",
+		sets: [subjectIsHuman, subjectSexBecomesStartingSex, doNotAssignSubjectSex],
+		requires: [tfSuppliesOwnSubject, humanOption, noSpecificIndividualTarget, tfAtomic, uncommon]
+	}
+	var lippleTF = {
+		makeTransformationText:function(){
+				return subjectFemale ? 
+				"your nipples invert, your areola reform into smacking lips, and you are left with fully-functioning mouths in the place of nipples"
+			: "you grow a pair of breasts with fully-functioning mouths in the place of nipples";
+		},
+		chosen: function(){shouldRenderSubjectText = false;},
+		subjectText: "",
+		makeAdditionalExplaination: function() {
+			return randomFrom([
+				"Your nipples catcall strangers.",
+				"You can only speak using your lipples.",
+				"You can't stop your nipples from speaking your dirty thoughts.",
+				"Eating with your lipples is orgasmic.",
+				"Your lipples nurse anything you put near them."
+			]);
+		},
+		sets: [subjectIsHuman, subjectSexBecomesStartingSex, doNotAssignSubjectSex],
+		requires: [lewd, tfSuppliesOwnSubject, humanOption, noSpecificIndividualTarget, tfAtomic]
+	};
+	var subjectGenitalMouthTF = {
+		makeTransformationText:function(){return specificTarget 
+			? String.format("you grow a copy of the {0}'s genitals in your mouth", curse.renderSubjectText())
+			: String.format("your {0} transforms into the {1} of {2} {3}", 
+				decidedAndFalse(subjectFemale) ? "tongue" : "mouth",
+				subjectFemale ? pussyName : dickName, subjectArticle, 
+				curse.renderGenderedSubjectText());},
+		makeAdditionalExplaination: function() {
+			return String.format("Whenever you're aroused, your {0}.",
+			decidedAndFalse(subjectFemale) ? "penis-tongue slides past your lips" 
+			: "mouth dribbles sexual fluids");
+		},
+		chosen: function(){shouldRenderSubjectText = false;},
+		sets: [subjectSexBecomesSpecificTriggerSex, determinesRandomSex, becomingCreatureHybrid, allowBeastsIfHumanoid],
+		requires: [lewd, subjectSexBecomesSpecificTriggerSex],
 	};
 
 	var transformations = [
 		// general transformations
+		lippleTF,
+		handFootMixupTF,
+		cockTailTF,
+		subjectGenitalMouthTF,
 		{
 			makeTransformationText:function(){return String.format("you transform into {0}", specificTarget ? "a copy of the" : subjectArticle);},
 			requires: [subjectSexBecomesSpecificTriggerSex],
@@ -1112,25 +1191,6 @@ function generateCurse() {
 			makeTransformationText:function(){return String.format("you become {0}", specificTarget ? "a copy of the" : subjectArticle);}, 
 			requires: [subjectSexBecomesSpecificTriggerSex],
 			sets: [subjectSexBecomesSpecificTriggerSex]
-		},
-		{ // body mod
-		makeTransformationText:function(){
-			//TODO: redo these so they can have additionalExplainations.
-			return randomFrom([
-				(nsfwSelected || lewdSelected) && decidedAndTrue(subjectFemale) ? "your nipples invert, your areola reform into smacking lips, and you are left with fully-functioning mouths in the place of nipples"
-					: "your fingers shrink, your palms swell, and you are left with feet in the place of hands",
-				(lewdSelected) ? "you grow a prehensile tail tipped with a functioning penis"
-					: "your toes twitch and stretch as your feet become copies of your hands",
-				"your fingers shrink, your palms swell, and you are left with feet in the place of hands",
-				"your toes twitch and stretch as your feet become copies of your hands"]);
-			//"You grow a prehensile tail tipped with a {staillion's dick}" // its balls rest at its base against your asscheeks
-			// you can pee through it
-			// asshole transforms into pussy, no longer poo, clit grinds against whatever you're sitting on.
-			},
-		chosen: function(){shouldRenderSubjectText = false;},
-		subjectText: "",
-		sets: [subjectIsHuman, subjectSexBecomesStartingSex, doNotAssignSubjectSex],
-		requires: [tfSuppliesOwnSubject, humanOption, noSpecificIndividualTarget, tfAtomic]
 		},
 		{
 			makeTransformationText:function(){return specificTarget 
@@ -1167,21 +1227,6 @@ function generateCurse() {
 				]));},
 			sets: [subjectSexBecomesSpecificTriggerSex],
 			requires: [lewd, subjectSexBecomesSpecificTriggerSex, veryUncommon],
-		},
-		{
-			makeTransformationText:function(){return specificTarget 
-				? String.format("you grow a copy of the {0}'s genitals in your mouth", curse.renderSubjectText())
-				: String.format("your {0} transforms into the {1} of {2} {3}", 
-					decidedAndFalse(subjectFemale) ? "tongue" : "mouth",
-					subjectFemale ? pussyName : dickName, subjectArticle, curse.renderGenderedSubjectText());},
-			sets: [subjectSexBecomesSpecificTriggerSex, determinesRandomSex, becomingCreatureHybrid, allowBeastsIfHumanoid],
-			makeAdditionalExplaination: function() {
-				return String.format("Whenever you're aroused, your {0}.",
-				decidedAndFalse(subjectFemale) ? "penis-tongue slides past your lips" 
-				: "mouth dribbles sexual fluids");
-			},
-			requires: [lewd, subjectSexBecomesSpecificTriggerSex, veryUncommon],
-			chosen: function(){shouldRenderSubjectText = false;},
 		},
 		{
 			makeTransformationText:function(){return String.format("your genitals transform into the mouth of {0}", specificTarget ? "the" : subjectArticle);},
@@ -1223,7 +1268,7 @@ function generateCurse() {
 				"You find yourself hopelessly attracted to all your friends."]),
 			chosen: function(){shouldRenderSubjectText = false;},
 			subjectText: "",
-			sets: [subjectIsHuman],
+			sets: [subjectIsHuman, transgenderTF],
 			requires: [tfSuppliesOwnSubject, humanOption, tgOption]
 		},
 		{
@@ -1284,11 +1329,18 @@ function generateCurse() {
 		},
 		// Inhuman transformations
 		{
-			makeTransformationText:function(){return String.format("you transform into {0} anthro version of {1}", 
+			makeTransformationText:function(){return String.format("you transform into {0} anthro {1}", 
 				Math.random() < 0.3 ? "an" : getBodyType(),
-				specificTarget ? "the" : subjectArticle);},
+				specificTarget ? "version of the" : "");},
 			sets: [becomingCreatureHybrid],
 			requires: [subjectInhuman, humanoidOption],
+		},
+		{
+			makeTransformationText:function(){return String.format("you shift into {0} anthropomorphic {1}", 
+				Math.random() < 0.3 ? "an" : getBodyType(),
+				specificTarget ? "version of the" : "");},
+			sets: [becomingCreatureHybrid],
+			requires: [uncommon, subjectInhuman, humanoidOption],
 		},
 		{
 			makeTransformationText:function(){return String.format("you transform into {0} {1} version of {2}",
@@ -2185,12 +2237,18 @@ function generateCurse() {
 		},
 	]
 
+	function makeTFComplication(transformation) {
+		var lower = String.format("{0}.", transformation.makeTransformationText());
+		return lower.charAt(0).toUpperCase() + lower.substring(1);
+	};
+
+
 	var complications = [
 		{
 			// Double complications
 			makeComplicationText: function(){
-				var comp1 = selectAnother(filterComponents(complications));
-				var comp2 = selectAnother(filterComponents(complications));
+				var comp1 = selectAnotherComplication(filterComponents(complications));
+				var comp2 = selectAnotherComplication(filterComponents(complications));
 				var compText1 = comp1.complicationText == null ? comp1.makeComplicationText() : comp1.complicationText;
 				var compText2 = comp2.complicationText == null ? comp2.makeComplicationText() : comp2.complicationText;
 				return String.format("<br></p><p>{0} {1}", 
@@ -2202,10 +2260,36 @@ function generateCurse() {
 		},
 		{ // expansion complication
 			makeComplicationText: function(){
-				var lower = String.format("{0}.", expansionTF.makeTransformationText());
-				return lower.charAt(0).toUpperCase() + lower.substring(1);
+				return makeTFComplication(expansionTF);
 			},
 			requires: [chosenTFNotExpansion, subjectIsAnimate, nsfw],
+		},
+		{ //lipple complication
+			makeComplicationText: function(){
+				return makeTFComplication(lippleTF);
+			},
+			makeAdditionalExplaination: function(){return lippleTF.makeAdditionalExplaination()},
+			requires: [subjectIsAnimate, lewd],
+		},
+		{ //cockTail complication
+			makeComplicationText: function(){
+				return makeTFComplication(cockTailTF);
+			},
+			makeAdditionalExplaination: function(){return cockTailTF.makeAdditionalExplaination()},
+			requires: [subjectIsAnimate, lewd],
+		},
+		{ // genital mouth
+			makeComplicationText: function(){
+				if (Math.random() < 0.5) {
+					return makeTFComplication(subjectGenitalMouthTF);
+				} else {
+					subjectFemale = !subjectFemale;
+					var output = makeTFComplication(subjectGenitalMouthTF);
+					subjectFemale = !subjectFemale;
+					return output;
+				}
+			},
+			requires: [subjectIsAnimate, lewd, subjectTransformation],
 		},
 		{
 			makeComplicationText: function(){return String.format("{0} must obey the orders of any human.",
@@ -2351,6 +2435,11 @@ function generateCurse() {
 		{
 			complicationText: "You can speak to other members of the relevant species.",
 			requires: [mundaneAnimalSubject, subjectIsAnimate, beastOption],
+		},
+		{
+			makeComplicationText: function() {return String.format("If that wasn't bad enough, you soon realize you're in {0}.",
+				subjectFemale ? "heat" : "rut");},
+			requires: [mundaneAnimalSubject, beastOption, subjectIsAnimate],
 		},
 		{
 			makeComplicationText: function() {return String.format("The longer you remain transformed, the more your thoughts become the simple instincts of {0} {1}.",
