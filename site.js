@@ -392,6 +392,14 @@ function generateCurse() {
 	var noTransformation = false;
 
 	// TAGS
+	const veryUncommon = {
+		shouldFilter: function(){return Math.random() < 0.75;},
+		onChoice: function() {},
+	}
+	const uncommon = {
+		shouldFilter: function(){return Math.random() < 0.5;},
+		onChoice: function() {},
+	}
 	const tfInStages = {
 		shouldFilter: function(){return !isDecided(stagesTF) || decidedAndFalse(stagesTF);},
 		onChoice: function() {stagesTF = true},
@@ -812,80 +820,75 @@ function generateCurse() {
 			makeTriggerText: function(){return happensOnce ? "In one week" : String.format("Every {0}", randomFrom(["Monday", "Saturday", "Friday"]));},
 			chosen: function(){shortDurationOnly = true;}
 		},
-		randomFrom([ // fewer permanent durations.
-			{
-				triggerText: "Immediately,", 
-				durationText: "The transformation is permanent.", 
-				chosen: function(){happensOnce = true;},
-				closingRemarkText: randomFrom([
-					"I hope you're sitting at home in front of your desktop right now.",
-					"Who's going to find you like that?",
-					"This might be awkward if you're out in public.",
-					"Surprise!",
-					"If you don't send me feedback, I'll know why.",
-					"I hope whatever clothes you're wearing don't get damaged."])
-			},
-			{
-				triggerText: randomFrom([
-					"You will be kidnapped by a cult. They perform a profane ritual on you where",
-					"A cruel witch will spike the punch at the next party you attend, and all the guests' bodies twist into new shapes. This includes you, and",
-					"You will be exposed to toxic sludge via a chemical spill. Instead of getting sick,"]), 
-				durationText: "There's no way to return to normal.", 
-				chosen: function(){happensOnce = true;},
-			},
-		]),
-		randomFrom([{
-				makeTriggerText: function(){return String.format(happensOnce ? "If you happen to touch {0}," : "Whenever you touch {0},", 
-					randomFrom(["someone's pet", "a wild animal", nsfwSelected || lewdSelected ? "an animal in heat" : "an angry animal", "an animal"]));},
-				subjectText: "touched animal", 
-				sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject, doNotAssignSubjectSex],
-				requires: [beastOption]
-			},
-			{
-				triggerText: happensOnce ? "If you are ever bitten by an animal," : "Whenever you touch an animal's tail,", 
-				subjectText: "animal", 
-				sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject, doNotAssignSubjectSex],
-				requires: [beastOption]
-			}
-		]),
-		randomFrom([ // fewer gendered animal touch options
-			{
-				makeTriggerText: function(){return happensOnce ? "If you ever touch a female animal," : "Whenever you touch a male animal,";},
-				subjectText: "touched animal", 
-				chosen: function(){triggerFemale = true;},
-				sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject],
-				requires: [beastOption],
-			},
-			{
-				makeTriggerText: function(){return happensOnce ? "If you ever touch a male animal," : "Whenever you touch a male animal,";},
-				subjectText: "touched animal", 
-				chosen: function(){triggerFemale = false;},
-				sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject],
-				requires: [beastOption]
-			},
-		]),
+		{
+			triggerText: "Immediately,", 
+			durationText: "The transformation is permanent.", 
+			chosen: function(){happensOnce = true;},
+			closingRemarkText: randomFrom([
+				"I hope you're sitting at home in front of your desktop right now.",
+				"Who's going to find you like that?",
+				"This might be awkward if you're out in public.",
+				"Surprise!",
+				"If you don't send me feedback, I'll know why.",
+				"I hope whatever clothes you're wearing don't get damaged."]),
+			requires: [uncommon],
+		},
+		{
+			triggerText: randomFrom([
+				"You will be kidnapped by a cult. They perform a profane ritual on you where",
+				"A cruel witch will spike the punch at the next party you attend, and all the guests' bodies twist into new shapes. This includes you, and",
+				"You will be exposed to toxic sludge via a chemical spill. Instead of getting sick,"]), 
+			durationText: "There's no way to return to normal.", 
+			chosen: function(){happensOnce = true;},
+			requires: [uncommon],
+		},
+		{
+			makeTriggerText: function(){return String.format(happensOnce ? "If you happen to touch {0}," : "Whenever you touch {0},", 
+				randomFrom(["someone's pet", "a wild animal", nsfwSelected || lewdSelected ? "an animal in heat" : "an angry animal", "an animal"]));},
+			subjectText: "touched animal", 
+			sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject, doNotAssignSubjectSex],
+			requires: [beastOption, uncommon]
+		},
+		{
+			triggerText: happensOnce ? "If you are ever bitten by an animal," : "Whenever you touch an animal's tail,", 
+			subjectText: "animal", 
+			sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject, doNotAssignSubjectSex],
+			requires: [beastOption, uncommon]
+		},
+		{
+			makeTriggerText: function(){return happensOnce ? "If you ever touch a female animal," : "Whenever you touch a male animal,";},
+			subjectText: "touched animal", 
+			chosen: function(){triggerFemale = true;},
+			sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject],
+			requires: [beastOption, uncommon],
+		},
+		{
+			makeTriggerText: function(){return happensOnce ? "If you ever touch a male animal," : "Whenever you touch a male animal,";},
+			subjectText: "touched animal", 
+			chosen: function(){triggerFemale = false;},
+			sets: [touchTransformation, specificIndividualTarget, mundaneAnimalSubject],
+			requires: [beastOption, uncommon]
+		},
 		{
 			makeTriggerText: function(){return happensOnce ? "If you ever eat meat or another animal product," : "Whenever you eat meat or another animal product,";},
 			subjectText: "consumed species", 
 			sets: [specificIndividualTarget, mundaneAnimalSubject, doNotAssignSubjectSex],
 			requires: [beastOption],
 		},
-		randomFrom([ // fewer gendered human touch triggers
-			{
-				makeTriggerText: function(){return happensOnce ? "When you next touch a man,": "Whenever you touch a man";},
-				subjectText: "touched man", 
-				chosen: function(){triggerFemale = false;},
-				sets: [touchTransformation, specificIndividualTarget, subjectIsHuman],
-				requires: [humanOption],
-			},
-			{
-				makeTriggerText: function(){return happensOnce ? "When you next touch a woman": "Whenever you touch a woman";},
-				subjectText: "touched woman", 
-				chosen: function(){triggerFemale = true;},
-				sets: [touchTransformation, specificIndividualTarget, subjectIsHuman],
-				requires: [humanOption]
-			},
-		]),
+		{
+			makeTriggerText: function(){return happensOnce ? "When you next touch a man,": "Whenever you touch a man";},
+			subjectText: "touched man", 
+			chosen: function(){triggerFemale = false;},
+			sets: [touchTransformation, specificIndividualTarget, subjectIsHuman],
+			requires: [humanOption, uncommon],
+		},
+		{
+			makeTriggerText: function(){return happensOnce ? "When you next touch a woman": "Whenever you touch a woman";},
+			subjectText: "touched woman", 
+			chosen: function(){triggerFemale = true;},
+			sets: [touchTransformation, specificIndividualTarget, subjectIsHuman],
+			requires: [humanOption, uncommon]
+		},
 		{
 			makeTriggerText: function(){
 				return String.format(happensOnce ? "When you next touch {0},": "Whenever you touch {0},",
@@ -1061,8 +1064,8 @@ function generateCurse() {
 					{a: "lips", b: randomFrom(growthWordPlural.concat(["balloon", "expand"])), c: lipsSize}
 					])
 				: randomFrom([
-					{a: "asshole", b: randomFrom(growthWordSingular), c: passageSize}
-					// bodyshape?
+					{a: "asshole", b: randomFrom(growthWordSingular), c: passageSize},
+					{a: "belly", b: randomFrom(growthWordSingular), c: defaultSize}
 						]);
 			var genitalGrowth = decidedAndTrue(subjectFemale) ? randomFrom([
 					{a: "pussy", b: randomFrom(growthWordSingular), c: randomFrom([defaultSize, passageSize])},
@@ -1129,69 +1132,67 @@ function generateCurse() {
 		sets: [subjectIsHuman, subjectSexBecomesStartingSex, doNotAssignSubjectSex],
 		requires: [tfSuppliesOwnSubject, humanOption, noSpecificIndividualTarget, tfAtomic]
 		},
-		randomFrom([ // make head transformations a little less common.
-			{
-				makeTransformationText:function(){return specificTarget 
-					? "an additional head grows beside your own. It's that of the" 
-						: String.format("an additional head grows beside your own, and your original head changes to match. The heads are those of {0}", subjectArticle);},
-				additionalExplaination: randomFrom([
-					specificTarget ? "The new head retains its own mind." : "You have no control over your new head.",
-					"You control the additional head fully.",
-					"Your personality is split between the heads. One gets your libido and passion, the other gets your logic and restraint.",
-					"You get along with your new head like a sibling most of the time, but it's always making sexual advances."]),
-				closingRemarkText: "It isn't always easy <a href=\"https://www.furaffinity.net/view/21328649/\"> sharing a body with others</a>.",
-				sets: [doNotAssignSubjectSex],
-				requires: [tfAtomic],
-			},			
-			{
-				makeTransformationText:function(){return String.format("your head transforms into that of {0}", specificTarget ? "the" : subjectArticle);},
-				sets: [doNotAssignSubjectSex, becomingCreatureHybrid],
-				requires: [subjectInhuman, humanoidOrBeastOption],
+		{
+			makeTransformationText:function(){return specificTarget 
+				? "an additional head grows beside your own. It's that of the" 
+					: String.format("an additional head grows beside your own, and your original head changes to match. The heads are those of {0}", subjectArticle);},
+			additionalExplaination: randomFrom([
+				specificTarget ? "The new head retains its own mind." : "You have no control over your new head.",
+				"You control the additional head fully.",
+				"Your personality is split between the heads. One gets your libido and passion, the other gets your logic and restraint.",
+				"You get along with your new head like a sibling most of the time, but it's always making sexual advances."]),
+			closingRemarkText: "It isn't always easy <a href=\"https://www.furaffinity.net/view/21328649/\"> sharing a body with others</a>.",
+			sets: [doNotAssignSubjectSex],
+			requires: [tfAtomic, veryUncommon],
+		},			
+		{
+			makeTransformationText:function(){return String.format("your head transforms into that of {0}", specificTarget ? "the" : subjectArticle);},
+			sets: [doNotAssignSubjectSex, becomingCreatureHybrid],
+			requires: [subjectInhuman, humanoidOrBeastOption, veryUncommon],
+		},
+		{
+			makeTransformationText:function(){return String.format("you upside-down transform into {0}", specificTarget ? "a copy of the" : subjectArticle);},
+			makeAdditionalExplaination: function(){return String.format(
+				"The new head emerges from your crotch, while your own head is reduced to its new {0}. {1}",
+				randomFrom([
+					isDecided(subjectFemale) ? subjectFemale ? pussyName : dickName : "genitals",
+					isDecided(subjectFemale) ? subjectFemale ? pussyName : dickName : "reproductive organs",
+					isDecided(subjectFemale) ? subjectFemale ? pussyName : dickName : "backside",
+					"asshole"]),
+				randomFrom([
+					"Your consciousness remains confined to your new body's backside, leaving you a helpless passenger. Your body's new owner is horny, mischevious, and has access to your memories.",
+					"Your consciousness remains confined to your new body's backside, leaving you a helpless passenger. Your body's new owner appears to be a mental duplicate of yourself and has no idea you still exist.",
+					"Your consciousness remains confined to your new body's backside, but you can wrestle with your bodymate for control.",
+					"The moment when your conciousness shifts from one head to the other is very disorienting.",
+				]));},
+			sets: [subjectSexBecomesSpecificTriggerSex],
+			requires: [lewd, subjectSexBecomesSpecificTriggerSex, veryUncommon],
+		},
+		{
+			makeTransformationText:function(){return specificTarget 
+				? String.format("you grow a copy of the {0}'s genitals in your mouth", curse.renderSubjectText())
+				: String.format("your {0} transforms into the {1} of {2} {3}", 
+					decidedAndFalse(subjectFemale) ? "tongue" : "mouth",
+					subjectFemale ? pussyName : dickName, subjectArticle, curse.renderGenderedSubjectText());},
+			sets: [subjectSexBecomesSpecificTriggerSex, determinesRandomSex, becomingCreatureHybrid, allowBeastsIfHumanoid],
+			makeAdditionalExplaination: function() {
+				return String.format("Whenever you're aroused, your {0}.",
+				decidedAndFalse(subjectFemale) ? "penis-tongue slides past your lips" 
+				: "mouth dribbles sexual fluids");
 			},
-			{
-				makeTransformationText:function(){return String.format("you upside-down transform into {0}", specificTarget ? "a copy of the" : subjectArticle);},
-				makeAdditionalExplaination: function(){return String.format(
-					"The new head emerges from your crotch, while your own head is reduced to its new {0}. {1}",
-					randomFrom([
-						isDecided(subjectFemale) ? subjectFemale ? pussyName : dickName : "genitals",
-						isDecided(subjectFemale) ? subjectFemale ? pussyName : dickName : "reproductive organs",
-						isDecided(subjectFemale) ? subjectFemale ? pussyName : dickName : "backside",
-						"asshole"]),
-					randomFrom([
-						"Your consciousness remains confined to your new body's backside, leaving you a helpless passenger. Your body's new owner is horny, mischevious, and has access to your memories.",
-						"Your consciousness remains confined to your new body's backside, leaving you a helpless passenger. Your body's new owner appears to be a mental duplicate of yourself and has no idea you still exist.",
-						"Your consciousness remains confined to your new body's backside, but you can wrestle with your bodymate for control.",
-						"The moment when your conciousness shifts from one head to the other is very disorienting.",
-					]));},
-				sets: [subjectSexBecomesSpecificTriggerSex],
-				requires: [lewd, subjectSexBecomesSpecificTriggerSex],
-			},
-			{
-				makeTransformationText:function(){return specificTarget 
-					? String.format("you grow a copy of the {0}'s genitals in your mouth", curse.renderSubjectText())
-					: String.format("your {0} transforms into the {1} of {2} {3}", 
-						decidedAndFalse(subjectFemale) ? "tongue" : "mouth",
-						subjectFemale ? pussyName : dickName, subjectArticle, curse.renderGenderedSubjectText());},
-				sets: [subjectSexBecomesSpecificTriggerSex, determinesRandomSex, becomingCreatureHybrid, allowBeastsIfHumanoid],
-				makeAdditionalExplaination: function() {
-					return String.format("Whenever you're aroused, your {0}.",
-					decidedAndFalse(subjectFemale) ? "penis-tongue slides past your lips" 
-					: "mouth dribbles sexual fluids");
-				},
-				requires: [lewd, subjectSexBecomesSpecificTriggerSex],
-				chosen: function(){shouldRenderSubjectText = false;},
-			},
-			{
-				makeTransformationText:function(){return String.format("your genitals transform into the mouth of {0}", specificTarget ? "the" : subjectArticle);},
-				additionalExplaination: randomFrom([
-					"You have no control over your new mouth.",
-					"Whatever was between your legs before ends up incorporated into your new mouth.",
-					"Whatever was between your legs before ends up incorporated into your original mouth.",
-					"Eating is an orgasmic experience."]),
-				sets: [doNotAssignSubjectSex, becomingCreatureHybrid, allowBeastsIfHumanoid],
-				requires: [lewd]
-			},
-		]),
+			requires: [lewd, subjectSexBecomesSpecificTriggerSex, veryUncommon],
+			chosen: function(){shouldRenderSubjectText = false;},
+		},
+		{
+			makeTransformationText:function(){return String.format("your genitals transform into the mouth of {0}", specificTarget ? "the" : subjectArticle);},
+			additionalExplaination: randomFrom([
+				"You have no control over your new mouth.",
+				"Whatever was between your legs before ends up incorporated into your new mouth.",
+				"Whatever was between your legs before ends up incorporated into your original mouth.",
+				"Eating is an orgasmic experience."]),
+			sets: [doNotAssignSubjectSex, becomingCreatureHybrid, allowBeastsIfHumanoid],
+			requires: [lewd, veryUncommon]
+		},
 		{
 			makeTransformationText:function(){return String.format("{0}", happensOnce 
 				? "you spend the next 24 hours transforming into" : 
