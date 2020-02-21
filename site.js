@@ -544,11 +544,6 @@ function generateCurse() {
 		onChoice: function() {mustUseStandardSubject = true;}
 	}
 
-	const tfSuppliesOwnSubject = {
-		shouldFilter: function(){return decidedAndTrue(tfCannotAssignSubject);},
-		onChoice: function() {tfCannotAssignSubject = true;}
-	}
-
 	const specificIndividualTarget = {
 		shouldFilter: function(){return decidedAndFalse(specificTarget);},
 		onChoice: function() {specificTarget = true; subjectArticle = "the"; singularSubject = true;}
@@ -1004,8 +999,7 @@ function generateCurse() {
 					])
 				)}, 
 			transformationText: "",
-			chosen: function(){shouldRenderSubjectText = false;},
-			sets: [specificIndividualTarget, subjectInhuman, subjectIsLiving],
+			sets: [specificIndividualTarget, subjectInhuman, subjectIsLiving, doNotRenderSubject],
 			requires: [humanoidOrBeastOption],
 			closingRemarkText: randomFrom(["I have the strangest urge to beat you up right now.", "I just want to cuddle you!"])
 		},
@@ -1110,10 +1104,9 @@ function generateCurse() {
 					genitalGrowth.a, genitalGrowth.b, genitalGrowth.c)
 			]);
 		},
-		chosen: function(){shouldRenderSubjectText = false;},
 		subjectText: "",
 		closingRemarkText: "Bigger, bigger bigger!",
-		sets: [subjectIsHuman, subjectSexBecomesStartingSex, doNotAssignSubjectSex, isExpansionTF],
+		sets: [subjectIsHuman, doNotRenderSubject, subjectSexBecomesStartingSex, doNotAssignSubjectSex, isExpansionTF],
 		requires: [canSupplySubject, humanOption, nsfw, noSpecificIndividualTarget]
 	};
 	// var sentientGenitals = {}
@@ -1122,7 +1115,6 @@ function generateCurse() {
 		makeTransformationText:function(){
 			return "you grow a prehensile tail tipped with a functioning penis";
 		},
-		chosen: function(){shouldRenderSubjectText = false;},
 		subjectText: "",
 		makeAdditionalExplaination: function() {
 			return randomFrom([
@@ -1132,7 +1124,7 @@ function generateCurse() {
 				"You can pee through your tail."
 			]);
 		},
-		sets: [subjectIsHuman, subjectSexBecomesStartingSex, doNotAssignSubjectSex],
+		sets: [subjectIsHuman, doNotRenderSubject, subjectSexBecomesStartingSex, doNotAssignSubjectSex],
 		requires: [canSupplySubject, lewd, humanOption, noSpecificIndividualTarget, tfAtomic]
 	}
 	var handFootMixupTF = {
@@ -1142,10 +1134,9 @@ function generateCurse() {
 				"your feet transform into hands, and your hands transform into feet",
 				"your toes twitch and stretch as your feet become copies of your hands"]);
 		},
-		chosen: function(){shouldRenderSubjectText = false;},
 		subjectText: "",
-		sets: [subjectIsHuman, subjectSexBecomesStartingSex, doNotAssignSubjectSex],
-		requires: [canSupplySubject, tfSuppliesOwnSubject, humanOption, noSpecificIndividualTarget, tfAtomic, uncommon]
+		sets: [subjectIsHuman, doNotRenderSubject, subjectSexBecomesStartingSex, doNotAssignSubjectSex],
+		requires: [canSupplySubject, humanOption, noSpecificIndividualTarget, tfAtomic, uncommon]
 	}
 	var lippleTF = {
 		makeTransformationText:function(){
@@ -1153,7 +1144,6 @@ function generateCurse() {
 				"your nipples invert, your areola reform into smacking lips, and you are left with fully-functioning mouths in the place of nipples"
 			: "you grow a pair of breasts with fully-functioning mouths in the place of nipples";
 		},
-		chosen: function(){shouldRenderSubjectText = false;},
 		subjectText: "",
 		makeAdditionalExplaination: function() {
 			return randomFrom([
@@ -1164,7 +1154,7 @@ function generateCurse() {
 				"Your lipples nurse anything you put near them."
 			]);
 		},
-		sets: [subjectIsHuman, subjectSexBecomesStartingSex, doNotAssignSubjectSex],
+		sets: [subjectIsHuman, doNotRenderSubject, subjectSexBecomesStartingSex, doNotAssignSubjectSex],
 		requires: [canSupplySubject, lewd, humanOption, noSpecificIndividualTarget, tfAtomic]
 	};
 	var subjectGenitalMouthTF = {
@@ -1179,8 +1169,7 @@ function generateCurse() {
 			decidedAndFalse(subjectFemale) ? "penis-tongue slides past your lips" 
 			: "mouth dribbles sexual fluids");
 		},
-		chosen: function(){shouldRenderSubjectText = false;},
-		sets: [subjectSexBecomesSpecificTriggerSex, determinesRandomSex, becomingCreatureHybrid, allowBeastsIfHumanoid],
+		sets: [subjectSexBecomesSpecificTriggerSex, doNotRenderSubject, determinesRandomSex, becomingCreatureHybrid, allowBeastsIfHumanoid],
 		requires: [lewd, subjectSexBecomesSpecificTriggerSex],
 	};
 
@@ -1190,6 +1179,7 @@ function generateCurse() {
 		handFootMixupTF,
 		cockTailTF,
 		subjectGenitalMouthTF,
+		expansionTF,
 		{
 			makeTransformationText:function(){return String.format("you transform into {0}", specificTarget ? "a copy of the" : subjectArticle);},
 			requires: [subjectSexBecomesSpecificTriggerSex],
@@ -1280,9 +1270,8 @@ function generateCurse() {
 				"You look like an androgynous version of your old self, but the equipment between your legs is the real deal.",
 				"You never quite feel comfortable as your new sex, and often \"crossdress\" to match your original gender.",
 				"You find yourself hopelessly attracted to all your friends."]),
-			chosen: function(){shouldRenderSubjectText = false;},
 			subjectText: "",
-			sets: [subjectIsHuman, transgenderTF],
+			sets: [subjectIsHuman, doNotRenderSubject, transgenderTF],
 			requires: [canSupplySubject, humanOption, tgOption]
 		},
 		{
@@ -1318,9 +1307,8 @@ function generateCurse() {
 			additionalExplaination: randomFrom([
 				"You retain your senses.",
 				"Time passes quickly.",]),
-			chosen: function(){shouldRenderSubjectText = false;},
 			subjectText: "",
-			sets: [subjectSexBecomesSpecificTriggerSex, subjectIsInanimate],
+			sets: [subjectSexBecomesSpecificTriggerSex, doNotRenderSubject, subjectIsInanimate],
 			requires: [nsfw, inanimateOption, canSupplySubject, subjectSexBecomesSpecificTriggerSex, uncommon]
 		},
 		{
@@ -1336,9 +1324,8 @@ function generateCurse() {
 					: "Your new tentacles are exceptionally large.",
 				lewdSelected ? "The tips of your tentacles are erogenous zones." 
 					: "Your tentacles can't stay still for long."]),
-			chosen: function(){shouldRenderSubjectText = false;},
 			subjectText: "",
-			sets: [doNotAssignSubjectSex, becomingCreatureHybrid],
+			sets: [doNotAssignSubjectSex, doNotRenderSubject, becomingCreatureHybrid],
 			requires: [subjectInhuman, canSupplySubject, humanoidOption, noSpecificIndividualTarget, uncommon],
 		},
 		// Inhuman transformations
@@ -1416,11 +1403,9 @@ function generateCurse() {
 					matchingBodyPart),
 				"You can still move a little bit and even wriggle along the floor if given enough time."])
 				.join(' ');},
-			chosen: function(){shouldRenderSubjectText = false;},
-			sets: [determinesRandomSex, subjectIsInanimate, oneSubject, allowBeasts],
+			sets: [determinesRandomSex, doNotRenderSubject, subjectIsInanimate, oneSubject, allowBeasts],
 			requires: [inanimateOption, lewd, tfAtomic],
 		},
-		expansionTF,
 		{
 			makeTransformationText:function(){return String.format("your {0} replaced with the {1} of {2}", 
 				decidedAndTrue(startingFemale) ? "pussy is" : decidedAndFalse(startingFemale) ? "penis is" : "genitals are",
@@ -1472,8 +1457,7 @@ function generateCurse() {
 		{
 			makeTransformationText:function(){return String.format("you become {0} {1} from the waist down",
 				specificTarget ? "the" : subjectArticle, curse.renderGenderedSubjectText());},
-			chosen: function(){shouldRenderSubjectText = false;},
-			sets: [becomingCreatureHybrid, subjectSexBecomesSpecificTriggerSex],
+			sets: [becomingCreatureHybrid, doNotRenderSubject, subjectSexBecomesSpecificTriggerSex],
 			requires: [subjectInhuman, humanoidOption, subjectSexBecomesSpecificTriggerSex],
 		},
 		// touch transformations
@@ -1484,9 +1468,8 @@ function generateCurse() {
 					randomFrom(["top half", "bottom half"]))])
 			},
 			subjectText: "",
-			chosen: function(){shouldRenderSubjectText = false;},
 			closingRemarkText: "I hope you really liked them.",
-			sets: [subjectSexBecomesTriggerSex, becomingCreatureHybrid],
+			sets: [subjectSexBecomesTriggerSex, doNotRenderSubject, becomingCreatureHybrid],
 			requires: [subjectSexBecomesTriggerSex, touchTransformation, tfAtomic, humanoidOption, canSupplySubject],
 		},
 		{
@@ -1497,8 +1480,7 @@ function generateCurse() {
 				"You can exert some control over your host's libido.",
 				"You can communicate with your host mentally and access their senses.",
 				"Your new host doesn't remember the transformation."]),
-			chosen: function(){shouldRenderSubjectText = false;},
-			sets: [subjectSexBecomesTriggerSex],
+			sets: [subjectSexBecomesTriggerSex, doNotRenderSubject],
 			requires: [touchTransformation, lewd, tfAtomic, inanimateOption, subjectSexBecomesTriggerSex],
 		},
 		// mental transformations
@@ -1585,6 +1567,8 @@ function generateCurse() {
 			closingRemarkText: "Uhh. . . Moo?",
 			makeAdditionalExplaination: function() {return randomFrom([
 				decidedAndTrue(subjectFemale) ? "You also have an udder and give milk." : "You can always feel a 'moo' building in your throat, begging to be let out.",
+				decidedAndTrue(subjectFemale) ? "You have pink fur and an udder that gives delicious strawberry-flavored milk." : "You can always feel a 'moo' building in your throat, begging to be let out.",
+				decidedAndTrue(subjectFemale) ? "You have brown fur and an udder that gives delicious chochocolate milk." : "You can always feel a 'moo' building in your throat, begging to be let out.",
 				decidedAndTrue(subjectFemale) ? "You also have an udder, and the milk is deeply addictive." : "You hate the color red, and you find cows strangely alluring.",
 				"You can always feel a 'moo' building in your throat, begging to be let out."]);},
 			sets: [determinesRandomSex, mundaneAnimalSubject, setPussyName("sloppy ".concat(pussyName)), setExtremitiesName("hooves"), setFacialFeature("clumsy snout")],
@@ -2392,7 +2376,10 @@ function generateCurse() {
 			requires: [tfAtomic]
 		},
 		{
-			complicationText: "No one seems to think your new curse is at all unusual."
+			complicationText: randomFrom([
+				"No one seems to think your new curse is at all unusual.",
+				"You refuse to believe that your curse isn't normal."
+			]),
 		},
 		{
 			complicationText: "Your current romantic interest is afflicted with a similar curse.",
