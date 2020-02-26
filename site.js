@@ -48,10 +48,10 @@ const humanoidOrBeastOption = {
 var generation = 0;
 var sfwSelected = false;
 var nsfwSelected = false;
-var lewdSelected = false;
+var lewdSelected = true;
 var maleSelected= false;
 var femaleSelected = false;
-var otherSexSelected = false;
+var otherSexSelected = true;
 var humansSelected = true;
 var humanoidsSelected = true;
 var beastsSelected = true;
@@ -1170,7 +1170,7 @@ function generateCurse() {
 			: "mouth dribbles sexual fluids");
 		},
 		sets: [subjectSexBecomesSpecificTriggerSex, doNotRenderSubject, determinesRandomSex, becomingCreatureHybrid, allowBeastsIfHumanoid],
-		requires: [lewd, subjectSexBecomesSpecificTriggerSex],
+		requires: [lewd, subjectSexBecomesSpecificTriggerSex, humanoidOption],
 	};
 
 	var transformations = [
@@ -1207,7 +1207,7 @@ function generateCurse() {
 				"You get along with your new head like a sibling most of the time, but it's always making sexual advances."]),
 			closingRemarkText: "It isn't always easy <a href=\"https://www.furaffinity.net/view/21328649/\"> sharing a body with others</a>.",
 			sets: [doNotAssignSubjectSex],
-			requires: [tfAtomic, veryUncommon],
+			requires: [tfAtomic, veryUncommon, humanoidOption],
 		},			
 		{
 			makeTransformationText:function(){return String.format("your head transforms into that of {0}", specificTarget ? "the" : subjectArticle);},
@@ -1240,7 +1240,7 @@ function generateCurse() {
 				"Whatever was between your legs before ends up incorporated into your original mouth.",
 				"Eating is an orgasmic experience."]),
 			sets: [doNotAssignSubjectSex, becomingCreatureHybrid, allowBeastsIfHumanoid],
-			requires: [lewd, veryUncommon]
+			requires: [lewd, veryUncommon, humanoidOption]
 		},
 		{
 			makeTransformationText:function(){return String.format("{0}", happensOnce 
@@ -1415,7 +1415,7 @@ function generateCurse() {
 				"You adopt the donor's sexual urges.",
 				"You adopt the donor's sexual preferences.",]) 
 				: "At least you're still mostly human.",
-			requires: [nsfw, genitalReplacementAllowed, tfAtomic, subjectSexBecomesSpecificTriggerSex],
+			requires: [nsfw, genitalReplacementAllowed, tfAtomic, subjectSexBecomesSpecificTriggerSex, humanoidOption],
 			sets: [allowBeastsIfHumanoid, subjectSexBecomesSpecificTriggerSex, becomingCreatureHybrid],
 		},
 		{
@@ -1508,10 +1508,17 @@ function generateCurse() {
 			requires: [mentalOption, nsfw, subjectIsAnimate, noSpecificIndividualTarget],
 		},
 		{
-			makeTransformationText:function(){return String.format("{1} {0}",
-				happensOnce ? "your body expands, envoloping your limbs as you dribble juice"
-					: "your skin changes hue and your body expands a little more, eventually",
-				"leaving you swollen up into a giant, barely-human"
+			makeTransformationText:function(){return String.format("{0}. {1} {2}",
+				stagesTF ? String.format(
+					"your skin becomes more like the rind of a {0}, and your body expands a little more",
+					curse.renderSubjectText())
+				: randomFrom([
+					"your body expands, envoloping your limbs",
+					String.format("you find your saliva tastes sweet like {0} juice. The rest of your bodily fluids follow, and your stomach inflates as the juices build up inside you", 
+						curse.renderSubjectText()),
+				]),
+				stagesTF ? "Eventually, you" : "You",
+				"are left swollen up into a giant, humanoid");
 			},
 			subjectText: randomFrom(["watermelon", "blueberry", "peach", "pumpkin", "pear", "apple", "squash", "orange"]),
 			chosen: function(){extremitiesName = "leaves"; renderSubjectGender = false},
@@ -1525,7 +1532,7 @@ function generateCurse() {
 					"People have an urge to take bites from you.",
 				]));},
 			sets: [subjectInhuman, subjectIsInanimate, setPussyName("flower"), setDickName("flower"), setFacialFeature("leaves")],
-			requires: [notBecomingHybrid, inanimateOption, noSpecificIndividualTarget, subjectIsLiving, beingTransformed, canSupplySubject],
+			requires: [notBecomingHybrid, inanimateOption, noSpecificIndividualTarget, beingTransformed, canSupplySubject],
 		},
 	];
 	
@@ -1656,6 +1663,9 @@ function generateCurse() {
 				"bluebird", 
 				"crow", 
 				"seagull", 
+				"flamingo", 
+				"heron", 
+				"duck", 
 				"harpy eagle", 
 				isDecided(subjectFemale) ? subjectFemale ? "peahen" : "peacock" : "peafowl",
 				"secretary bird"]);}, 
@@ -1694,7 +1704,7 @@ function generateCurse() {
 			sets: [mundaneAnimalSubject, determinesRandomSex, setPussyName("winking ".concat(pussyName)), setDickName("flared ".concat(dickName))],
 		},
 		{
-			subjectText: randomFrom(["snow leopard", "leopard", "panther", "cougar"]),
+			subjectText: randomFrom(["snow leopard", "leopard", "panther", "cougar", "cheetah"]),
 			requires: [beastOption],
 			sets: [mundaneAnimalSubject, setDickName("barbed ".concat(dickName)), setExtremitiesName("paws")],
 		},
@@ -1717,7 +1727,7 @@ function generateCurse() {
 			sets: [mundaneAnimalSubject, setPussyName("pseudopenis"), setExtremitiesName("paws")],
 		},
 		{
-			subjectText: "squirrel",
+			subjectText: randomFrom(["squirrel", "flying squirrel"]),
 			chosen: function(){facialFeatureName = randomFrom(["whiskers", "ears"]);},
 			additionalExplaination: randomFrom([
 				"You become twitchy and skittish.",
@@ -2010,7 +2020,7 @@ function generateCurse() {
 			additionalExplaination: randomFrom([
 				"People who spend time around you become obsessed with you.",
 				"You can read minds.",
-				"You discover that you can influence the toughts of others.",
+				"You discover that you can influence the thoughts of others.",
 			]),
 			sets: [subjectInhuman, nonMundaneSubject, setFacialFeature("writhing tentacles"), setDickName("prehensile ".concat(dickName)), setPussyName("tentacle-crowned ".concat(pussyName))],
 			requires: [notBecomingHybrid, nonMundaneSubject, humanoidOption],
@@ -2128,7 +2138,6 @@ function generateCurse() {
 		},
 	]
 
-	
 	// =======================
 	//        DURATIONS
 	// =======================
@@ -2237,11 +2246,11 @@ function generateCurse() {
 		},
 	]
 
+
 	function makeTFComplication(transformation) {
 		var lower = String.format("{0}.", transformation.makeTransformationText());
 		return lower.charAt(0).toUpperCase() + lower.substring(1);
 	};
-
 
 	var complications = [
 		{
@@ -2536,7 +2545,6 @@ function generateCurse() {
 	}
 
 	var chosenSubject = randomFrom(filterComponents(subjects));
-	console.log(chosenSubject);
 	if (curse.renderSubjectText == null) {
 		updateCurse(curse, chosenSubject);
 	}
