@@ -50,7 +50,11 @@ var inanimateSelected = true;
 var mentalSelected = true;
 var tgSelected = true;
 
-function generateCurse() {
+function generateSecondPersonCurse() {
+    return generateCurse("you");
+}
+
+function generateCurse(targetArg) {
 	selectAnotherComplication = function(components) {
 		var anotherSelected = randomFrom(components);
 		if (chosenComplication == anotherSelected) {
@@ -2482,8 +2486,7 @@ function generateCurse() {
 		subjectArticle = "a";
 	}
 
-	return {curseText: curse.renderText(), circeText: curse.renderCirceText()};
-
+	return {curseText: fixPronouns(curse.renderText(), targetArg), circeText: curse.renderCirceText()};
 }
 
 
@@ -2512,4 +2515,32 @@ function randomSelectionFrom(array) {
 		return randomSelectionFrom(array);
 	}
 	return selection;
+}
+
+function fixPronouns(message, target) {
+    if (target == "you") {
+        var output = message.replace(/%you\/they%/g, "you");
+        var output = output.replace(/%You\/They%/g, "You");
+        var output = output.replace(/%you\/them%/g, "you");
+        var output = output.replace(/%You\/Them%/g, "You");
+        var output = output.replace(/%your\/their%/g, "your");
+        var output = output.replace(/%Your\/Their%/g, "Your");
+        var output = output.replace(/%yours\/theirs%/g, "yours");
+        var output = output.replace(/%Yours\/Theirs%/g, "Yours");
+        var output = output.replace(/%yourself\/themselves%/g, "yourself");
+        var output = output.replace(/%Yourself\/Themselves%/g, "Yourself");
+        return output;
+    } else {
+        var output = message.replace(/%you\/they%/g, "they");
+        var output = output.replace(/%You\/They%/g, "They");
+        var output = output.replace(/%you\/them%/g, "them");
+        var output = output.replace(/%You\/Them%/g, "Them");
+        var output = output.replace(/%your\/their%/g, "their");
+        var output = output.replace(/%Your\/Their%/g, "Their");
+        var output = output.replace(/%yours\/theirs%/g, "theirs");
+        var output = output.replace(/%Yours\/Theirs%/g, "Theirs");
+        var output = output.replace(/%yourself\/themselves%/g, "themselves");
+        var output = output.replace(/%Yourself\/Themselves%/g, "Themselves");
+        return output;
+    }
 }

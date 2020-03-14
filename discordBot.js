@@ -38,11 +38,10 @@ function tfCommand(args, channelID) {
         messageText = "Wait, who did you want me to transform? (Try `!TF me` or `!TF @username`)";
     } else {
         var subject = args[0].toLowerCase();
-        var curseText = unHTML(generateCurse().curseText);
         if ( subject == "me" || subject == "myself" ) {
-            messageText = curseText;
+            messageText = unHTML(generateSecondPersonCurse().curseText);
         } else {
-            messageText = changeSubject(curseText, subject);
+            messageText = unHTML(generateCurse(subject).curseText);
         }
     }
     bot.sendMessage({
@@ -59,10 +58,3 @@ function unHTML(htmlText) {
     return output;
 }
 
-function changeSubject(message, newSubject) {
-    var output = message.replace(/your/g, "their");
-    var output = output.replace(/Your/g, "Their");
-    var output = output.replace(/you/g, "they");
-    var output = output.replace(/You/g, "They");
-    return String.format("Here's a curse for {0}:\n {1}", newSubject, output);
-}

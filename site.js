@@ -18,7 +18,7 @@ $(document).ready(function() {
 	        var i;
 	    	for (i = 0; i < 3; i++) {
 			try {
-				curseOutput = generateCurse();
+				curseOutput = generateSecondPersonCurse();
 				break;
 			} catch(err) {
 				console.log("failed to generate curse " + i + ": " + err);
