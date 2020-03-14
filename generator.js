@@ -37,8 +37,8 @@ const humanoidOrBeastOption = {
 
 
 var sfwSelected = false;
-var nsfwSelected = false;
-var lewdSelected = true;
+var nsfwSelected = true;
+var lewdSelected = false;
 var maleSelected= false;
 var femaleSelected = false;
 var otherSexSelected = true;
@@ -640,7 +640,7 @@ function generateCurse() {
 					randomFrom(["Any time you are separated, you have an urge to return to them", "You are compelled to adopt them as a new pet", "You cannot stand to be away from them"]),
 					selectedDrawAndTrigger[0],
 					happensOnce ? "If you ever" : "Each time you",
-					selectedDrawAndTrigger[1],
+					selectedDrawAndTrigger[1]
 					)},
 			requires: [humanoidOrBeastOption],
 			sets: [determinesRandomSex, usesStandardSubject, triggerSexBecomesOppositeSubjectSex, touchTransformation, subjectInhuman, oneSubject]
