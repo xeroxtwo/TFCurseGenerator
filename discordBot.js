@@ -39,9 +39,14 @@ function tfCommand(args, channelID) {
     } else {
         var subject = args[0].toLowerCase();
         if ( subject == "me" || subject == "myself" ) {
-            messageText = unHTML(generateSecondPersonCurse().curseText);
+            messageText = String.format("{0}\n{1}",
+                "Here's a curse for you:",
+                unHTML(generateSecondPersonCurse().curseText));
         } else {
-            messageText = unHTML(generateCurse(subject).curseText);
+            messageText = String.format("{0} {1}:\n{2}",
+                "Here's a curse for",
+                subject,
+                unHTML(generateCurse(subject).curseText));
         }
     }
     bot.sendMessage({
