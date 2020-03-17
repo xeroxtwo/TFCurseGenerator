@@ -1,62 +1,46 @@
 const SECOND_PERSON_ARG = "$SECONDPERSON$";
 
-// Tags for global status.
-const sfw = {
-	shouldFilter: function() {return false;},
-}
-const nsfw = {
-	shouldFilter: function() {return sfwSelected;},
-}
-const lewd = {
-	shouldFilter: function() {return sfwSelected || nsfwSelected;},
-}
-const tgOption = {
-	shouldFilter: function() {return !tgSelected;},
-}
-const humanOption = {
-	shouldFilter: function() {return !humansSelected;},
-}
-const humanoidOption = {
-	shouldFilter: function() {return !humanoidsSelected;},
-}
-const beastOption = {
-	shouldFilter: function() {return !beastsSelected;},
-}
-const inanimateOption = {
-	shouldFilter: function() {return !inanimateSelected;},
-}
-const mentalOption = {
-	shouldFilter: function() {return !mentalSelected;},
-}
-const extantCreaturesAllowed = {
-	shouldFilter: function() {return !beastsSelected && !humansSelected;},
-}
-const humanoidOrBeastOption = {
-	shouldFilter: function(){return !humanoidsSelected && !beastsSelected;},
-	onChoice: function() {},
+class TfOptions {
+    constructor(sfw, nsfw, lewd, male, female, otherSex, humans, humanoid, beasts, mythical, inanimate, mental, tg) {
+        this.sfwSelected = sfw;
+        this.nsfwSelected = nsfw;
+        this.lewdSelected = lewd;
+        this.maleSelected= male;
+        this.femaleSelected = female;
+        this.otherSexSelected = otherSex;
+        this.humansSelected = humans;
+        this.humanoidsSelected = humanoid;
+        this.beastsSelected = beasts;
+        this.mythicalSelected = mythical;
+        this.inanimateSelected = inanimate;
+        this.mentalSelected = mental;
+        this.tgSelected = tg;
+    }
 }
 
-
-
-var sfwSelected = false;
-var nsfwSelected = true;
-var lewdSelected = false;
-var maleSelected= false;
-var femaleSelected = false;
-var otherSexSelected = true;
-var humansSelected = true;
-var humanoidsSelected = true;
-var beastsSelected = true;
-var mythicalSelected = true;
-var inanimateSelected = true;
-var mentalSelected = true;
-var tgSelected = true;
-
-function generateSecondPersonCurse() {
-    return generateCurse(SECOND_PERSON_ARG);
+function generateSecondPersonCurse(tfOptions) {
+    return generateTransformation(SECOND_PERSON_ARG, true, tfOptions);
 }
 
-function generateCurse(targetArg) {
+function generateSecondPersonTF(isCurse, tfOptions) {
+    return generateTransformation(SECOND_PERSON_ARG, isCurse, tfOptions);
+}
+
+function generateTransformation(targetName, isCurse, options) {
+    var sfwSelected = options.sfwSelected;
+    var nsfwSelected = options.nsfwSelected;
+    var lewdSelected = options.lewdSelected;
+    var maleSelected= options.maleSelected;
+    var femaleSelected = options.femaleSelected;
+    var otherSexSelected = options.otherSexSelected;
+    var humansSelected = options.humansSelected;
+    var humanoidsSelected = options.humanoidsSelected;
+    var beastsSelected = options.beastsSelected;
+    var mythicalSelected = options.mythicalSelected;
+    var inanimateSelected = options.inanimateSelected;
+    var mentalSelected = options.mentalSelected;
+    var tgSelected = options.tgSelected;
+
 	selectAnotherComplication = function(components) {
 		var anotherSelected = randomFrom(components);
 		if (chosenComplication == anotherSelected) {
@@ -186,8 +170,8 @@ function generateCurse(targetArg) {
 
 		renderAdditionalExplainations : function () {
 			if (this.additionalExplainations.length > 0) {
-				var explainations = "";
-				for (var i = 0; i < this.additionalExplainations.length; i++) {
+				var explainations = this.additionalExplainations[0]();
+				for (var i = 1; i < this.additionalExplainations.length; i++) {
 					explainations = explainations + " " + this.additionalExplainations[i]();
 				}
 				return String.format("<br></p><p>{0}", explainations);
@@ -214,15 +198,24 @@ function generateCurse(targetArg) {
 		},
 
 		renderText : function() {
-			return String.format("<p>{0} {1}{2}{3}. {4} {5}{6}</p>",
-				this.renderTriggerText(),
-				this.renderTransformationText(),
-				shouldRenderSubjectText ? " " : "",
-				shouldRenderSubjectText ? this.renderGenderedSubjectText() : "",
-				this.renderDurationText(),
-				this.renderComplicationText(),
-				this.renderAdditionalExplainations());
-			},
+		    if (isCurse) {
+    			return String.format("<p>{0} {1}{2}{3}. {4} {5} {6}</p>",
+                    this.renderTriggerText(),
+                    this.renderTransformationText(),
+                    shouldRenderSubjectText ? " " : "",
+                    shouldRenderSubjectText ? this.renderGenderedSubjectText() : "",
+                    this.renderDurationText(),
+                    this.renderComplicationText(),
+                    this.renderAdditionalExplainations());
+		    } else {
+    			return String.format("<p>{0}{1}{2}. {3} {4}</p>",
+                    this.renderTransformationText(),
+                    shouldRenderSubjectText ? " " : "",
+                    shouldRenderSubjectText ? this.renderGenderedSubjectText() : "",
+                    this.renderComplicationText(),
+                    this.renderAdditionalExplainations());
+		    }
+		},
 	}
 
 	function renderOppositeSex(method) {
@@ -241,7 +234,8 @@ function generateCurse(targetArg) {
 	}
 
 	var subjectArticle = "a";
-	var happensOnce = (Math.random() <0.2); // 20% chance, more with some triggers that force it.
+
+	var happensOnce = !isCurse ? true : (Math.random() <0.2); // 20% chance, more with some triggers that force it.
 	var shouldRenderSubjectText = true;
 	var shortDurationOnly = false;
 	const defaultExtremitiesName = "feet";
@@ -555,7 +549,41 @@ function generateCurse(targetArg) {
 		onChoice: function() {},
 	}
 
-
+    // Tags for global status.
+    const sfw = {
+        shouldFilter: function() {return false;},
+    }
+    const nsfw = {
+        shouldFilter: function() {return sfwSelected;},
+    }
+    const lewd = {
+        shouldFilter: function() {return sfwSelected || nsfwSelected;},
+    }
+    const tgOption = {
+        shouldFilter: function() {return !tgSelected;},
+    }
+    const humanOption = {
+        shouldFilter: function() {return !humansSelected;},
+    }
+    const humanoidOption = {
+        shouldFilter: function() {return !humanoidsSelected;},
+    }
+    const beastOption = {
+        shouldFilter: function() {return !beastsSelected;},
+    }
+    const inanimateOption = {
+        shouldFilter: function() {return !inanimateSelected;},
+    }
+    const mentalOption = {
+        shouldFilter: function() {return !mentalSelected;},
+    }
+    const extantCreaturesAllowed = {
+        shouldFilter: function() {return !beastsSelected && !humansSelected;},
+    }
+    const humanoidOrBeastOption = {
+        shouldFilter: function(){return !humanoidsSelected && !beastsSelected;},
+        onChoice: function() {},
+    }
 
 	// DATA
 	// instead of static text, you can specify a "make" function that will be called at render time.
@@ -604,11 +632,11 @@ function generateCurse(targetArg) {
 					String.format("{0} {1}", randomFrom(["a baby", "an adorable little", "a full-grown", "a roudy little"]), curse.renderGenderedSubjectText())]),
 				randomFrom([
 					String.format("{0} {1} {2}.",
-						" You immediately crave the same foods as",
+						" %You/They% immediately crave the same foods as",
 						subjectArticle,
 						curse.renderSubjectText()),
-					" You have an urge to get pregnant again as soon as possible.",
-					" You're willing to do whatever it takes to be a good mom.",
+					" %You/They% have an urge to get pregnant again as soon as possible.",
+					" %You/They%'re willing to do whatever it takes to be a good mom.",
 					" A few weeks later, %you/they% realize %you/they%'re pregnant again!",
 					"",
 				])
@@ -954,6 +982,12 @@ function generateCurse(targetArg) {
 					"until %your/their% pants no longer fit",
 					"to freakish proportions",
 					"so large, walking becomes a chore"]);
+			var defaultSize2 = decidedAndTrue(stagesTF) ? "noticably larger"
+				: randomFrom(["large enough to always create a noticable bulge",
+					"to an inconvenient size",
+					"until %your/their% pants no longer fit",
+					"to freakish proportions",
+					"so large, walking becomes a chore"]);
 			var assSize = decidedAndTrue(stagesTF) ? "noticably larger"
 				: randomFrom(["until %your/their% pants burst",
 					"until %your/their% pants no longer fit",
@@ -991,15 +1025,15 @@ function generateCurse(targetArg) {
 					{a: "belly", b: randomFrom(growthWordSingular), c: defaultSize}
 						]);
 			var genitalGrowth = decidedAndTrue(subjectFemale) ? randomFrom([
-					{a: "pussy", b: randomFrom(growthWordSingular), c: randomFrom([defaultSize, passageSize])},
-					{a: "clit", b: randomFrom(growthWordSingular), c: randomFrom([defaultSize, clitSize])},
+					{a: "pussy", b: randomFrom(growthWordSingular), c: randomFrom([defaultSize2, passageSize])},
+					{a: "clit", b: randomFrom(growthWordSingular), c: randomFrom([defaultSize2, clitSize])},
 					])
 				: decidedAndFalse(subjectFemale) ? randomFrom([
-					{a: "penis", b: randomFrom(growthWordSingular), c: randomFrom([defaultSize, penisSize])},
-					{a: "balls", b: randomFrom(growthWordPlural), c: defaultSize},
-					{a: "cock and balls", b: randomFrom(growthWordPlural), c: defaultSize}
+					{a: "penis", b: randomFrom(growthWordSingular), c: randomFrom([defaultSize2, penisSize])},
+					{a: "balls", b: randomFrom(growthWordPlural), c: defaultSize2},
+					{a: "cock and balls", b: randomFrom(growthWordPlural), c: defaultSize2}
 					])
-				: {a: "genitals", b: randomFrom(growthWordPlural), c: defaultSize};
+				: {a: "genitals", b: randomFrom(growthWordPlural), c: defaultSize2};
 			var partAndGrowth = randomFrom([bodypartGrowth, genitalGrowth]);
 			return randomFrom([
 				String.format("%your/their% {0} {1} {2}",
@@ -1248,7 +1282,7 @@ function generateCurse(targetArg) {
 				Math.random() < 0.3 ? "an" : getBodyType(),
 				specificTarget ? "version of the" : "");},
 			sets: [becomingCreatureHybrid],
-			requires: [uncommon, subjectInhuman, humanoidOption],
+			requires: [subjectInhuman, humanoidOption],
 		},
 		{
 			makeTransformationText:function(){return String.format("%you/they% transform into {0} {1} version of {2}",
@@ -1439,7 +1473,7 @@ function generateCurse(targetArg) {
 					"People have an urge to take bites from %you/them%.",
 				]));},
 			sets: [subjectInhuman, subjectIsInanimate, setPussyName("flower"), setDickName("flower"), setFacialFeature("leaves")],
-			requires: [notBecomingHybrid, inanimateOption, noSpecificIndividualTarget, beingTransformed, canSupplySubject],
+			requires: [notBecomingHybrid, inanimateOption, noSpecificIndividualTarget, beingTransformed, canSupplySubject, uncommon],
 		},
 	];
 
@@ -2443,8 +2477,10 @@ function generateCurse(targetArg) {
 		return {curseText: "%You/They% turn into nothing.", circeText: "What did you expect?"};
 	}
 
-	var chosenTrigger = randomFrom(filterComponents(triggers));
-	updateCurse(curse, chosenTrigger);
+    if (isCurse) {
+	    var chosenTrigger = randomFrom(filterComponents(triggers));
+	    updateCurse(curse, chosenTrigger);
+    }
 
 	var chosenTransformation = randomFrom(filterComponents(transformations));
 	if (curse.renderTransformationText == null) {
@@ -2456,14 +2492,16 @@ function generateCurse(targetArg) {
 		updateCurse(curse, chosenSubject);
 	}
 
-	if (happensOnce) {
-		updateCurse(curse, {durationText: "The transformation is permanent."});
-	}
+    if (isCurse) {
+	    if (happensOnce) {
+	    	updateCurse(curse, {durationText: "The transformation is permanent."});
+	    }
 
-	var chosenDuration = randomFrom(buildDurations());
-	if (curse.renderDurationText == null) {
-		updateCurse(curse, chosenDuration);
-	}
+	    var chosenDuration = randomFrom(buildDurations());
+	    if (curse.renderDurationText == null) {
+		    updateCurse(curse, chosenDuration);
+	    }
+    }
 
 	var chosenComplication = null;
 	if (curse.renderComplicationText == null) {
@@ -2488,9 +2526,12 @@ function generateCurse(targetArg) {
 		subjectArticle = "a";
 	}
 
-	return {curseText: fixPronouns(curse.renderText(), targetArg), circeText: fixPronouns(curse.renderCirceText(), targetArg)};
+	return {curseText: fixPronouns(curse.renderText(), targetName), circeText: fixPronouns(curse.renderCirceText(), targetName)};
 }
 
+String.prototype.capitalize = function() {
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
 
 String.format = function() {
   var s = arguments[0];
