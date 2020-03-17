@@ -1146,7 +1146,7 @@ function generateTransformation(targetName, isCurse, options) {
 				"%You/They% control the additional head fully.",
 				"%Your/Their% personality is split between the heads. One gets %your/their% libido and passion, the other gets %your/their% logic and restraint.",
 				"%You/They% get along with %your/their% new head like a sibling most of the time, but it's always making sexual advances."]),
-			closingRemarkText: "It isn't always easy <a href=\"https://www.furaffinity.net/view/21328649/\"> sharing a body with others</a>.",
+			closingRemarkText: "It isn't always easy <a href=\"https://www.furaffinity.net/view/21328649/\">sharing a body with others</a>.",
 			sets: [doNotAssignSubjectSex],
 			requires: [tfAtomic, veryUncommon, humanoidOption],
 		},

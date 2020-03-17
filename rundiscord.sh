@@ -5,4 +5,5 @@ BOTFILE=runnable-discord-bot.js
 cat generator.js > $BOTFILE
 echo "" >> $BOTFILE
 cat discordBot.js >> $BOTFILE
-node $BOTFILE
+mkdir logs
+nohup node $BOTFILE ./rundiscord.sh > logs/nohup.out 2>&1 &

@@ -1,15 +1,21 @@
 var Discord = require('discord.io');
-var logger = require('winston');
-// Configure logger settings
-logger.remove(logger.transports.Console);
-logger.add(new logger.transports.Console, {
-    colorize: true
+const {transports, createLogger, format} = require('winston');
+const logger = createLogger({
+    format: format.combine(
+        format.timestamp(),
+        format.json()
+    ),
+    transports: [
+        new transports.Console(),
+        new transports.File({filename: 'logs/error.log', level: 'error'}),
+        new transports.File({filename: 'logs/activity.log', level:'info'}),
+        new transports.File({filename: 'logs/warn.log', level:'warn'})
+    ]
 });
-logger.level = 'debug';
 // Initialize Discord Bot
 var bot = new Discord.Client({
    token:  process.env.DISCORD_BOT_TOKEN,
-   autorun: true
+   autorun: true,
 });
 
 bot.on('ready', function (evt) {
@@ -19,6 +25,16 @@ bot.on('ready', function (evt) {
 });
 
 bot.on('message', function (user, userID, channelID, message, evt) {
+    if (message.includes("<@!688492979312525357>")) {
+        logger.warn("Mentioned! " + message);
+        sendMessage(
+            channelID,
+            String.format("Hey, <@!{0}>!\nUse this form to talk to me: {1}.\nIf you want help, DM me `!TF help`",
+                userID,
+                "https://forms.gle/m8DUedNp7eK5gabf8"));
+        return;
+
+    }
     if (message.startsWith('!')) {
         logger.info('saw command: ' + message);
         var args = message.substring(1).split(' ');
@@ -34,15 +50,6 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             break;
          }
      }
-    if (message.includes("<@!688492979312525357>")) {
-        logger.warn("Mentioned! " + message);
-        sendMessage(
-            channelID,
-            String.format("Hey, <@!{0}>!\nUse this form to talk to me: {1}.\nIf you want help, DM me `!TF help`",
-                userID,
-                "https://forms.gle/m8DUedNp7eK5gabf8"));
-
-    }
 });
 
 function safeTfCommand(args, channelID, isCurse) {
@@ -158,11 +165,12 @@ function tfCommand(args, channelID, isCurse) {
                     ));
             return;
         }
+        logger.error(" BEFORE: " + curseOutput);
         if (subject.toLowerCase() == "me" || subject.toLowerCase() == "myself") {
             curseOutput = generateSecondPersonTF(isCurse, options);
             messageText = String.format("{0}\n{1}",
                 isCurse ? "Here's a curse for you:" : "That can be arranged.",
-                unHTML(generateSecondPersonTF(isCurse, options).curseText).capitalize());
+                unHTML(curseOutput.curseText).capitalize());
         } else {
             curseOutput = generateTransformation(subject, isCurse, options);
             messageText = String.format("{0} {1}!\n{2}",
@@ -170,7 +178,7 @@ function tfCommand(args, channelID, isCurse) {
                 isCurse ? "is cursed!": "transforms!",
                 unHTML(curseOutput.curseText).capitalize());
         }
-        if (curseOutput.circeText && Math.random() < 0.4) {
+        if (curseOutput.circeText  && Math.random() < 0.4) {
             messageText = messageText + "\n" + unHTML(curseOutput.circeText);
         }
         sendMessage(channelID, messageText);
@@ -196,7 +204,7 @@ function unHTML(htmlText) {
         var text = results[2];
         var link = results[1];
         output = output.replace(regexp, text);
-        output = output + link;
+        output = output + " " + link;
     }
     return output;
 }
