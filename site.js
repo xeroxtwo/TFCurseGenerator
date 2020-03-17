@@ -13,12 +13,12 @@ $(document).ready(function() {
     $("#goButton").click(function(){
 		// curse counter
 		fetch("https://www.freevisitorcounters.com/en/home/counter/588546/t/3", {credentials: "omit", mode: 'no-cors',});
-		updateOptionStatuses();
+		var options = updateOptionStatuses();
 		var curseOutput;
-	        var i;
-	    	for (i = 0; i < 3; i++) {
+	    var i;
+	    for (i = 0; i < 3; i++) {
 			try {
-				curseOutput = generateCurse();
+				curseOutput = generateSecondPersonCurse(options);
 				break;
 			} catch(err) {
 				console.log("failed to generate curse " + i + ": " + err);
@@ -43,6 +43,19 @@ $(document).ready(function() {
 });
 
 function updateOptionStatuses() {
+    var sfwSelected = false;
+    var nsfwSelected = true;
+    var lewdSelected = false;
+    var maleSelected= false;
+    var femaleSelected = false;
+    var otherSexSelected = true;
+    var humansSelected = true;
+    var humanoidsSelected = true;
+    var beastsSelected = true;
+    var mythicalSelected = true;
+    var inanimateSelected = true;
+    var mentalSelected = true;
+    var tgSelected = true;
 	var radios = document.getElementsByName('inlineRadioOptions');
 	for (var i = 0, length = radios.length; i < length; i++) {
 		if (radios[i].checked) {
@@ -88,6 +101,19 @@ function updateOptionStatuses() {
 	inanimateSelected = document.getElementById("inanimateCheckbox").checked;
 	mentalSelected = document.getElementById("mentalCheckbox").checked;
 	tgSelected = document.getElementById("transgenderCheckbox").checked;
+	return new TfOptions(sfwSelected,
+        nsfwSelected,
+        lewdSelected,
+        maleSelected,
+        femaleSelected,
+        otherSexSelected,
+        humansSelected,
+        humanoidsSelected,
+        beastsSelected,
+        mythicalSelected,
+        inanimateSelected,
+        mentalSelected,
+        tgSelected);
 }
 
 function getCircePreText() {
